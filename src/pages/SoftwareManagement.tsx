@@ -16,6 +16,7 @@ import {
 import { StudentManagement } from "@/components/software/StudentManagement";
 import { SedesManagement } from "@/components/software/SedesManagement";
 import { VehiculosManagement } from "@/components/software/VehiculosManagement";
+import { MaterialDidacticoManagement } from "@/components/software/MaterialDidacticoManagement";
 
 const features = [
   {
@@ -119,6 +120,7 @@ export default function SoftwareManagement() {
             {activeModule === "Gestión de Alumnos" && <StudentManagement />}
             {activeModule === "Gestión Multisección" && <SedesManagement />}
             {activeModule === "Control de Vehículos" && <VehiculosManagement />}
+            {activeModule === "Material Didáctico" && <MaterialDidacticoManagement />}
             {/* Otros módulos se añadirán aquí */}
           </div>
         )}
