@@ -1,191 +1,98 @@
-import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { type StudentFormValues, type StudentRecord } from "@/components/software/students/studentSchema";
-import { useToast } from "@/components/ui/use-toast";
+import { useCallback } from 'react';
+import { supabase } from '@/lib/supabaseClient';
 
-export function useStudents() {
-  const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
+interface StudentCreateInput {
+  first_name: string;
+  last_name: string;
+  dni: string;
+  birth_date: string;
+  registration_date: string;
+  status: 'active' | 'inactive';
+  phone?: string;
+  email?: string;
+  address?: string;
+  gdpr_consent?: boolean;
+}
 
-  const loadStudents = async () => {
-    try {
-      setIsLoading(true);
-      const { data, error } = await supabase
-        .from("students")
-        .select("*")
-        .order("created_at", { ascending: false });
+interface StudentResponse {
+  id: string;
+  first_name: string;
+  last_name: string;
+  dni: string;
+  birth_date: string;
+  phone: string | null;
+  email: string | null;
+  address: string | null;
+  registration_date: string;
+  status: 'active' | 'inactive';
+  gdpr_consent: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
-      if (error) throw error;
-      return (data || []) as StudentRecord[];
-    } catch (error: any) {
-      toast({
-        title: "Error al cargar alumnos",
-        description: error.message,
-        variant: "destructive",
-      });
-      return [];
-    } finally {
-      setIsLoading(false);
-    }
-  };
+export const useStudents = () => {
+  const getStudents = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('students')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-  const searchStudents = async (term: string) => {
-    try {
-      setIsLoading(true);
-      const { data, error } = await supabase
-        .from("students")
-        .select("*")
-        .or(
-          `first_name.ilike.%${term}%,last_name.ilike.%${term}%,dni.ilike.%${term}%,email.ilike.%${term}%`
-        )
-        .order("created_at", { ascending: false });
+    if (error) throw error;
+    return data as StudentResponse[];
+  }, []);
 
-      if (error) throw error;
-      return (data || []) as StudentRecord[];
-    } catch (error: any) {
-      toast({
-        title: "Error al buscar alumnos",
-        description: error.message,
-        variant: "destructive",
-      });
-      return [];
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const createStudent = useCallback(async (studentData: StudentCreateInput) => {
+    const requiredFields: (keyof StudentCreateInput)[] = [
+      'first_name',
+      'last_name',
+      'dni',
+      'birth_date',
+      'registration_date',
+      'status'
+    ];
 
-  const createStudent = async (values: StudentFormValues) => {
-    try {
-      setIsLoading(true);
-      
-      const { data: existingStudent, error: searchError } = await supabase
-        .from("students")
-        .select("id")
-        .eq("dni", values.dni)
-        .maybeSingle();
-
-      if (searchError) throw searchError;
-
-      if (existingStudent) {
-        toast({
-          title: "Error al crear alumno",
-          description: "Ya existe un alumno con ese DNI",
-          variant: "destructive",
-        });
-        return false;
+    // Validar campos requeridos
+    for (const field of requiredFields) {
+      if (!studentData[field]) {
+        throw new Error(`El campo ${field} es requerido`);
       }
-
-      const studentData = {
-        ...values,
-        registration_date: new Date().toISOString(),
-        status: "active" as const,
-      };
-
-      const { error } = await supabase
-        .from("students")
-        .insert([studentData]);
-
-      if (error) throw error;
-
-      toast({
-        title: "Alumno creado correctamente",
-        description: "Se ha registrado el nuevo alumno en el sistema",
-      });
-
-      return true;
-    } catch (error: any) {
-      toast({
-        title: "Error al crear alumno",
-        description: error.message,
-        variant: "destructive",
-      });
-      return false;
-    } finally {
-      setIsLoading(false);
     }
-  };
 
-  const updateStudent = async (id: string, values: StudentFormValues) => {
-    try {
-      setIsLoading(true);
+    const { data, error } = await supabase
+      .from('students')
+      .insert([studentData])
+      .select();
 
-      const { data: existingStudent, error: searchError } = await supabase
-        .from("students")
-        .select("id")
-        .eq("dni", values.dni)
-        .neq("id", id)
-        .maybeSingle();
+    if (error) throw error;
+    return data as StudentResponse[];
+  }, []);
 
-      if (searchError) throw searchError;
+  const updateStudent = useCallback(async (id: string, updates: Partial<StudentCreateInput>) => {
+    const { data, error } = await supabase
+      .from('students')
+      .update(updates)
+      .eq('id', id)
+      .select();
 
-      if (existingStudent) {
-        toast({
-          title: "Error al actualizar alumno",
-          description: "Ya existe otro alumno con ese DNI",
-          variant: "destructive",
-        });
-        return false;
-      }
+    if (error) throw error;
+    return data as StudentResponse[];
+  }, []);
 
-      const { error } = await supabase
-        .from("students")
-        .update(values)
-        .eq("id", id);
+  const deleteStudent = useCallback(async (id: string) => {
+    const { error } = await supabase
+      .from('students')
+      .delete()
+      .eq('id', id);
 
-      if (error) throw error;
-
-      toast({
-        title: "Alumno actualizado correctamente",
-        description: "Se han guardado los cambios del alumno",
-      });
-
-      return true;
-    } catch (error: any) {
-      toast({
-        title: "Error al actualizar alumno",
-        description: error.message,
-        variant: "destructive",
-      });
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const deleteStudent = async (id: string) => {
-    try {
-      setIsLoading(true);
-      const { error } = await supabase
-        .from("students")
-        .update({ status: "inactive" as const })
-        .eq("id", id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Alumno dado de baja correctamente",
-        description: "Se ha actualizado el estado del alumno a inactivo",
-      });
-
-      return true;
-    } catch (error: any) {
-      toast({
-        title: "Error al dar de baja al alumno",
-        description: error.message,
-        variant: "destructive",
-      });
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    if (error) throw error;
+  }, []);
 
   return {
-    isLoading,
-    loadStudents,
-    searchStudents,
+    getStudents,
     createStudent,
     updateStudent,
     deleteStudent,
   };
-}
+};
+
+export type { StudentCreateInput, StudentResponse };
