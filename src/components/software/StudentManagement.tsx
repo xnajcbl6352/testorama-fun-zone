@@ -24,10 +24,10 @@ export function StudentManagement() {
   const [showRecordForm, setShowRecordForm] = useState(false);
   const { isLoading, loadStudents, searchStudents, createStudent, deleteStudent } = useStudents();
 
-  // Load students on mount
-  useState(() => {
+  // Load students on mount using useEffect
+  useEffect(() => {
     loadStudents().then(setStudents);
-  }, []);
+  }, [loadStudents]);
 
   const handleSearch = async (term: string) => {
     setSearchTerm(term);
