@@ -10,7 +10,8 @@ export interface Invoice {
     due_date: string;
     created_at: string;
     updated_at: string;
-    student?: {
+    students?: {
+        id: string;
         first_name: string;
         last_name: string;
         dni: string;
@@ -19,6 +20,7 @@ export interface Invoice {
 
 export interface InvoiceCreateInput {
     student_id: string;
+    invoice_number: string;
     amount: number;
     due_date: string;
 }

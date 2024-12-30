@@ -49,8 +49,8 @@ export function InvoiceList() {
             <TableRow key={invoice.id}>
               <TableCell className="font-medium">{invoice.invoice_number}</TableCell>
               <TableCell>
-                {invoice.student
-                  ? `${invoice.student.first_name} ${invoice.student.last_name}`
+                {invoice.students
+                  ? `${invoice.students.first_name} ${invoice.students.last_name}`
                   : "N/A"}
               </TableCell>
               <TableCell>{formatCurrency(invoice.amount)}</TableCell>
@@ -58,7 +58,7 @@ export function InvoiceList() {
                 <Badge
                   variant={
                     invoice.status === "paid"
-                      ? "success"
+                      ? "secondary"
                       : invoice.status === "overdue"
                       ? "destructive"
                       : "default"
