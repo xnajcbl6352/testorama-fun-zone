@@ -11,6 +11,7 @@ import TestGamificado from "./pages/TestGamificado";
 import TestAdaptativo from "./pages/TestAdaptativo";
 import TestFallos from "./pages/TestFallos";
 import TestSimulado from "./pages/TestSimulado";
+import SoftwareManagement from "./pages/SoftwareManagement";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/test/adaptativo" element={<TestAdaptativo />} />
             <Route path="/test/fallos" element={<TestFallos />} />
             <Route path="/test/simulado" element={<TestSimulado />} />
+            <Route path="/software" element={<SoftwareManagement />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>

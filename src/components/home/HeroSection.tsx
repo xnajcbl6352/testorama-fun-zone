@@ -37,9 +37,9 @@ export function HeroSection() {
               variant="outline"
               size="lg"
               className="group w-full border-2 border-primary/20 bg-white/80 backdrop-blur-sm transition-all hover:scale-105 hover:border-primary hover:shadow-lg sm:w-auto"
-              onClick={() => navigate("/register")}
+              onClick={() => navigate("/software")}
             >
-              Crear cuenta gratuita
+              Software de Gestión
             </Button>
           </div>
         </div>
