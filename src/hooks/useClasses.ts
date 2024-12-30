@@ -14,17 +14,17 @@ export const useClasses = () => {
         .from('classes')
         .select(`
           *,
-          teacher:teacher_id(
+          teacher:students!classes_teacher_id_fkey(
             id,
             first_name,
             last_name
           ),
-          student:student_id(
+          student:students!classes_student_id_fkey(
             id,
             first_name,
             last_name
           ),
-          vehicle:vehicle_id(
+          vehicle:vehicles(
             id,
             plate_number,
             brand,
