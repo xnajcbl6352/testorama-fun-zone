@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -12,6 +13,7 @@ import {
   Shield,
   Settings
 } from "lucide-react";
+import { StudentManagement } from "@/components/software/StudentManagement";
 
 const features = [
   {
@@ -68,6 +70,11 @@ const features = [
 
 export default function SoftwareManagement() {
   const navigate = useNavigate();
+  const [activeModule, setActiveModule] = useState<string | null>(null);
+
+  const handleModuleClick = (title: string) => {
+    setActiveModule(title);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary/5 to-background">
@@ -81,20 +88,36 @@ export default function SoftwareManagement() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-16">
-          {features.map((feature, index) => (
-            <div
-              key={index}
-              className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-200"
-            >
-              <div className="mb-4">
-                <feature.icon className="w-8 h-8 text-primary" />
+        {!activeModule ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-16">
+            {features.map((feature, index) => (
+              <div
+                key={index}
+                className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer"
+                onClick={() => handleModuleClick(feature.title)}
+              >
+                <div className="mb-4">
+                  <feature.icon className="w-8 h-8 text-primary" />
+                </div>
+                <h3 className="font-semibold mb-2">{feature.title}</h3>
+                <p className="text-sm text-gray-600">{feature.description}</p>
               </div>
-              <h3 className="font-semibold mb-2">{feature.title}</h3>
-              <p className="text-sm text-gray-600">{feature.description}</p>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="mb-16">
+            <Button
+              variant="ghost"
+              className="mb-6"
+              onClick={() => setActiveModule(null)}
+            >
+              ← Volver al menú
+            </Button>
+            
+            {activeModule === "Gestión de Alumnos" && <StudentManagement />}
+            {/* Otros módulos se añadirán aquí */}
+          </div>
+        )}
 
         <div className="text-center">
           <Button
