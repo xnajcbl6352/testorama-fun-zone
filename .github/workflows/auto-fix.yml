@@ -1,0 +1,88 @@
+name: Auto Fix TypeScript Errors
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  auto-fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Create types folder and files if not exist
+        run: |
+          mkdir -p src/types
+          if [ ! -f src/types/student.ts ]; then
+            echo "export type StudentStatus = 'active' | 'inactive';
+
+            export interface StudentRecord {
+              id: string;
+              first_name: string;
+              last_name: string;
+              dni: string;
+              birth_date: string;
+              phone: string;
+              email: string;
+              address: string;
+              registration_date: string;
+              status: StudentStatus;
+              gdpr_consent: boolean;
+              created_at: string;
+              updated_at: string;
+            }
+
+            export interface StudentCreateInput {
+              first_name: string;
+              last_name: string;
+              dni: string;
+              birth_date: string;
+              registration_date: string;
+              status: StudentStatus;
+              phone?: string;
+              email?: string;
+              address?: string;
+              gdpr_consent?: boolean;
+            }" > src/types/student.ts
+          fi
+
+      - name: Fix TypeScript Errors
+        run: |
+          # Corregir imports faltantes
+          find src -name "*.ts" -o -name "*.tsx" | while read file; do
+            if grep -q "StudentRecord\|StudentCreateInput" "$file" && ! grep -q "import.*from '@/types/student'" "$file"; then
+              sed -i '1i import { StudentRecord, StudentCreateInput, StudentStatus } from '"'"'@/types/student'"'"';' "$file"
+            fi
+          done
+
+          # Corregir tipos de status
+          find src -name "*.ts" -o -name "*.tsx" | while read file; do
+            sed -i 's/status: string/status: StudentStatus/g' "$file"
+          done
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: "fix: Auto-fix TypeScript errors"
+          title: "🔧 Auto Fix: Corrección de errores de TypeScript"
+          body: |
+            Este PR corrige automáticamente errores comunes de TypeScript:
+            - Agrega tipos faltantes
+            - Corrige imports
+            - Actualiza definiciones de tipos
+            
+            Por favor, revisa los cambios antes de hacer merge.
+          branch: auto-fix-typescript
+          delete-branch: true
