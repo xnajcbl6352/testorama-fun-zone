@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, User } from "lucide-react";
 
 export function HeroSection() {
   const navigate = useNavigate();
@@ -40,6 +40,16 @@ export function HeroSection() {
               onClick={() => navigate("/software")}
             >
               Software de Gestión
+            </Button>
+
+            <Button
+              variant="secondary"
+              size="lg"
+              className="group w-full bg-secondary/10 transition-all hover:scale-105 hover:shadow-lg sm:w-auto"
+              onClick={() => navigate("/dashboard")}
+            >
+              <User className="mr-2 h-4 w-4" />
+              Panel de Usuario
             </Button>
           </div>
         </div>

@@ -32,8 +32,12 @@ export function ClassBookingDialog({
 
     setIsBooking(true);
     try {
+      // Using a default teacher_id for now - in a real app, you'd select from available teachers
+      const defaultTeacherId = "00000000-0000-0000-0000-000000000000";
+      
       const { error } = await supabase.from("classes").insert({
         student_id: session.user.id,
+        teacher_id: defaultTeacherId, // Added required teacher_id
         date: selectedDate.toISOString().split("T")[0],
         type: "practical",
         start_time: "10:00",
