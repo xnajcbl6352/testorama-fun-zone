@@ -1,7 +1,12 @@
 import { Book } from "lucide-react";
 import { TestPageLayout } from "@/components/test/TestPageLayout";
+import { useState } from "react";
+import { TestInterface } from "@/components/test/TestInterface";
 
 const TestSimple = () => {
+  const [hasStarted, setHasStarted] = useState(false);
+  const [selectedDuration, setSelectedDuration] = useState<number | null>(null);
+
   const benefits = [
     {
       icon: "💡",
@@ -23,6 +28,21 @@ const TestSimple = () => {
     "Revisa tus resultados y recomendaciones",
   ];
 
+  const handleStartTest = (duration: number | null) => {
+    setSelectedDuration(duration);
+    setHasStarted(true);
+  };
+
+  if (hasStarted) {
+    return (
+      <TestInterface
+        type="simple"
+        title="Test Simple"
+        duration={selectedDuration ?? undefined}
+      />
+    );
+  }
+
   return (
     <TestPageLayout
       title="Tests Simples"
@@ -32,6 +52,7 @@ const TestSimple = () => {
       description="Practica preguntas generales en formato oficial. Ideal para principiantes que desean familiarizarse con el examen DGT."
       benefits={benefits}
       steps={steps}
+      onStartTest={handleStartTest}
     />
   );
 };

@@ -1,7 +1,12 @@
 import { XOctagon } from "lucide-react";
 import { TestPageLayout } from "@/components/test/TestPageLayout";
+import { useState } from "react";
+import { TestInterface } from "@/components/test/TestInterface";
 
 const TestFallos = () => {
+  const [hasStarted, setHasStarted] = useState(false);
+  const [selectedDuration, setSelectedDuration] = useState<number | null>(null);
+
   const benefits = [
     {
       icon: "📂",
@@ -23,6 +28,21 @@ const TestFallos = () => {
     "Practica y elimina errores correctamente respondidos",
   ];
 
+  const handleStartTest = (duration: number | null) => {
+    setSelectedDuration(duration);
+    setHasStarted(true);
+  };
+
+  if (hasStarted) {
+    return (
+      <TestInterface
+        type="fallos"
+        title="Test de Fallos"
+        duration={selectedDuration ?? undefined}
+      />
+    );
+  }
+
   return (
     <TestPageLayout
       title="Registro de Fallos"
@@ -32,6 +52,7 @@ const TestFallos = () => {
       description="Revisa y practica tus errores. Genera tests personalizados con tus respuestas incorrectas."
       benefits={benefits}
       steps={steps}
+      onStartTest={handleStartTest}
     />
   );
 };

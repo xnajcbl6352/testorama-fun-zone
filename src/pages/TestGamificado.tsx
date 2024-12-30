@@ -1,7 +1,12 @@
 import { Trophy } from "lucide-react";
 import { TestPageLayout } from "@/components/test/TestPageLayout";
+import { useState } from "react";
+import { TestInterface } from "@/components/test/TestInterface";
 
 const TestGamificado = () => {
+  const [hasStarted, setHasStarted] = useState(false);
+  const [selectedDuration, setSelectedDuration] = useState<number | null>(null);
+
   const benefits = [
     {
       icon: "🏅",
@@ -23,6 +28,21 @@ const TestGamificado = () => {
     "Revisa tu progreso y desbloquea recompensas",
   ];
 
+  const handleStartTest = (duration: number | null) => {
+    setSelectedDuration(duration);
+    setHasStarted(true);
+  };
+
+  if (hasStarted) {
+    return (
+      <TestInterface
+        type="gamificado"
+        title="Test Gamificado"
+        duration={selectedDuration ?? undefined}
+      />
+    );
+  }
+
   return (
     <TestPageLayout
       title="Tests Gamificados"
@@ -32,6 +52,7 @@ const TestGamificado = () => {
       description="Haz el aprendizaje divertido. Obtén puntos, sube de nivel y desbloquea logros mientras practicas."
       benefits={benefits}
       steps={steps}
+      onStartTest={handleStartTest}
     />
   );
 };

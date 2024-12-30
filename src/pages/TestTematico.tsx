@@ -1,7 +1,12 @@
 import { Brain } from "lucide-react";
 import { TestPageLayout } from "@/components/test/TestPageLayout";
+import { useState } from "react";
+import { TestInterface } from "@/components/test/TestInterface";
 
 const TestTematico = () => {
+  const [hasStarted, setHasStarted] = useState(false);
+  const [selectedDuration, setSelectedDuration] = useState<number | null>(null);
+
   const benefits = [
     {
       icon: "🧠",
@@ -23,6 +28,21 @@ const TestTematico = () => {
     "Revisa resultados con análisis por subcategorías",
   ];
 
+  const handleStartTest = (duration: number | null) => {
+    setSelectedDuration(duration);
+    setHasStarted(true);
+  };
+
+  if (hasStarted) {
+    return (
+      <TestInterface
+        type="tematico"
+        title="Test Temático"
+        duration={selectedDuration ?? undefined}
+      />
+    );
+  }
+
   return (
     <TestPageLayout
       title="Tests Temáticos"
@@ -32,6 +52,7 @@ const TestTematico = () => {
       description="Tests específicos para reforzar tus puntos débiles. Enfócate en áreas como señales de tráfico, normativa y más."
       benefits={benefits}
       steps={steps}
+      onStartTest={handleStartTest}
     />
   );
 };
