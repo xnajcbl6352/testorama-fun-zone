@@ -24,6 +24,22 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+interface Teacher {
+  first_name: string;
+  last_name: string;
+}
+
+interface Student {
+  first_name: string;
+  last_name: string;
+}
+
+interface Vehicle {
+  plate_number: string;
+  brand: string;
+  model: string;
+}
+
 interface Class {
   id: string;
   type: "theoretical" | "practical" | "exam";
@@ -36,9 +52,11 @@ interface Class {
   status: "scheduled" | "completed" | "cancelled";
   attendance_marked: boolean;
   notes?: string;
-  teacher?: { first_name: string; last_name: string };
-  student?: { first_name: string; last_name: string };
-  vehicle?: { plate_number: string; brand: string; model: string };
+  created_at?: string;
+  updated_at?: string;
+  teacher?: Teacher | null;
+  student?: Student | null;
+  vehicle?: Vehicle | null;
 }
 
 export function ProgramacionManagement() {
