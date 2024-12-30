@@ -13,7 +13,11 @@ export type Database = {
         Row: {
           created_at: string | null
           creation_date: string | null
+          dgt_comments: string | null
           dgt_response: Json | null
+          dgt_response_date: string | null
+          dgt_response_status: string | null
+          dgt_submission_date: string | null
           document_url: string | null
           id: string
           record_number: string
@@ -24,7 +28,11 @@ export type Database = {
         Insert: {
           created_at?: string | null
           creation_date?: string | null
+          dgt_comments?: string | null
           dgt_response?: Json | null
+          dgt_response_date?: string | null
+          dgt_response_status?: string | null
+          dgt_submission_date?: string | null
           document_url?: string | null
           id?: string
           record_number: string
@@ -35,7 +43,11 @@ export type Database = {
         Update: {
           created_at?: string | null
           creation_date?: string | null
+          dgt_comments?: string | null
           dgt_response?: Json | null
+          dgt_response_date?: string | null
+          dgt_response_status?: string | null
+          dgt_submission_date?: string | null
           document_url?: string | null
           id?: string
           record_number?: string
@@ -109,7 +121,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      record_status: "pending" | "in_progress" | "completed"
     }
     CompositeTypes: {
       [_ in never]: never
