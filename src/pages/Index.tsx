@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { HeroSection } from "@/components/home/HeroSection";
 import { FeaturesSection } from "@/components/home/FeaturesSection";
 import { TestTypesSection } from "@/components/home/TestTypesSection";
@@ -7,6 +8,7 @@ import { TimerDialog } from "@/components/TimerDialog";
 import { Timer } from "@/components/Timer";
 
 const Index = () => {
+  const navigate = useNavigate();
   const [showTimerDialog, setShowTimerDialog] = useState(false);
   const [selectedTestType, setSelectedTestType] = useState<string | null>(null);
   const [timerDuration, setTimerDuration] = useState<number | null>(null);
@@ -19,7 +21,7 @@ const Index = () => {
   const handleTimerSelection = (duration: number) => {
     setTimerDuration(duration);
     if (selectedTestType) {
-      // navigate(selectedTestType); // Uncomment when navigation is needed
+      navigate(selectedTestType);
     }
   };
 
@@ -30,7 +32,6 @@ const Index = () => {
       <TestTypesSection onTestSelect={handleTestSelection} />
       <ThemeToggle />
 
-      {/* Timer Components */}
       <TimerDialog
         open={showTimerDialog}
         onOpenChange={setShowTimerDialog}

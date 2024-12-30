@@ -5,6 +5,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import Index from "./pages/Index";
+import TestSimple from "./pages/TestSimple";
+import TestTematico from "./pages/TestTematico";
+import TestGamificado from "./pages/TestGamificado";
+import TestAdaptativo from "./pages/TestAdaptativo";
+import TestFallos from "./pages/TestFallos";
+import TestSimulado from "./pages/TestSimulado";
 
 const queryClient = new QueryClient();
 
@@ -17,7 +23,12 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            {/* Otras rutas se añadirán más adelante */}
+            <Route path="/test/simple" element={<TestSimple />} />
+            <Route path="/test/tematico" element={<TestTematico />} />
+            <Route path="/test/gamificado" element={<TestGamificado />} />
+            <Route path="/test/adaptativo" element={<TestAdaptativo />} />
+            <Route path="/test/fallos" element={<TestFallos />} />
+            <Route path="/test/simulado" element={<TestSimulado />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
