@@ -12,7 +12,27 @@ import {
   BarChart3,
   Shield,
   Settings,
-  Wallet
+  Wallet,
+  FileText,
+  Database,
+  Map,
+  FileSignature,
+  Building,
+  ArrowLeftRight,
+  Clock,
+  Smartphone,
+  Phone,
+  Send,
+  Mail,
+  Tag,
+  Globe,
+  Lock,
+  LifeBuoy,
+  GraduationCap,
+  Video,
+  LayoutDashboard,
+  CalendarClock,
+  Truck
 } from "lucide-react";
 import { StudentManagement } from "@/components/software/StudentManagement";
 import { SedesManagement } from "@/components/software/SedesManagement";
@@ -28,19 +48,44 @@ import { FinancialDashboard } from "@/components/software/financial/FinancialDas
 
 const features = [
   {
+    icon: LayoutDashboard,
+    title: "Dashboard",
+    description: "Vista general del sistema"
+  },
+  {
     icon: Users,
     title: "Gestión de Alumnos",
     description: "Control completo de expedientes y seguimiento"
   },
   {
+    icon: FileText,
+    title: "Expedientes",
+    description: "Gestión de documentación oficial"
+  },
+  {
     icon: Building2,
-    title: "Gestión Multisección",
+    title: "Gestión Multisede",
     description: "Administra múltiples sedes eficientemente"
   },
   {
+    icon: Wallet,
+    title: "Finanzas y Facturación",
+    description: "Control financiero y facturación"
+  },
+  {
+    icon: Database,
+    title: "Inventario",
+    description: "Gestión de materiales y recursos"
+  },
+  {
     icon: Car,
-    title: "Control de Vehículos",
-    description: "Seguimiento de mantenimiento y disponibilidad"
+    title: "Vehículos",
+    description: "Control de flota y mantenimiento"
+  },
+  {
+    icon: Calendar,
+    title: "Clases y Exámenes",
+    description: "Programación y calendario"
   },
   {
     icon: BookOpen,
@@ -48,39 +93,109 @@ const features = [
     description: "Recursos educativos digitales"
   },
   {
-    icon: Calendar,
-    title: "Programación",
-    description: "Gestión de clases y exámenes"
+    icon: BarChart3,
+    title: "Evaluaciones",
+    description: "Seguimiento del rendimiento"
   },
   {
-    icon: MessageSquare,
-    title: "Comunicación",
-    description: "WhatsApp y mensajería interna"
+    icon: Map,
+    title: "GPS Tracking",
+    description: "Seguimiento de prácticas"
+  },
+  {
+    icon: FileSignature,
+    title: "Documentos Digitales",
+    description: "Gestión documental y firmas"
+  },
+  {
+    icon: Building,
+    title: "Integración DGT",
+    description: "Conexión con sistemas oficiales"
+  },
+  {
+    icon: ArrowLeftRight,
+    title: "Copias de Seguridad",
+    description: "Gestión de backups"
+  },
+  {
+    icon: Clock,
+    title: "Automatización",
+    description: "Tareas programadas"
+  },
+  {
+    icon: Smartphone,
+    title: "App de Alumnos",
+    description: "Gestión móvil para alumnos"
+  },
+  {
+    icon: Phone,
+    title: "App de Profesores",
+    description: "Gestión móvil para profesores"
+  },
+  {
+    icon: Send,
+    title: "WhatsApp",
+    description: "Integración de mensajería"
   },
   {
     icon: Bell,
     title: "Notificaciones",
-    description: "Sistema automatizado de alertas"
+    description: "Sistema de alertas"
+  },
+  {
+    icon: MessageSquare,
+    title: "Mensajería Interna",
+    description: "Comunicación entre usuarios"
+  },
+  {
+    icon: Tag,
+    title: "Precios y Promociones",
+    description: "Gestión de tarifas"
   },
   {
     icon: BarChart3,
     title: "Marketing",
-    description: "Gestión de promociones y campañas"
+    description: "Campañas y promociones"
+  },
+  {
+    icon: Globe,
+    title: "Generador Web",
+    description: "Creación de páginas web"
+  },
+  {
+    icon: Lock,
+    title: "Control de Acceso",
+    description: "Roles y permisos"
   },
   {
     icon: Shield,
-    title: "Seguridad",
-    description: "Control de accesos y RGPD"
+    title: "Seguridad y RGPD",
+    description: "Protección de datos"
   },
   {
-    icon: Settings,
-    title: "Configuración",
-    description: "Personalización y ajustes"
+    icon: LifeBuoy,
+    title: "Soporte",
+    description: "Sistema de tickets"
   },
   {
-    icon: Wallet,
-    title: "Dashboard Financiero",
-    description: "Análisis financiero y facturación"
+    icon: GraduationCap,
+    title: "Cursos Especiales",
+    description: "CAP, ADR y otros"
+  },
+  {
+    icon: Video,
+    title: "Cursos Virtuales",
+    description: "Clases en streaming"
+  },
+  {
+    icon: CalendarClock,
+    title: "Reservas Avanzadas",
+    description: "Sistema de reservas"
+  },
+  {
+    icon: Truck,
+    title: "Control de Flota",
+    description: "Gestión avanzada de vehículos"
   }
 ];
 
@@ -131,16 +246,16 @@ export default function SoftwareManagement() {
             </Button>
             
             {activeModule === "Gestión de Alumnos" && <StudentManagement />}
-            {activeModule === "Gestión Multisección" && <SedesManagement />}
-            {activeModule === "Control de Vehículos" && <VehiculosManagement />}
+            {activeModule === "Gestión Multisede" && <SedesManagement />}
+            {activeModule === "Vehículos" && <VehiculosManagement />}
             {activeModule === "Material Didáctico" && <MaterialDidacticoManagement />}
-            {activeModule === "Programación" && <ProgramacionManagement />}
-            {activeModule === "Comunicación" && <ComunicacionManagement />}
+            {activeModule === "Clases y Exámenes" && <ProgramacionManagement />}
+            {activeModule === "Mensajería Interna" && <ComunicacionManagement />}
             {activeModule === "Notificaciones" && <NotificacionesManagement />}
             {activeModule === "Marketing" && <MarketingManagement />}
-            {activeModule === "Seguridad" && <SeguridadManagement />}
-            {activeModule === "Configuración" && <ConfiguracionManagement />}
-            {activeModule === "Dashboard Financiero" && <FinancialDashboard />}
+            {activeModule === "Seguridad y RGPD" && <SeguridadManagement />}
+            {activeModule === "Control de Acceso" && <ConfiguracionManagement />}
+            {activeModule === "Finanzas y Facturación" && <FinancialDashboard />}
           </div>
         )}
 
