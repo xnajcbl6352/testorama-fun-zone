@@ -2,14 +2,27 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Calendar, Search, Plus, Clock, X } from "lucide-react";
+import { Calendar, Search, Plus, Clock, X, Filter } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Class {
   id: string;
@@ -23,12 +36,20 @@ interface Class {
   status: "scheduled" | "completed" | "cancelled";
   attendance_marked: boolean;
   notes?: string;
+  teacher?: { first_name: string; last_name: string };
+  student?: { first_name: string; last_name: string };
+  vehicle?: { plate_number: string; brand: string; model: string };
 }
 
 export function ProgramacionManagement() {
   const [classes, setClasses] = useState<Class[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAddingClass, setIsAddingClass] = useState(false);
+  const [filters, setFilters] = useState({
+    type: '',
+    status: '',
+    searchTerm: ''
+  });
   const { toast } = useToast();
 
   useEffect(() => {
@@ -40,7 +61,12 @@ export function ProgramacionManagement() {
       setIsLoading(true);
       const { data, error } = await supabase
         .from('classes')
-        .select('*')
+        .select(`
+          *,
+          teacher:teacher_id(first_name, last_name),
+          student:student_id(first_name, last_name),
+          vehicle:vehicle_id(plate_number, brand, model)
+        `)
         .order('date', { ascending: true });
 
       if (error) throw error;
@@ -70,7 +96,28 @@ export function ProgramacionManagement() {
     }
   };
 
-  const calendarEvents = classes.map(classItem => ({
+  const getStatusIcon = (status: Class['status']) => {
+    switch (status) {
+      case 'completed':
+        return '✓';
+      case 'cancelled':
+        return '✗';
+      default:
+        return '⏳';
+    }
+  };
+
+  const filteredClasses = classes.filter(classItem => {
+    const matchesType = !filters.type || classItem.type === filters.type;
+    const matchesStatus = !filters.status || classItem.status === filters.status;
+    const matchesSearch = !filters.searchTerm || (
+      (classItem.student?.first_name + ' ' + classItem.student?.last_name).toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
+      (classItem.teacher?.first_name + ' ' + classItem.teacher?.last_name).toLowerCase().includes(filters.searchTerm.toLowerCase())
+    );
+    return matchesType && matchesStatus && matchesSearch;
+  });
+
+  const calendarEvents = filteredClasses.map(classItem => ({
     id: classItem.id,
     title: `${classItem.type.charAt(0).toUpperCase() + classItem.type.slice(1)} Class`,
     start: `${classItem.date}T${classItem.start_time}`,
@@ -79,20 +126,51 @@ export function ProgramacionManagement() {
     extendedProps: {
       type: classItem.type,
       status: classItem.status,
+      teacher: classItem.teacher,
+      student: classItem.student,
+      vehicle: classItem.vehicle,
+      statusIcon: getStatusIcon(classItem.status)
     }
   }));
 
   const handleDateSelect = (selectInfo: any) => {
     setIsAddingClass(true);
-    // We'll implement the class creation dialog in the next step
   };
 
   const handleEventClick = (clickInfo: any) => {
-    // We'll implement the class details/edit dialog in the next step
+    const event = clickInfo.event;
     toast({
       title: "Clase seleccionada",
-      description: `Has seleccionado la clase ${clickInfo.event.title}`,
+      description: `${event.title} - ${event.extendedProps.student?.first_name} ${event.extendedProps.student?.last_name}`,
     });
+  };
+
+  const eventContent = (eventInfo: any) => {
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="w-full h-full p-1">
+              <div className="font-semibold">{eventInfo.event.title}</div>
+              <div className="text-xs">
+                {eventInfo.event.extendedProps.statusIcon} {' '}
+                {eventInfo.event.extendedProps.student?.first_name} {eventInfo.event.extendedProps.student?.last_name}
+              </div>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <div className="space-y-1">
+              <p><strong>Instructor:</strong> {eventInfo.event.extendedProps.teacher?.first_name} {eventInfo.event.extendedProps.teacher?.last_name}</p>
+              <p><strong>Estudiante:</strong> {eventInfo.event.extendedProps.student?.first_name} {eventInfo.event.extendedProps.student?.last_name}</p>
+              {eventInfo.event.extendedProps.vehicle && (
+                <p><strong>Vehículo:</strong> {eventInfo.event.extendedProps.vehicle.brand} {eventInfo.event.extendedProps.vehicle.model}</p>
+              )}
+              <p><strong>Estado:</strong> {eventInfo.event.extendedProps.status}</p>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
   };
 
   return (
@@ -103,19 +181,59 @@ export function ProgramacionManagement() {
           <h2 className="text-2xl font-bold">Programación de Clases</h2>
         </div>
         <Dialog open={isAddingClass} onOpenChange={setIsAddingClass}>
-          <DialogTrigger asChild>
-            <Button className="gap-2">
-              <Plus className="h-4 w-4" />
-              Nueva Clase
-            </Button>
-          </DialogTrigger>
+          <Button onClick={() => setIsAddingClass(true)} className="gap-2">
+            <Plus className="h-4 w-4" />
+            Nueva Clase
+          </Button>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Programar Nueva Clase</DialogTitle>
             </DialogHeader>
-            {/* We'll implement the class creation form in the next step */}
+            {/* Class creation form will be implemented in the next step */}
           </DialogContent>
         </Dialog>
+      </div>
+
+      <div className="flex gap-4 flex-wrap">
+        <div className="flex-1 min-w-[200px]">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              placeholder="Buscar por alumno o instructor..."
+              value={filters.searchTerm}
+              onChange={(e) => setFilters(prev => ({ ...prev, searchTerm: e.target.value }))}
+              className="pl-10"
+            />
+          </div>
+        </div>
+        <Select
+          value={filters.type}
+          onValueChange={(value) => setFilters(prev => ({ ...prev, type: value }))}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Tipo de clase" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">Todos los tipos</SelectItem>
+            <SelectItem value="theoretical">Teórica</SelectItem>
+            <SelectItem value="practical">Práctica</SelectItem>
+            <SelectItem value="exam">Examen</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select
+          value={filters.status}
+          onValueChange={(value) => setFilters(prev => ({ ...prev, status: value }))}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Estado" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">Todos los estados</SelectItem>
+            <SelectItem value="scheduled">Programada</SelectItem>
+            <SelectItem value="completed">Completada</SelectItem>
+            <SelectItem value="cancelled">Cancelada</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <Card className="p-4">
@@ -135,6 +253,7 @@ export function ProgramacionManagement() {
           events={calendarEvents}
           select={handleDateSelect}
           eventClick={handleEventClick}
+          eventContent={eventContent}
           height="auto"
           slotMinTime="07:00:00"
           slotMaxTime="21:00:00"
