@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Building2Plus, Search } from "lucide-react";
+import { Search, Building2, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,8 +9,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { LocationForm } from "./locations/LocationForm";
-import { LocationList, type Location } from "./locations/LocationList";
+import { LocationForm } from "./LocationForm";
+import { LocationList, type Location } from "./LocationList";
 import { useToast } from "@/components/ui/use-toast";
 
 export function LocationManagement() {
@@ -24,29 +24,47 @@ export function LocationManagement() {
     // TODO: Implement search functionality with Supabase
   };
 
-  const handleSubmit = async (values: any) => {
-    // TODO: Implement create/update functionality with Supabase
-    console.log("Form values:", values);
-    toast({
-      title: "Sede creada correctamente",
-      description: "La nueva sede ha sido registrada en el sistema",
-    });
-    setIsDialogOpen(false);
+  const handleSubmit = async (values: Omit<Location, "id">) => {
+    try {
+      // TODO: Implement create location with Supabase
+      setIsDialogOpen(false);
+      toast({
+        title: "Sede creada correctamente",
+        description: "La nueva sede ha sido registrada en el sistema",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error al crear la sede",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
   const handleEdit = (id: string) => {
     // TODO: Implement edit functionality
-    console.log("Edit location:", id);
+    console.log("Edit location", id);
   };
 
-  const handleDelete = (id: string) => {
-    // TODO: Implement delete functionality
-    console.log("Delete location:", id);
+  const handleDelete = async (id: string) => {
+    try {
+      // TODO: Implement delete with Supabase
+      toast({
+        title: "Sede eliminada correctamente",
+        description: "La sede ha sido eliminada del sistema",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error al eliminar la sede",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
   const handleManageUsers = (id: string) => {
     // TODO: Implement user management functionality
-    console.log("Manage users for location:", id);
+    console.log("Manage users for location", id);
   };
 
   return (
@@ -56,7 +74,7 @@ export function LocationManagement() {
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button className="gap-2">
-              <Building2Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4" />
               Nueva Sede
             </Button>
           </DialogTrigger>
