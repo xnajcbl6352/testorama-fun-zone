@@ -31,11 +31,12 @@ export function useStudents() {
 
   const searchStudents = async (term: string) => {
     try {
+      setIsLoading(true);
       const { data, error } = await supabase
         .from("students")
         .select("*")
         .or(
-          `first_name.ilike.%${term}%,last_name.ilike.%${term}%,dni.ilike.%${term}%`
+          `first_name.ilike.%${term}%,last_name.ilike.%${term}%,dni.ilike.%${term}%,email.ilike.%${term}%`
         )
         .order("created_at", { ascending: false });
 
@@ -48,12 +49,16 @@ export function useStudents() {
         variant: "destructive",
       });
       return [];
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const createStudent = async (values: StudentFormValues) => {
     try {
-      // Check if student exists using maybeSingle() instead of single()
+      setIsLoading(true);
+      
+      // Check if student exists
       const { data: existingStudent, error: searchError } = await supabase
         .from("students")
         .select("id")
@@ -72,16 +77,9 @@ export function useStudents() {
       }
 
       const studentData = {
-        first_name: values.first_name,
-        last_name: values.last_name,
-        dni: values.dni,
-        birth_date: values.birth_date,
-        phone: values.phone || null,
-        email: values.email || null,
-        address: values.address || null,
-        gdpr_consent: values.gdpr_consent,
-        status: 'active',
+        ...values,
         registration_date: new Date().toISOString(),
+        status: "active",
       };
 
       const { error } = await supabase
@@ -103,11 +101,62 @@ export function useStudents() {
         variant: "destructive",
       });
       return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updateStudent = async (id: string, values: StudentFormValues) => {
+    try {
+      setIsLoading(true);
+
+      // Check if DNI exists for other students
+      const { data: existingStudent, error: searchError } = await supabase
+        .from("students")
+        .select("id")
+        .eq("dni", values.dni)
+        .neq("id", id)
+        .maybeSingle();
+
+      if (searchError) throw searchError;
+
+      if (existingStudent) {
+        toast({
+          title: "Error al actualizar alumno",
+          description: "Ya existe otro alumno con ese DNI",
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      const { error } = await supabase
+        .from("students")
+        .update(values)
+        .eq("id", id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Alumno actualizado correctamente",
+        description: "Se han guardado los cambios del alumno",
+      });
+
+      return true;
+    } catch (error: any) {
+      toast({
+        title: "Error al actualizar alumno",
+        description: error.message,
+        variant: "destructive",
+      });
+      return false;
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const deleteStudent = async (id: string) => {
     try {
+      setIsLoading(true);
       const { error } = await supabase
         .from("students")
         .update({ status: "inactive" })
@@ -128,6 +177,8 @@ export function useStudents() {
         variant: "destructive",
       });
       return false;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -136,6 +187,7 @@ export function useStudents() {
     loadStudents,
     searchStudents,
     createStudent,
+    updateStudent,
     deleteStudent,
   };
 }
