@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Search, UserPlus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -11,148 +10,46 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { StudentForm } from "./students/StudentForm";
-import { type StudentFormValues, type StudentRecord } from "./students/studentSchema";
+import { type StudentRecord } from "./students/studentSchema";
 import { StudentList } from "./students/StudentList";
 import { RecordForm } from "./records/RecordForm";
 import { RecordList } from "./records/RecordList";
-import { supabase } from "@/integrations/supabase/client";
+import { useStudents } from "@/hooks/useStudents";
 
 export function StudentManagement() {
   const [students, setStudents] = useState<StudentRecord[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<string | null>(null);
   const [showRecordForm, setShowRecordForm] = useState(false);
-  const { toast } = useToast();
+  const { isLoading, loadStudents, searchStudents, createStudent, deleteStudent } = useStudents();
 
-  useEffect(() => {
-    loadStudents();
+  // Load students on mount
+  useState(() => {
+    loadStudents().then(setStudents);
   }, []);
-
-  const loadStudents = async () => {
-    try {
-      setIsLoading(true);
-      const { data, error } = await supabase
-        .from("students")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-
-      setStudents(data || []);
-    } catch (error: any) {
-      toast({
-        title: "Error al cargar alumnos",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleSearch = async (term: string) => {
     setSearchTerm(term);
-    try {
-      const { data, error } = await supabase
-        .from("students")
-        .select("*")
-        .or(
-          `first_name.ilike.%${term}%,last_name.ilike.%${term}%,dni.ilike.%${term}%`
-        )
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-
-      setStudents(data || []);
-    } catch (error: any) {
-      toast({
-        title: "Error al buscar alumnos",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
+    const results = await searchStudents(term);
+    setStudents(results);
   };
 
   const onSubmit = async (values: StudentFormValues) => {
-    try {
-      const { data: existingStudent } = await supabase
-        .from("students")
-        .select("id")
-        .eq("dni", values.dni)
-        .single();
-
-      if (existingStudent) {
-        toast({
-          title: "Error al crear alumno",
-          description: "Ya existe un alumno con ese DNI",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      const studentData: Omit<StudentRecord, 'id' | 'created_at' | 'updated_at'> = {
-        first_name: values.first_name,
-        last_name: values.last_name,
-        dni: values.dni,
-        birth_date: values.birth_date,
-        phone: values.phone || null,
-        email: values.email || null,
-        address: values.address || null,
-        gdpr_consent: values.gdpr_consent,
-        status: 'active',
-        registration_date: new Date().toISOString(),
-      };
-
-      const { error } = await supabase
-        .from("students")
-        .insert([studentData]);
-
-      if (error) throw error;
-
-      toast({
-        title: "Alumno creado correctamente",
-        description: "Se ha registrado el nuevo alumno en el sistema",
-      });
-
+    const success = await createStudent(values);
+    if (success) {
       setIsDialogOpen(false);
-      loadStudents();
-    } catch (error: any) {
-      toast({
-        title: "Error al crear alumno",
-        description: error.message,
-        variant: "destructive",
-      });
+      const updatedStudents = await loadStudents();
+      setStudents(updatedStudents);
     }
   };
 
   const handleDeleteStudent = async (id: string) => {
-    try {
-      const { error } = await supabase
-        .from("students")
-        .update({ status: "inactive" })
-        .eq("id", id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Alumno dado de baja correctamente",
-        description: "Se ha actualizado el estado del alumno a inactivo",
-      });
-
-      loadStudents();
-    } catch (error: any) {
-      toast({
-        title: "Error al dar de baja al alumno",
-        description: error.message,
-        variant: "destructive",
-      });
+    const success = await deleteStudent(id);
+    if (success) {
+      const updatedStudents = await loadStudents();
+      setStudents(updatedStudents);
     }
-  };
-
-  const handleViewRecords = (studentId: string) => {
-    setSelectedStudent(studentId);
   };
 
   return (
@@ -191,7 +88,7 @@ export function StudentManagement() {
         students={students}
         onEdit={(id) => console.log("Edit student", id)}
         onDelete={handleDeleteStudent}
-        onViewRecords={handleViewRecords}
+        onViewRecords={setSelectedStudent}
       />
 
       {selectedStudent && (
