@@ -3,7 +3,7 @@ import { QuestionCard } from "./QuestionCard";
 import { ProgressBar } from "./ProgressBar";
 import { Timer } from "../Timer";
 import { ResultsCard } from "./ResultsCard";
-import { X } from "lucide-react";
+import { X, ArrowRight } from "lucide-react";
 import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
 
@@ -84,14 +84,19 @@ export function TestInterface({ type, title, duration }: TestInterfaceProps) {
 
   return (
     <div className="min-h-screen bg-background pb-8">
-      <header className="fixed left-0 right-0 top-0 z-50 bg-white shadow-sm">
+      <header className="fixed left-0 right-0 top-0 z-50 bg-white/80 backdrop-blur-sm shadow-sm dark:bg-gray-900/80">
         <div className="container flex items-center justify-between py-4">
-          <h1 className="text-xl font-bold">{title}</h1>
+          <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+            {title}
+          </h1>
           <Button
             variant="ghost"
             size="icon"
-            className="ml-auto"
-            onClick={handleExit}
+            className="ml-auto hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
+            onClick={() => {
+              const confirmExit = window.confirm("¿Estás seguro de que quieres salir? Perderás tu progreso.");
+              if (confirmExit) navigate("/");
+            }}
           >
             <X className="h-5 w-5" />
           </Button>
@@ -124,11 +129,16 @@ export function TestInterface({ type, title, duration }: TestInterfaceProps) {
             <Button
               size="lg"
               onClick={handleNextQuestion}
-              className="animate-fade-in"
+              className="animate-fade-in group"
             >
-              {currentQuestion < mockQuestions.length - 1
-                ? "Siguiente Pregunta"
-                : "Finalizar Test"}
+              {currentQuestion < mockQuestions.length - 1 ? (
+                <>
+                  Siguiente Pregunta
+                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </>
+              ) : (
+                "Finalizar Test"
+              )}
             </Button>
           </div>
         )}
