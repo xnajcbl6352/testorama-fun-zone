@@ -16,7 +16,7 @@ export function useStudents() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      return (data || []) as StudentRecord[];
     } catch (error: any) {
       toast({
         title: "Error al cargar alumnos",
@@ -41,7 +41,7 @@ export function useStudents() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      return (data || []) as StudentRecord[];
     } catch (error: any) {
       toast({
         title: "Error al buscar alumnos",
@@ -58,7 +58,6 @@ export function useStudents() {
     try {
       setIsLoading(true);
       
-      // Check if student exists
       const { data: existingStudent, error: searchError } = await supabase
         .from("students")
         .select("id")
@@ -79,7 +78,7 @@ export function useStudents() {
       const studentData = {
         ...values,
         registration_date: new Date().toISOString(),
-        status: "active",
+        status: "active" as const,
       };
 
       const { error } = await supabase
@@ -110,7 +109,6 @@ export function useStudents() {
     try {
       setIsLoading(true);
 
-      // Check if DNI exists for other students
       const { data: existingStudent, error: searchError } = await supabase
         .from("students")
         .select("id")
@@ -159,7 +157,7 @@ export function useStudents() {
       setIsLoading(true);
       const { error } = await supabase
         .from("students")
-        .update({ status: "inactive" })
+        .update({ status: "inactive" as const })
         .eq("id", id);
 
       if (error) throw error;
