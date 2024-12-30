@@ -80,9 +80,16 @@ export const useStudents = () => {
 
       const now = new Date().toISOString();
       const studentData: StudentCreateInput = {
-        ...values,
+        first_name: values.first_name,
+        last_name: values.last_name,
+        dni: values.dni,
+        birth_date: values.birth_date,
+        phone: values.phone,
+        email: values.email,
+        address: values.address,
         registration_date: now,
         status: StudentStatus.active,
+        gdpr_consent: values.gdpr_consent,
       };
 
       const { error } = await supabase
