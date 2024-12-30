@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   FormControl,
   FormField,
@@ -14,13 +15,23 @@ import {
 } from "@/components/ui/select";
 import { useStudents } from "@/hooks/useStudents";
 import { UseFormReturn } from "react-hook-form";
+import type { StudentRecord } from "@/types/student";
 
 interface StudentSelectProps {
   form: UseFormReturn<any>;
 }
 
 export function StudentSelect({ form }: StudentSelectProps) {
-  const { students, isLoading } = useStudents();
+  const { loadStudents, isLoading } = useStudents();
+  const [students, setStudents] = useState<StudentRecord[]>([]);
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      const data = await loadStudents();
+      setStudents(data);
+    };
+    fetchStudents();
+  }, [loadStudents]);
 
   if (isLoading) {
     return <div>Loading students...</div>;
@@ -40,7 +51,7 @@ export function StudentSelect({ form }: StudentSelectProps) {
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {students?.map((student) => (
+              {students.map((student) => (
                 <SelectItem key={student.id} value={student.id}>
                   {student.first_name} {student.last_name}
                 </SelectItem>
