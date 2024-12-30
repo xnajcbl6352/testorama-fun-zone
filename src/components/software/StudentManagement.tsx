@@ -15,6 +15,7 @@ import { StudentList } from "./students/StudentList";
 import { RecordForm } from "./records/RecordForm";
 import { RecordList } from "./records/RecordList";
 import { useStudents } from "@/hooks/useStudents";
+import { useToast } from "@/hooks/use-toast";
 
 export function StudentManagement() {
   const [students, setStudents] = useState<StudentRecord[]>([]);
@@ -23,6 +24,7 @@ export function StudentManagement() {
   const [selectedStudent, setSelectedStudent] = useState<string | null>(null);
   const [showRecordForm, setShowRecordForm] = useState(false);
   const { isLoading, loadStudents, searchStudents, createStudent, deleteStudent } = useStudents();
+  const { toast } = useToast();
 
   useEffect(() => {
     loadStudents().then(setStudents);
@@ -35,19 +37,43 @@ export function StudentManagement() {
   };
 
   const onSubmit = async (values: StudentFormValues) => {
-    const success = await createStudent(values);
-    if (success) {
-      setIsDialogOpen(false);
-      const updatedStudents = await loadStudents();
-      setStudents(updatedStudents);
+    try {
+      const success = await createStudent(values);
+      if (success) {
+        setIsDialogOpen(false);
+        const updatedStudents = await loadStudents();
+        setStudents(updatedStudents);
+        toast({
+          title: "Alumno registrado",
+          description: "El alumno ha sido registrado correctamente",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Ha ocurrido un error al registrar el alumno",
+        variant: "destructive",
+      });
     }
   };
 
   const handleDeleteStudent = async (id: string) => {
-    const success = await deleteStudent(id);
-    if (success) {
-      const updatedStudents = await loadStudents();
-      setStudents(updatedStudents);
+    try {
+      const success = await deleteStudent(id);
+      if (success) {
+        const updatedStudents = await loadStudents();
+        setStudents(updatedStudents);
+        toast({
+          title: "Alumno eliminado",
+          description: "El alumno ha sido eliminado correctamente",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Ha ocurrido un error al eliminar el alumno",
+        variant: "destructive",
+      });
     }
   };
 
