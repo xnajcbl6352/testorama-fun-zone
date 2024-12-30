@@ -24,11 +24,18 @@ export const studentSchema = z.object({
 export type StudentFormValues = z.infer<typeof studentSchema>;
 
 // Define the complete student record type including database fields
-export interface StudentRecord extends Omit<StudentFormValues, 'birth_date'> {
+export interface StudentRecord {
   id: string;
+  first_name: string;
+  last_name: string;
+  dni: string;
   birth_date: string;
+  phone: string | null;
+  email: string | null;
+  address: string | null;
   registration_date: string;
   status: StudentStatus;
+  gdpr_consent: boolean;
   created_at: string | null;
   updated_at: string | null;
 }
@@ -43,6 +50,6 @@ export interface StudentCreateInput {
   email?: string | null;
   address?: string | null;
   registration_date?: string;
-  status?: string;
+  status: StudentStatus;
   gdpr_consent?: boolean;
 }
