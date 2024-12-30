@@ -23,6 +23,7 @@ import { DocumentUpload } from "./DocumentUpload";
 import { StudentSelect } from "./form/StudentSelect";
 import { StatusSelect } from "./form/StatusSelect";
 import { useState } from "react";
+import type { RecordCreateInput } from "@/types/record";
 
 const formSchema = z.object({
   student_id: z.string().min(1, "Please select a student"),
@@ -48,6 +49,8 @@ export function RecordForm({ open, onClose, initialData }: RecordFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
       status: "pending",
+      student_id: "",
+      record_number: "",
     },
   });
 
@@ -64,7 +67,13 @@ export function RecordForm({ open, onClose, initialData }: RecordFormProps) {
           description: "Record updated successfully",
         });
       } else {
-        await createRecord.mutateAsync(values);
+        const recordInput: RecordCreateInput = {
+          student_id: values.student_id,
+          record_number: values.record_number,
+          status: values.status,
+          document_url: values.document_url,
+        };
+        await createRecord.mutateAsync(recordInput);
         toast({
           title: "Success",
           description: "Record created successfully",

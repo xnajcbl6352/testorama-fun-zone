@@ -20,7 +20,7 @@ interface StudentSelectProps {
 }
 
 export function StudentSelect({ form }: StudentSelectProps) {
-  const { data: students, isLoading } = useStudents();
+  const { students, isLoading } = useStudents();
 
   if (isLoading) {
     return <div>Loading students...</div>;
