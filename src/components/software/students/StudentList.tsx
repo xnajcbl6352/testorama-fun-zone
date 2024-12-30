@@ -1,48 +1,48 @@
-import { Table } from "@/components/ui/table";
+import { Edit, Trash2, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2 } from "lucide-react";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { type StudentRecord } from "./studentSchema";
 
 interface StudentListProps {
   students: StudentRecord[];
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
+  onViewRecords: (id: string) => void;
 }
 
-export function StudentList({ students, onEdit, onDelete }: StudentListProps) {
+export function StudentList({ students, onEdit, onDelete, onViewRecords }: StudentListProps) {
   return (
     <div className="border rounded-lg">
       <Table>
-        <thead>
-          <tr>
-            <th className="font-semibold">Nombre</th>
-            <th className="font-semibold">DNI</th>
-            <th className="font-semibold">Email</th>
-            <th className="font-semibold">Teléfono</th>
-            <th className="font-semibold">Fecha de Alta</th>
-            <th className="font-semibold">Estado</th>
-            <th className="font-semibold text-right">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Nombre</TableHead>
+            <TableHead>DNI</TableHead>
+            <TableHead>Email</TableHead>
+            <TableHead>Teléfono</TableHead>
+            <TableHead>Estado</TableHead>
+            <TableHead className="text-right">Acciones</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {students.map((student) => (
-            <tr key={student.id}>
-              <td className="font-medium">
+            <TableRow key={student.id}>
+              <TableCell>
                 {student.first_name} {student.last_name}
-              </td>
-              <td>{student.dni}</td>
-              <td>{student.email}</td>
-              <td>{student.phone}</td>
-              <td>
-                {student.registration_date && format(new Date(student.registration_date), "dd/MM/yyyy", {
-                  locale: es,
-                })}
-              </td>
-              <td>
+              </TableCell>
+              <TableCell>{student.dni}</TableCell>
+              <TableCell>{student.email || "-"}</TableCell>
+              <TableCell>{student.phone || "-"}</TableCell>
+              <TableCell>
                 <span
-                  className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                     student.status === "active"
                       ? "bg-green-100 text-green-800"
                       : "bg-red-100 text-red-800"
@@ -50,28 +50,35 @@ export function StudentList({ students, onEdit, onDelete }: StudentListProps) {
                 >
                   {student.status === "active" ? "Activo" : "Inactivo"}
                 </span>
-              </td>
-              <td>
+              </TableCell>
+              <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="icon"
-                    onClick={() => student.id && onEdit(student.id)}
+                    onClick={() => onViewRecords(student.id!)}
+                  >
+                    <FileText className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => onEdit(student.id!)}
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="icon"
-                    onClick={() => student.id && onDelete(student.id)}
+                    onClick={() => onDelete(student.id!)}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
+        </TableBody>
       </Table>
     </div>
   );

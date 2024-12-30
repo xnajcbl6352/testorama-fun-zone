@@ -13,6 +13,8 @@ import {
 import { StudentForm } from "./students/StudentForm";
 import { type StudentFormValues, type StudentRecord } from "./students/studentSchema";
 import { StudentList } from "./students/StudentList";
+import { RecordForm } from "./records/RecordForm";
+import { RecordList } from "./records/RecordList";
 import { supabase } from "@/integrations/supabase/client";
 
 export function StudentManagement() {
@@ -20,6 +22,8 @@ export function StudentManagement() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState<string | null>(null);
+  const [showRecordForm, setShowRecordForm] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -73,7 +77,6 @@ export function StudentManagement() {
 
   const onSubmit = async (values: StudentFormValues) => {
     try {
-      // Check if DNI already exists
       const { data: existingStudent } = await supabase
         .from("students")
         .select("id")
@@ -89,7 +92,6 @@ export function StudentManagement() {
         return;
       }
 
-      // Convert form values to match database schema
       const studentData: Omit<StudentRecord, 'id' | 'created_at' | 'updated_at'> = {
         first_name: values.first_name,
         last_name: values.last_name,
@@ -149,6 +151,10 @@ export function StudentManagement() {
     }
   };
 
+  const handleViewRecords = (studentId: string) => {
+    setSelectedStudent(studentId);
+  };
+
   return (
     <div className="space-y-6 p-6 bg-white rounded-lg shadow-sm">
       <div className="flex justify-between items-center">
@@ -185,7 +191,41 @@ export function StudentManagement() {
         students={students}
         onEdit={(id) => console.log("Edit student", id)}
         onDelete={handleDeleteStudent}
+        onViewRecords={handleViewRecords}
       />
+
+      {selectedStudent && (
+        <Dialog open={!!selectedStudent} onOpenChange={() => setSelectedStudent(null)}>
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle>Expedientes del Alumno</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="flex justify-end">
+                <Button
+                  onClick={() => setShowRecordForm(!showRecordForm)}
+                  className="gap-2"
+                >
+                  {showRecordForm ? "Cancelar" : "Nuevo Expediente"}
+                </Button>
+              </div>
+              
+              {showRecordForm ? (
+                <RecordForm
+                  studentId={selectedStudent}
+                  onSuccess={() => {
+                    setShowRecordForm(false);
+                    // Refresh records list
+                  }}
+                  onCancel={() => setShowRecordForm(false)}
+                />
+              ) : (
+                <RecordList studentId={selectedStudent} />
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
