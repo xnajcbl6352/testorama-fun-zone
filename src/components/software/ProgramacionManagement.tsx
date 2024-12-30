@@ -1,23 +1,14 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Calendar, Search, Plus, Clock, X, Filter } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from '@supabase/auth-helpers-react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { CalendarHeader } from "./calendar/CalendarHeader";
+import { CalendarFilters } from "./calendar/CalendarFilters";
 import {
   Tooltip,
   TooltipContent,
@@ -224,98 +215,49 @@ export function ProgramacionManagement() {
           <h3 className="text-lg font-semibold">Inicia sesión para ver el calendario</h3>
         </div>
       ) : (
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Calendar className="h-6 w-6 text-primary" />
-          <h2 className="text-2xl font-bold">Programación de Clases</h2>
-        </div>
-        <Dialog open={isAddingClass} onOpenChange={setIsAddingClass}>
-          <Button onClick={() => setIsAddingClass(true)} className="gap-2">
-            <Plus className="h-4 w-4" />
-            Nueva Clase
-          </Button>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Programar Nueva Clase</DialogTitle>
-            </DialogHeader>
-            {/* Class creation form will be implemented in the next step */}
-          </DialogContent>
-        </Dialog>
-      </div>
+        <>
+          <CalendarHeader 
+            isAddingClass={isAddingClass}
+            setIsAddingClass={setIsAddingClass}
+          />
+          
+          <CalendarFilters 
+            filters={filters}
+            setFilters={setFilters}
+          />
 
-      <div className="flex gap-4 flex-wrap">
-        <div className="flex-1 min-w-[200px]">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Buscar por alumno o instructor..."
-              value={filters.searchTerm}
-              onChange={(e) => setFilters(prev => ({ ...prev, searchTerm: e.target.value }))}
-              className="pl-10"
+          <Card className="p-4">
+            <FullCalendar
+              plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+              initialView="timeGridWeek"
+              headerToolbar={{
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+              }}
+              editable={true}
+              selectable={true}
+              selectMirror={true}
+              dayMaxEvents={true}
+              weekends={true}
+              events={calendarEvents}
+              select={handleDateSelect}
+              eventClick={handleEventClick}
+              eventContent={eventContent}
+              height="auto"
+              slotMinTime="07:00:00"
+              slotMaxTime="21:00:00"
+              allDaySlot={false}
+              locale="es"
+              buttonText={{
+                today: 'Hoy',
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día'
+              }}
             />
-          </div>
-        </div>
-        <Select
-          value={filters.type}
-          onValueChange={(value) => setFilters(prev => ({ ...prev, type: value }))}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Tipo de clase" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">Todos los tipos</SelectItem>
-            <SelectItem value="theoretical">Teórica</SelectItem>
-            <SelectItem value="practical">Práctica</SelectItem>
-            <SelectItem value="exam">Examen</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select
-          value={filters.status}
-          onValueChange={(value) => setFilters(prev => ({ ...prev, status: value }))}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Estado" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">Todos los estados</SelectItem>
-            <SelectItem value="scheduled">Programada</SelectItem>
-            <SelectItem value="completed">Completada</SelectItem>
-            <SelectItem value="cancelled">Cancelada</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <Card className="p-4">
-        <FullCalendar
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-          initialView="timeGridWeek"
-          headerToolbar={{
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay'
-          }}
-          editable={true}
-          selectable={true}
-          selectMirror={true}
-          dayMaxEvents={true}
-          weekends={true}
-          events={calendarEvents}
-          select={handleDateSelect}
-          eventClick={handleEventClick}
-          eventContent={eventContent}
-          height="auto"
-          slotMinTime="07:00:00"
-          slotMaxTime="21:00:00"
-          allDaySlot={false}
-          locale="es"
-          buttonText={{
-            today: 'Hoy',
-            month: 'Mes',
-            week: 'Semana',
-            day: 'Día'
-          }}
-        />
-      </Card>
+          </Card>
+        </>
       )}
     </div>
   );
