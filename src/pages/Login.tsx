@@ -38,6 +38,23 @@ export function Login() {
             }}
             providers={[]}
             redirectTo={`${window.location.origin}/dashboard`}
+            onlyThirdPartyProviders={false}
+            magicLink={false}
+            showLinks={true}
+            localization={{
+              variables: {
+                sign_in: {
+                  email_label: 'Correo electrónico',
+                  password_label: 'Contraseña',
+                  button_label: 'Iniciar sesión',
+                },
+                sign_up: {
+                  email_label: 'Correo electrónico',
+                  password_label: 'Contraseña',
+                  button_label: 'Registrarse',
+                },
+              },
+            }}
           />
         </CardContent>
       </Card>
