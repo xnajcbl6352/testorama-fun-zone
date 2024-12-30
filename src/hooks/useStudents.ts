@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
-import { type StudentFormValues, type StudentRecord, StudentStatus } from '@/components/software/students/studentSchema';
+import { 
+  type StudentFormValues, 
+  type StudentRecord, 
+  type StudentCreateInput,
+  StudentStatus 
+} from '@/types/student';
 
 export const useStudents = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -60,9 +65,9 @@ export const useStudents = () => {
         .from("students")
         .select("id")
         .eq("dni", values.dni)
-        .single();
+        .maybeSingle();
 
-      if (searchError && searchError.code !== 'PGRST116') throw searchError;
+      if (searchError) throw searchError;
 
       if (existingStudent) {
         toast({
@@ -74,17 +79,15 @@ export const useStudents = () => {
       }
 
       const now = new Date().toISOString();
-      const studentData = {
+      const studentData: StudentCreateInput = {
         ...values,
         registration_date: now,
         status: StudentStatus.active,
-        created_at: now,
-        updated_at: now,
       };
 
       const { error } = await supabase
         .from("students")
-        .insert([studentData]);
+        .insert(studentData);
 
       if (error) throw error;
 
