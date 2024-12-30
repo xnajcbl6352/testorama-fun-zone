@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
-import { type StudentFormValues, type StudentRecord } from '@/components/software/students/studentSchema';
+import { type StudentFormValues, type StudentRecord, StudentStatus } from '@/components/software/students/studentSchema';
 
 export const useStudents = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -77,7 +77,7 @@ export const useStudents = () => {
       const studentData = {
         ...values,
         registration_date: now,
-        status: "active" as const,
+        status: StudentStatus.active,
         created_at: now,
         updated_at: now,
       };
@@ -164,7 +164,7 @@ export const useStudents = () => {
       const { error } = await supabase
         .from("students")
         .update({ 
-          status: "inactive" as const,
+          status: StudentStatus.inactive,
           updated_at: new Date().toISOString()
         })
         .eq("id", id);

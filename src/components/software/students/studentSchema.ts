@@ -15,7 +15,7 @@ export const studentSchema = z.object({
 
 export type StudentFormValues = z.infer<typeof studentSchema>;
 
-const StudentStatus = {
+export const StudentStatus = {
   active: "active",
   inactive: "inactive",
 } as const;
