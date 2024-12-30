@@ -1,6 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Check, X } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 interface QuestionCardProps {
@@ -24,38 +23,41 @@ export function QuestionCard({
 }: QuestionCardProps) {
   return (
     <Card className="w-full max-w-3xl animate-fade-in p-6">
-      <h2 className="mb-6 text-xl font-bold leading-relaxed text-foreground">{question}</h2>
+      <h2 className="mb-8 text-center text-2xl font-bold leading-relaxed text-foreground">
+        {question}
+      </h2>
+      
       <div className="grid gap-4">
         {options.map((option, index) => (
-          <Button
+          <div
             key={index}
-            variant={selectedOption === index ? "default" : "outline"}
             className={cn(
-              "h-auto min-h-[3rem] w-full justify-start p-4 text-left text-base",
-              showFeedback && correctOption === index && "bg-green-500 text-white hover:bg-green-600",
-              showFeedback && selectedOption === index && correctOption !== index && "bg-red-500 text-white hover:bg-red-600"
+              "question-option",
+              selectedOption === index && "selected",
+              showFeedback && correctOption === index && "correct",
+              showFeedback && selectedOption === index && correctOption !== index && "incorrect"
             )}
             onClick={() => !showFeedback && onSelectOption(index)}
-            disabled={showFeedback}
           >
             {option}
-          </Button>
+            
+            <div className="feedback">
+              {showFeedback && (
+                correctOption === index ? (
+                  <Check className="h-5 w-5 text-green-500" />
+                ) : (
+                  selectedOption === index && <X className="h-5 w-5 text-red-500" />
+                )
+              )}
+            </div>
+          </div>
         ))}
       </div>
-      {showFeedback && (
-        <div className="mt-6 flex items-start gap-2 rounded-lg bg-gray-50 p-4">
-          {selectedOption === correctOption ? (
-            <Check className="mt-1 h-5 w-5 shrink-0 text-green-500" />
-          ) : (
-            <X className="mt-1 h-5 w-5 shrink-0 text-red-500" />
-          )}
-          <div>
-            <p className="font-medium">
-              {selectedOption === correctOption ? "¡Correcto!" : "Incorrecto"}
-            </p>
-            {explanation && <p className="mt-1 text-sm text-gray-600">{explanation}</p>}
-          </div>
-        </div>
+
+      {showFeedback && explanation && (
+        <p className="mt-6 text-center text-sm text-gray-600">
+          {explanation}
+        </p>
       )}
     </Card>
   );
