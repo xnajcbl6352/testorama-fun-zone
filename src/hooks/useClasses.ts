@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -16,14 +15,17 @@ export const useClasses = () => {
         .select(`
           *,
           teacher:teacher_id(
+            id,
             first_name,
             last_name
           ),
           student:student_id(
+            id,
             first_name,
             last_name
           ),
           vehicle:vehicle_id(
+            id,
             plate_number,
             brand,
             model
@@ -35,7 +37,19 @@ export const useClasses = () => {
 
       // Ensure the data matches our Class interface
       const typedClasses: Class[] = (data || []).map(item => ({
-        ...item,
+        id: item.id,
+        type: item.type,
+        teacher_id: item.teacher_id,
+        student_id: item.student_id,
+        vehicle_id: item.vehicle_id,
+        date: item.date,
+        start_time: item.start_time,
+        end_time: item.end_time,
+        status: item.status,
+        attendance_marked: item.attendance_marked,
+        notes: item.notes,
+        created_at: item.created_at,
+        updated_at: item.updated_at,
         teacher: item.teacher ? {
           first_name: item.teacher.first_name,
           last_name: item.teacher.last_name

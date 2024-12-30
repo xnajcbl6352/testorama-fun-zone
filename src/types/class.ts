@@ -19,16 +19,16 @@ export interface Class {
   type: "theoretical" | "practical" | "exam";
   teacher_id: string;
   student_id: string;
-  vehicle_id?: string;
+  vehicle_id?: string | null;
   date: string;
   start_time: string;
   end_time: string;
   status: "scheduled" | "completed" | "cancelled";
   attendance_marked: boolean;
-  notes?: string;
-  created_at?: string;
-  updated_at?: string;
-  teacher?: Teacher | null;
-  student?: Student | null;
-  vehicle?: Vehicle | null;
+  notes?: string | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+  teacher: Teacher | null;
+  student: Student | null;
+  vehicle: Vehicle | null;
 }
