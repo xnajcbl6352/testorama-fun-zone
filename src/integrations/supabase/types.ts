@@ -9,6 +9,85 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      invoices: {
+        Row: {
+          amount: number
+          created_at: string | null
+          due_date: string
+          id: string
+          invoice_number: string
+          status: Database["public"]["Enums"]["payment_status"] | null
+          student_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          due_date: string
+          id?: string
+          invoice_number: string
+          status?: Database["public"]["Enums"]["payment_status"] | null
+          student_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          due_date?: string
+          id?: string
+          invoice_number?: string
+          status?: Database["public"]["Enums"]["payment_status"] | null
+          student_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string | null
+          id: string
+          invoice_id: string
+          method: Database["public"]["Enums"]["payment_method"]
+          notes: string | null
+          payment_date: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          id?: string
+          invoice_id: string
+          method: Database["public"]["Enums"]["payment_method"]
+          notes?: string | null
+          payment_date?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          id?: string
+          invoice_id?: string
+          method?: Database["public"]["Enums"]["payment_method"]
+          notes?: string | null
+          payment_date?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       records: {
         Row: {
           created_at: string | null
@@ -121,6 +200,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      payment_method: "cash" | "card" | "transfer"
+      payment_status: "pending" | "paid" | "overdue"
       record_status: "pending" | "in_progress" | "completed"
     }
     CompositeTypes: {
