@@ -5,10 +5,11 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { supabase } from "@/integrations/supabase/client";
 import { useSession } from '@supabase/auth-helpers-react';
 import { CalendarHeader } from "./calendar/CalendarHeader";
 import { CalendarFilters } from "./calendar/CalendarFilters";
+import { Class } from "@/types/class";
+import { useClasses } from "@/hooks/useClasses";
 import {
   Tooltip,
   TooltipContent,
@@ -16,44 +17,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-interface Teacher {
-  first_name: string;
-  last_name: string;
-}
-
-interface Student {
-  first_name: string;
-  last_name: string;
-}
-
-interface Vehicle {
-  plate_number: string;
-  brand: string;
-  model: string;
-}
-
-interface Class {
-  id: string;
-  type: "theoretical" | "practical" | "exam";
-  teacher_id: string;
-  student_id: string;
-  vehicle_id?: string;
-  date: string;
-  start_time: string;
-  end_time: string;
-  status: "scheduled" | "completed" | "cancelled";
-  attendance_marked: boolean;
-  notes?: string;
-  created_at?: string;
-  updated_at?: string;
-  teacher?: Teacher | null;
-  student?: Student | null;
-  vehicle?: Vehicle | null;
-}
-
 export function ProgramacionManagement() {
   const [classes, setClasses] = useState<Class[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [isAddingClass, setIsAddingClass] = useState(false);
   const [filters, setFilters] = useState({
     type: '',
@@ -62,10 +27,11 @@ export function ProgramacionManagement() {
   });
   const { toast } = useToast();
   const session = useSession();
+  const { isLoading, loadClasses } = useClasses();
 
   useEffect(() => {
     if (session) {
-      loadClasses();
+      loadClasses().then(setClasses);
     } else {
       toast({
         title: "Error de autenticación",
@@ -73,42 +39,7 @@ export function ProgramacionManagement() {
         variant: "destructive",
       });
     }
-  }, [session]);
-
-  const loadClasses = async () => {
-    try {
-      setIsLoading(true);
-      const { data, error } = await supabase
-        .from('classes')
-        .select(`
-          *,
-          teacher:teacher_id(first_name, last_name),
-          student:student_id(first_name, last_name),
-          vehicle:vehicle_id(plate_number, brand, model)
-        `)
-        .order('date', { ascending: true });
-
-      if (error) throw error;
-
-      // Ensure the data matches our Class interface
-      const typedClasses: Class[] = (data || []).map(item => ({
-        ...item,
-        teacher: item.teacher || null,
-        student: item.student || null,
-        vehicle: item.vehicle || null
-      }));
-
-      setClasses(typedClasses);
-    } catch (error: any) {
-      toast({
-        title: "Error al cargar clases",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [session, loadClasses]);
 
   const getEventColor = (type: Class['type']) => {
     switch (type) {
