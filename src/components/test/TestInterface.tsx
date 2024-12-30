@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { QuestionCard } from "./QuestionCard";
 import { ProgressBar } from "./ProgressBar";
 import { Timer } from "../Timer";
 import { ResultsCard } from "./ResultsCard";
-import { X, ArrowRight } from "lucide-react";
+import { X, ArrowRight, Trophy, Share2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../ui/use-toast";
 
 interface Question {
   id: number;
@@ -13,9 +14,9 @@ interface Question {
   options: string[];
   correctOption: number;
   explanation: string;
+  category?: string;
 }
 
-// Mock data - replace with real data later
 const mockQuestions: Question[] = [
   {
     id: 1,
@@ -23,6 +24,7 @@ const mockQuestions: Question[] = [
     options: ["Prohibido el paso", "Ceda el paso", "Paso obligatorio"],
     correctOption: 2,
     explanation: "Esta señal indica paso obligatorio en la dirección señalada.",
+    category: "Señales",
   },
   // Add more questions as needed
 ];
@@ -39,13 +41,36 @@ export function TestInterface({ type, title, duration }: TestInterfaceProps) {
   const [showFeedback, setShowFeedback] = useState(false);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [isTestComplete, setIsTestComplete] = useState(false);
+  const [streak, setStreak] = useState(0);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleSelectOption = (index: number) => {
     setSelectedOption(index);
     setShowFeedback(true);
+    
     if (index === mockQuestions[currentQuestion].correctOption) {
       setCorrectAnswers((prev) => prev + 1);
+      setStreak((prev) => prev + 1);
+      
+      if (streak >= 2) {
+        toast({
+          title: "¡Racha perfecta! 🔥",
+          description: `Has acertado ${streak + 1} preguntas seguidas`,
+        });
+      } else {
+        toast({
+          title: "¡Correcto! ✨",
+          description: "Sigue así, ¡vas muy bien!",
+        });
+      }
+    } else {
+      setStreak(0);
+      toast({
+        variant: "destructive",
+        title: "¡Casi!",
+        description: "No te preocupes, aprende del error y sigue adelante.",
+      });
     }
   };
 
@@ -56,17 +81,37 @@ export function TestInterface({ type, title, duration }: TestInterfaceProps) {
       setShowFeedback(false);
     } else {
       setIsTestComplete(true);
+      if ((correctAnswers / mockQuestions.length) >= 0.9) {
+        toast({
+          title: "🏆 ¡Felicidades!",
+          description: "Has superado el test con éxito.",
+        });
+      }
     }
   };
 
   const handleTimeUp = () => {
     setIsTestComplete(true);
+    toast({
+      variant: "destructive",
+      title: "¡Tiempo agotado!",
+      description: "No te preocupes, puedes intentarlo de nuevo.",
+    });
   };
 
-  const handleExit = () => {
-    const confirmExit = window.confirm("¿Estás seguro de que quieres salir? Perderás tu progreso.");
-    if (confirmExit) {
-      navigate("/");
+  const handleShare = async () => {
+    try {
+      await navigator.share({
+        title: "Mi resultado en AutoTest",
+        text: `¡He conseguido ${correctAnswers}/${mockQuestions.length} respuestas correctas en el test de conducir!`,
+        url: window.location.href,
+      });
+    } catch (error) {
+      toast({
+        title: "Error al compartir",
+        description: "No se pudo compartir el resultado.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -78,6 +123,13 @@ export function TestInterface({ type, title, duration }: TestInterfaceProps) {
         onReviewAnswers={() => console.log("Review answers")}
         onRetryTest={() => window.location.reload()}
         onBackToSelector={() => navigate("/")}
+        onShare={handleShare}
+        previousBestScore={8} // Mock data, replace with real data
+        categoryPerformance={{
+          Señales: 85,
+          Normativa: 70,
+          Velocidad: 90,
+        }}
       />
     );
   }

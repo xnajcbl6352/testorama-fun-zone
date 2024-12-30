@@ -32,7 +32,7 @@ export function QuestionCard({
           <button
             key={index}
             className={cn(
-              "question-option group relative overflow-hidden rounded-xl border-2 border-transparent bg-white p-6 text-lg font-medium shadow-md transition-all duration-300 hover:scale-[1.02] hover:border-primary/20 hover:shadow-lg dark:bg-gray-800",
+              "group relative overflow-hidden rounded-xl border-2 border-transparent bg-white p-6 text-lg font-medium shadow-md transition-all duration-300 hover:scale-[1.02] hover:border-primary/20 hover:shadow-lg dark:bg-gray-800",
               selectedOption === index && "selected border-primary bg-primary/5",
               showFeedback && correctOption === index && "correct border-green-500 bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-300",
               showFeedback && selectedOption === index && correctOption !== index && "incorrect border-red-500 bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300"
