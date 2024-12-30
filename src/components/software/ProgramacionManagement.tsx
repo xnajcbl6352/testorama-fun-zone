@@ -10,6 +10,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
+import { useSession } from '@supabase/auth-helpers-react';
 import {
   Select,
   SelectContent,
@@ -69,10 +70,19 @@ export function ProgramacionManagement() {
     searchTerm: ''
   });
   const { toast } = useToast();
+  const session = useSession();
 
   useEffect(() => {
-    loadClasses();
-  }, []);
+    if (session) {
+      loadClasses();
+    } else {
+      toast({
+        title: "Error de autenticación",
+        description: "Debes iniciar sesión para ver las clases",
+        variant: "destructive",
+      });
+    }
+  }, [session]);
 
   const loadClasses = async () => {
     try {
@@ -89,7 +99,15 @@ export function ProgramacionManagement() {
 
       if (error) throw error;
 
-      setClasses(data || []);
+      // Ensure the data matches our Class interface
+      const typedClasses: Class[] = (data || []).map(item => ({
+        ...item,
+        teacher: item.teacher || null,
+        student: item.student || null,
+        vehicle: item.vehicle || null
+      }));
+
+      setClasses(typedClasses);
     } catch (error: any) {
       toast({
         title: "Error al cargar clases",
@@ -152,6 +170,14 @@ export function ProgramacionManagement() {
   }));
 
   const handleDateSelect = (selectInfo: any) => {
+    if (!session) {
+      toast({
+        title: "Error de autenticación",
+        description: "Debes iniciar sesión para programar clases",
+        variant: "destructive",
+      });
+      return;
+    }
     setIsAddingClass(true);
   };
 
@@ -193,6 +219,11 @@ export function ProgramacionManagement() {
 
   return (
     <div className="space-y-6">
+      {!session ? (
+        <div className="text-center py-8">
+          <h3 className="text-lg font-semibold">Inicia sesión para ver el calendario</h3>
+        </div>
+      ) : (
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Calendar className="h-6 w-6 text-primary" />
@@ -285,6 +316,7 @@ export function ProgramacionManagement() {
           }}
         />
       </Card>
+      )}
     </div>
   );
 }
