@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { StudentForm } from "./students/StudentForm";
-import { type StudentRecord } from "./students/studentSchema";
+import { type StudentRecord, type StudentFormValues } from "./students/studentSchema";
 import { StudentList } from "./students/StudentList";
 import { RecordForm } from "./records/RecordForm";
 import { RecordList } from "./records/RecordList";
