@@ -10,7 +10,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { StudentForm, type StudentFormValues } from "./students/StudentForm";
+import { StudentForm } from "./students/StudentForm";
+import { type StudentFormValues } from "./students/studentSchema";
 import { StudentList } from "./students/StudentList";
 import { supabase } from "@/integrations/supabase/client";
 
