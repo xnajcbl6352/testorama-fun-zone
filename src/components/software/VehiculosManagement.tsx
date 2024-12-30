@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Car, Search, Plus, Edit, Trash, Calendar, Tool } from "lucide-react";
+import { Car, Search, Plus, Edit, Trash, Calendar, Wrench } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { Badge } from "@/components/ui/badge";
 
@@ -159,7 +159,7 @@ export function VehiculosManagement() {
               </div>
               
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Tool className="h-4 w-4" />
+                <Wrench className="h-4 w-4" />
                 <span>Kilometraje: {vehiculo.kilometraje.toLocaleString()} km</span>
               </div>
             </div>
