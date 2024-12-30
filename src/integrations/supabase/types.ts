@@ -9,6 +9,76 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      classes: {
+        Row: {
+          attendance_marked: boolean | null
+          created_at: string | null
+          date: string
+          end_time: string
+          id: string
+          notes: string | null
+          start_time: string
+          status: Database["public"]["Enums"]["class_status"] | null
+          student_id: string
+          teacher_id: string
+          type: Database["public"]["Enums"]["class_type"]
+          updated_at: string | null
+          vehicle_id: string | null
+        }
+        Insert: {
+          attendance_marked?: boolean | null
+          created_at?: string | null
+          date: string
+          end_time: string
+          id?: string
+          notes?: string | null
+          start_time: string
+          status?: Database["public"]["Enums"]["class_status"] | null
+          student_id: string
+          teacher_id: string
+          type: Database["public"]["Enums"]["class_type"]
+          updated_at?: string | null
+          vehicle_id?: string | null
+        }
+        Update: {
+          attendance_marked?: boolean | null
+          created_at?: string | null
+          date?: string
+          end_time?: string
+          id?: string
+          notes?: string | null
+          start_time?: string
+          status?: Database["public"]["Enums"]["class_status"] | null
+          student_id?: string
+          teacher_id?: string
+          type?: Database["public"]["Enums"]["class_type"]
+          updated_at?: string | null
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "classes_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "classes_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "classes_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoices: {
         Row: {
           amount: number
@@ -192,6 +262,45 @@ export type Database = {
         }
         Relationships: []
       }
+      vehicles: {
+        Row: {
+          brand: string
+          created_at: string | null
+          id: string
+          mileage: number | null
+          model: string
+          next_maintenance_date: string | null
+          plate_number: string
+          status: Database["public"]["Enums"]["vehicle_status"] | null
+          type: Database["public"]["Enums"]["vehicle_type"]
+          updated_at: string | null
+        }
+        Insert: {
+          brand: string
+          created_at?: string | null
+          id?: string
+          mileage?: number | null
+          model: string
+          next_maintenance_date?: string | null
+          plate_number: string
+          status?: Database["public"]["Enums"]["vehicle_status"] | null
+          type: Database["public"]["Enums"]["vehicle_type"]
+          updated_at?: string | null
+        }
+        Update: {
+          brand?: string
+          created_at?: string | null
+          id?: string
+          mileage?: number | null
+          model?: string
+          next_maintenance_date?: string | null
+          plate_number?: string
+          status?: Database["public"]["Enums"]["vehicle_status"] | null
+          type?: Database["public"]["Enums"]["vehicle_type"]
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -200,9 +309,13 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      class_status: "scheduled" | "completed" | "cancelled"
+      class_type: "theoretical" | "practical" | "exam"
       payment_method: "cash" | "card" | "transfer"
       payment_status: "pending" | "paid" | "overdue"
       record_status: "pending" | "in_progress" | "completed"
+      vehicle_status: "available" | "in_use" | "maintenance"
+      vehicle_type: "car" | "motorcycle" | "truck"
     }
     CompositeTypes: {
       [_ in never]: never

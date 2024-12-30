@@ -1,69 +1,98 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Calendar, Search, Plus, Clock, X } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { supabase } from "@/integrations/supabase/client";
 
-interface Clase {
-  id: number;
-  tipo: "Teórica" | "Práctica";
-  fecha: string;
-  hora: string;
-  alumno: string;
-  profesor: string;
-  estado: "Programada" | "Completada" | "Cancelada";
+interface Class {
+  id: string;
+  type: "theoretical" | "practical" | "exam";
+  teacher_id: string;
+  student_id: string;
+  vehicle_id?: string;
+  date: string;
+  start_time: string;
+  end_time: string;
+  status: "scheduled" | "completed" | "cancelled";
+  attendance_marked: boolean;
+  notes?: string;
 }
 
-const clasesIniciales: Clase[] = [
-  {
-    id: 1,
-    tipo: "Teórica",
-    fecha: "2024-03-20",
-    hora: "10:00",
-    alumno: "Juan Pérez",
-    profesor: "María García",
-    estado: "Programada"
-  },
-  {
-    id: 2,
-    tipo: "Práctica",
-    fecha: "2024-03-21",
-    hora: "16:30",
-    alumno: "Ana López",
-    profesor: "Pedro Martínez",
-    estado: "Completada"
-  }
-];
-
 export function ProgramacionManagement() {
-  const [clases, setClases] = useState<Clase[]>(clasesIniciales);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [classes, setClasses] = useState<Class[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAddingClass, setIsAddingClass] = useState(false);
   const { toast } = useToast();
 
-  const clasesFiltradas = clases.filter(clase =>
-    clase.alumno.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    clase.profesor.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  useEffect(() => {
+    loadClasses();
+  }, []);
 
-  const handleAddClase = () => {
-    toast({
-      title: "Función en desarrollo",
-      description: "La funcionalidad para añadir clases estará disponible próximamente.",
-    });
+  const loadClasses = async () => {
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from('classes')
+        .select('*')
+        .order('date', { ascending: true });
+
+      if (error) throw error;
+
+      setClasses(data || []);
+    } catch (error: any) {
+      toast({
+        title: "Error al cargar clases",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const getEstadoColor = (estado: Clase["estado"]) => {
-    switch (estado) {
-      case "Programada":
-        return "bg-blue-100 text-blue-800";
-      case "Completada":
-        return "bg-green-100 text-green-800";
-      case "Cancelada":
-        return "bg-red-100 text-red-800";
+  const getEventColor = (type: Class['type']) => {
+    switch (type) {
+      case 'theoretical':
+        return '#818cf8'; // indigo-400
+      case 'practical':
+        return '#34d399'; // emerald-400
+      case 'exam':
+        return '#f87171'; // red-400
       default:
-        return "bg-gray-100 text-gray-800";
+        return '#94a3b8'; // slate-400
     }
+  };
+
+  const calendarEvents = classes.map(classItem => ({
+    id: classItem.id,
+    title: `${classItem.type.charAt(0).toUpperCase() + classItem.type.slice(1)} Class`,
+    start: `${classItem.date}T${classItem.start_time}`,
+    end: `${classItem.date}T${classItem.end_time}`,
+    backgroundColor: getEventColor(classItem.type),
+    extendedProps: {
+      type: classItem.type,
+      status: classItem.status,
+    }
+  }));
+
+  const handleDateSelect = (selectInfo: any) => {
+    setIsAddingClass(true);
+    // We'll implement the class creation dialog in the next step
+  };
+
+  const handleEventClick = (clickInfo: any) => {
+    // We'll implement the class details/edit dialog in the next step
+    toast({
+      title: "Clase seleccionada",
+      description: `Has seleccionado la clase ${clickInfo.event.title}`,
+    });
   };
 
   return (
@@ -73,56 +102,52 @@ export function ProgramacionManagement() {
           <Calendar className="h-6 w-6 text-primary" />
           <h2 className="text-2xl font-bold">Programación de Clases</h2>
         </div>
-        <Button onClick={handleAddClase} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Nueva Clase
-        </Button>
+        <Dialog open={isAddingClass} onOpenChange={setIsAddingClass}>
+          <DialogTrigger asChild>
+            <Button className="gap-2">
+              <Plus className="h-4 w-4" />
+              Nueva Clase
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Programar Nueva Clase</DialogTitle>
+            </DialogHeader>
+            {/* We'll implement the class creation form in the next step */}
+          </DialogContent>
+        </Dialog>
       </div>
 
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
-        <Input
-          className="pl-10"
-          placeholder="Buscar por alumno o profesor..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+      <Card className="p-4">
+        <FullCalendar
+          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+          initialView="timeGridWeek"
+          headerToolbar={{
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+          }}
+          editable={true}
+          selectable={true}
+          selectMirror={true}
+          dayMaxEvents={true}
+          weekends={true}
+          events={calendarEvents}
+          select={handleDateSelect}
+          eventClick={handleEventClick}
+          height="auto"
+          slotMinTime="07:00:00"
+          slotMaxTime="21:00:00"
+          allDaySlot={false}
+          locale="es"
+          buttonText={{
+            today: 'Hoy',
+            month: 'Mes',
+            week: 'Semana',
+            day: 'Día'
+          }}
         />
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {clasesFiltradas.map((clase) => (
-          <Card key={clase.id} className="p-6">
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  clase.tipo === "Teórica" 
-                    ? "bg-purple-100 text-purple-800" 
-                    : "bg-orange-100 text-orange-800"
-                }`}>
-                  {clase.tipo}
-                </span>
-                <h3 className="mt-2 text-lg font-semibold">{clase.alumno}</h3>
-                <p className="text-sm text-gray-600">Profesor: {clase.profesor}</p>
-              </div>
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${getEstadoColor(clase.estado)}`}>
-                {clase.estado}
-              </span>
-            </div>
-            
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Calendar className="h-4 w-4" />
-                <span>{clase.fecha}</span>
-              </div>
-              
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Clock className="h-4 w-4" />
-                <span>{clase.hora}</span>
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
+      </Card>
     </div>
   );
 }
