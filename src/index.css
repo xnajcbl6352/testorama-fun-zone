@@ -23,11 +23,11 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-sans antialiased;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-heading font-bold;
+    @apply font-heading font-bold tracking-tight;
   }
 }
 
@@ -50,4 +50,26 @@
 
 .feature-icon {
   @apply transition-transform duration-300 group-hover:scale-110;
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.focus-ring {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+}
+
+/* High contrast improvements */
+@media (prefers-contrast: high) {
+  :root {
+    --primary: 222.2 84% 4.9%;
+    --primary-foreground: 0 0% 100%;
+  }
 }
