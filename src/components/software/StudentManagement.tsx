@@ -24,7 +24,6 @@ export function StudentManagement() {
   const [showRecordForm, setShowRecordForm] = useState(false);
   const { isLoading, loadStudents, searchStudents, createStudent, deleteStudent } = useStudents();
 
-  // Load students on mount using useEffect
   useEffect(() => {
     loadStudents().then(setStudents);
   }, [loadStudents]);
@@ -112,7 +111,6 @@ export function StudentManagement() {
                   studentId={selectedStudent}
                   onSuccess={() => {
                     setShowRecordForm(false);
-                    // Refresh records list
                   }}
                   onCancel={() => setShowRecordForm(false)}
                 />

@@ -1,5 +1,6 @@
 import * as z from "zod";
 
+// Define the base schema for student form values
 export const studentSchema = z.object({
   first_name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
   last_name: z.string().min(2, "Los apellidos deben tener al menos 2 caracteres"),
@@ -13,8 +14,10 @@ export const studentSchema = z.object({
   }),
 });
 
+// Export the type for form values
 export type StudentFormValues = z.infer<typeof studentSchema>;
 
+// Define the status type
 export const StudentStatus = {
   active: "active",
   inactive: "inactive",
@@ -22,10 +25,11 @@ export const StudentStatus = {
 
 export type StudentStatus = typeof StudentStatus[keyof typeof StudentStatus];
 
-export type StudentRecord = StudentFormValues & {
+// Define the complete student record type including database fields
+export interface StudentRecord extends StudentFormValues {
   id: string;
   registration_date: string;
   status: StudentStatus;
   created_at: string | null;
   updated_at: string | null;
-};
+}

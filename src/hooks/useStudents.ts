@@ -7,7 +7,7 @@ export const useStudents = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const loadStudents = async () => {
+  const loadStudents = async (): Promise<StudentRecord[]> => {
     try {
       setIsLoading(true);
       const { data, error } = await supabase
@@ -29,7 +29,7 @@ export const useStudents = () => {
     }
   };
 
-  const searchStudents = async (term: string) => {
+  const searchStudents = async (term: string): Promise<StudentRecord[]> => {
     try {
       setIsLoading(true);
       const { data, error } = await supabase
@@ -105,59 +105,6 @@ export const useStudents = () => {
     }
   };
 
-  const updateStudent = async (id: string, values: Partial<StudentFormValues>): Promise<boolean> => {
-    try {
-      setIsLoading(true);
-
-      if (values.dni) {
-        const { data: existingStudent, error: searchError } = await supabase
-          .from("students")
-          .select("id")
-          .eq("dni", values.dni)
-          .neq("id", id)
-          .single();
-
-        if (searchError && searchError.code !== 'PGRST116') throw searchError;
-
-        if (existingStudent) {
-          toast({
-            title: "Error al actualizar alumno",
-            description: "Ya existe otro alumno con ese DNI",
-            variant: "destructive",
-          });
-          return false;
-        }
-      }
-
-      const updateData = {
-        ...values,
-        updated_at: new Date().toISOString(),
-      };
-
-      const { error } = await supabase
-        .from("students")
-        .update(updateData)
-        .eq("id", id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Alumno actualizado",
-        description: "Los datos del alumno han sido actualizados correctamente",
-      });
-      return true;
-    } catch (error: any) {
-      toast({
-        title: "Error al actualizar alumno",
-        description: error.message,
-        variant: "destructive",
-      });
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const deleteStudent = async (id: string): Promise<boolean> => {
     try {
       setIsLoading(true);
@@ -193,7 +140,6 @@ export const useStudents = () => {
     loadStudents,
     searchStudents,
     createStudent,
-    updateStudent,
     deleteStudent,
   };
 };
