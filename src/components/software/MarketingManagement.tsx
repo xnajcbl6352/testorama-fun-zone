@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { BarChart3, Search, Plus, Target, Users, TrendingUp } from "lucide-react";
+import { BarChart3, Search, Plus, Target, Users, TrendingUp, Calendar } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 interface Campana {

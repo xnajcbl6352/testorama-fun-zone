@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Shield, Search, Plus, UserCheck, Lock, FileText } from "lucide-react";
+import { Shield, Search, Plus, UserCheck, Lock, FileText, Clock } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 interface Acceso {

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Search, Plus, Send, Phone } from "lucide-react";
+import { MessageSquare, Search, Plus, Send, Phone, Calendar } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 interface Mensaje {

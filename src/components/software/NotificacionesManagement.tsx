@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Bell, Search, Plus, AlertCircle, CheckCircle } from "lucide-react";
+import { Bell, Search, Plus, AlertCircle, CheckCircle, calendar } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 interface Notificacion {
@@ -112,7 +112,7 @@ export function NotificacionesManagement() {
             <p className="text-sm text-gray-600 mb-4">{notificacion.mensaje}</p>
             
             <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Calendar className="h-4 w-4" />
+              <calendar className="h-4 w-4" />
               <span>{notificacion.fecha}</span>
             </div>
           </Card>
