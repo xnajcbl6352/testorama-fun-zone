@@ -10,6 +10,7 @@ import {
 
 export const useStudents = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [students, setStudents] = useState<StudentRecord[]>([]);
   const { toast } = useToast();
 
   const loadStudents = async (): Promise<StudentRecord[]> => {
@@ -21,7 +22,9 @@ export const useStudents = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return (data || []) as StudentRecord[];
+      const loadedStudents = (data || []) as StudentRecord[];
+      setStudents(loadedStudents);
+      return loadedStudents;
     } catch (error: any) {
       toast({
         title: "Error al cargar alumnos",
@@ -44,7 +47,9 @@ export const useStudents = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return (data || []) as StudentRecord[];
+      const searchResults = (data || []) as StudentRecord[];
+      setStudents(searchResults);
+      return searchResults;
     } catch (error: any) {
       toast({
         title: "Error al buscar alumnos",
@@ -102,6 +107,9 @@ export const useStudents = () => {
         title: "Alumno creado",
         description: "El alumno ha sido registrado correctamente",
       });
+      
+      // Reload students after creating a new one
+      await loadStudents();
       return true;
     } catch (error: any) {
       toast({
@@ -132,6 +140,9 @@ export const useStudents = () => {
         title: "Alumno dado de baja",
         description: "El alumno ha sido dado de baja correctamente",
       });
+      
+      // Reload students after deleting one
+      await loadStudents();
       return true;
     } catch (error: any) {
       toast({
@@ -147,6 +158,7 @@ export const useStudents = () => {
 
   return {
     isLoading,
+    students, // Now we're returning the students array
     loadStudents,
     searchStudents,
     createStudent,
