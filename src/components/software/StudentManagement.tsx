@@ -11,12 +11,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { StudentForm } from "./students/StudentForm";
-import { type StudentFormValues } from "./students/studentSchema";
+import { type StudentFormValues, type StudentRecord } from "./students/studentSchema";
 import { StudentList } from "./students/StudentList";
 import { supabase } from "@/integrations/supabase/client";
 
 export function StudentManagement() {
-  const [students, setStudents] = useState<any[]>([]);
+  const [students, setStudents] = useState<StudentRecord[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -85,7 +85,15 @@ export function StudentManagement() {
         return;
       }
 
-      const { error } = await supabase.from("students").insert([values]);
+      // Convert form values to match database schema
+      const studentData: Omit<StudentRecord, 'id' | 'created_at' | 'updated_at'> = {
+        ...values,
+        status: 'active',
+      };
+
+      const { error } = await supabase
+        .from("students")
+        .insert([studentData]);
 
       if (error) throw error;
 

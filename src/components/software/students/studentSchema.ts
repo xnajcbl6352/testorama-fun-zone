@@ -12,3 +12,20 @@ export const studentSchema = z.object({
 });
 
 export type StudentFormValues = z.infer<typeof studentSchema>;
+
+// Type that matches the database schema
+export type StudentRecord = {
+  id?: string;
+  first_name: string;
+  last_name: string;
+  dni: string;
+  birth_date: string;
+  phone?: string | null;
+  email?: string | null;
+  address?: string | null;
+  gdpr_consent?: boolean | null;
+  registration_date?: string | null;
+  status?: string;
+  created_at?: string | null;
+  updated_at?: string | null;
+};
