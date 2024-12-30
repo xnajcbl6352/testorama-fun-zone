@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { HeroSection } from "@/components/home/HeroSection";
 import { FeaturesSection } from "@/components/home/FeaturesSection";
 import { TestTypesSection } from "@/components/home/TestTypesSection";
+import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { ThemeToggle } from "@/components/home/ThemeToggle";
 import { TimerDialog } from "@/components/TimerDialog";
 import { Timer } from "@/components/Timer";
@@ -30,6 +31,7 @@ const Index = () => {
       <HeroSection />
       <FeaturesSection />
       <TestTypesSection onTestSelect={handleTestSelection} />
+      <ReviewsSection />
       <ThemeToggle />
 
       <TimerDialog
