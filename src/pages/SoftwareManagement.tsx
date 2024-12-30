@@ -17,6 +17,12 @@ import { StudentManagement } from "@/components/software/StudentManagement";
 import { SedesManagement } from "@/components/software/SedesManagement";
 import { VehiculosManagement } from "@/components/software/VehiculosManagement";
 import { MaterialDidacticoManagement } from "@/components/software/MaterialDidacticoManagement";
+import { ProgramacionManagement } from "@/components/software/ProgramacionManagement";
+import { ComunicacionManagement } from "@/components/software/ComunicacionManagement";
+import { NotificacionesManagement } from "@/components/software/NotificacionesManagement";
+import { MarketingManagement } from "@/components/software/MarketingManagement";
+import { SeguridadManagement } from "@/components/software/SeguridadManagement";
+import { ConfiguracionManagement } from "@/components/software/ConfiguracionManagement";
 
 const features = [
   {
@@ -121,7 +127,12 @@ export default function SoftwareManagement() {
             {activeModule === "Gestión Multisección" && <SedesManagement />}
             {activeModule === "Control de Vehículos" && <VehiculosManagement />}
             {activeModule === "Material Didáctico" && <MaterialDidacticoManagement />}
-            {/* Otros módulos se añadirán aquí */}
+            {activeModule === "Programación" && <ProgramacionManagement />}
+            {activeModule === "Comunicación" && <ComunicacionManagement />}
+            {activeModule === "Notificaciones" && <NotificacionesManagement />}
+            {activeModule === "Marketing" && <MarketingManagement />}
+            {activeModule === "Seguridad" && <SeguridadManagement />}
+            {activeModule === "Configuración" && <ConfiguracionManagement />}
           </div>
         )}
 
