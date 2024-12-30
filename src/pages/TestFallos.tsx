@@ -1,15 +1,38 @@
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { XOctagon } from "lucide-react";
+import { TestPageLayout } from "@/components/test/TestPageLayout";
 
 const TestFallos = () => {
-  const navigate = useNavigate();
+  const benefits = [
+    {
+      icon: "📂",
+      text: "Almacenamiento Automático: Cada error se guarda automáticamente",
+    },
+    {
+      icon: "✅",
+      text: "Actualización Dinámica: Las respuestas correctas se eliminan del registro",
+    },
+    {
+      icon: "🗒️",
+      text: "Test Personalizado: Genera un test exclusivamente con tus fallos",
+    },
+  ];
+
+  const steps = [
+    "Accede al registro de fallos",
+    "Genera un test personalizado con preguntas incorrectas",
+    "Practica y elimina errores correctamente respondidos",
+  ];
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="mb-6 text-3xl font-bold">Test de Fallos</h1>
-      <p className="mb-4">Esta página está en construcción.</p>
-      <Button onClick={() => navigate("/")}>Volver al inicio</Button>
-    </div>
+    <TestPageLayout
+      title="Registro de Fallos"
+      icon={XOctagon}
+      difficulty="Intermedio"
+      duration="15-20 min"
+      description="Revisa y practica tus errores. Genera tests personalizados con tus respuestas incorrectas."
+      benefits={benefits}
+      steps={steps}
+    />
   );
 };
 

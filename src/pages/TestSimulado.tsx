@@ -1,15 +1,38 @@
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { Clock } from "lucide-react";
+import { TestPageLayout } from "@/components/test/TestPageLayout";
 
 const TestSimulado = () => {
-  const navigate = useNavigate();
+  const benefits = [
+    {
+      icon: "🕒",
+      text: "Simulación Real: Preguntas con temporizador activado",
+    },
+    {
+      icon: "📋",
+      text: 'Evaluación Final: "Aprobado" o "Suspendido" basado en criterios oficiales',
+    },
+    {
+      icon: "📊",
+      text: "Análisis de Áreas: Desglose de rendimiento por tema",
+    },
+  ];
+
+  const steps = [
+    "Selecciona el simulacro (2024 o 2025)",
+    "Responde preguntas con tiempo limitado",
+    "Revisa tu evaluación final y áreas de mejora",
+  ];
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="mb-6 text-3xl font-bold">Test Simulado</h1>
-      <p className="mb-4">Esta página está en construcción.</p>
-      <Button onClick={() => navigate("/")}>Volver al inicio</Button>
-    </div>
+    <TestPageLayout
+      title="Exámenes Simulados"
+      icon={Clock}
+      difficulty="Avanzado"
+      duration="30 min"
+      description="Simula las condiciones reales del examen DGT. Prepárate con los simulacros de 2024 y 2025."
+      benefits={benefits}
+      steps={steps}
+    />
   );
 };
 

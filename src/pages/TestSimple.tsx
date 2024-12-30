@@ -1,15 +1,38 @@
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { Book } from "lucide-react";
+import { TestPageLayout } from "@/components/test/TestPageLayout";
 
 const TestSimple = () => {
-  const navigate = useNavigate();
+  const benefits = [
+    {
+      icon: "💡",
+      text: "Formato Oficial: Preguntas que replican el examen real",
+    },
+    {
+      icon: "✅",
+      text: "Retroalimentación Instantánea: Recibe notificaciones de Correcto/Incorrecto tras cada respuesta",
+    },
+    {
+      icon: "📊",
+      text: "Resultados Claros: Total de preguntas correctas e incorrectas con recomendaciones",
+    },
+  ];
+
+  const steps = [
+    "Selecciona una categoría (general o específica)",
+    "Responde preguntas de opción múltiple",
+    "Revisa tus resultados y recomendaciones",
+  ];
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="mb-6 text-3xl font-bold">Test Simple</h1>
-      <p className="mb-4">Esta página está en construcción.</p>
-      <Button onClick={() => navigate("/")}>Volver al inicio</Button>
-    </div>
+    <TestPageLayout
+      title="Tests Simples"
+      icon={Book}
+      difficulty="Fácil"
+      duration="10-15 min"
+      description="Practica preguntas generales en formato oficial. Ideal para principiantes que desean familiarizarse con el examen DGT."
+      benefits={benefits}
+      steps={steps}
+    />
   );
 };
 
