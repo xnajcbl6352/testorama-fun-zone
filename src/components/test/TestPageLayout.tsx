@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TimerDialog } from "@/components/TimerDialog";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 interface TestPageLayoutProps {
   title: string;
@@ -13,7 +12,7 @@ interface TestPageLayoutProps {
   description: string;
   benefits: { icon: string; text: string }[];
   steps: string[];
-  children?: React.ReactNode;
+  onStartTest: (duration: number | null) => void;
 }
 
 export function TestPageLayout({
@@ -24,10 +23,9 @@ export function TestPageLayout({
   description,
   benefits,
   steps,
-  children,
+  onStartTest,
 }: TestPageLayoutProps) {
   const [showTimerDialog, setShowTimerDialog] = useState(false);
-  const navigate = useNavigate();
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -47,8 +45,7 @@ export function TestPageLayout({
   };
 
   const handleSelectDuration = (duration: number | null) => {
-    // Here you would start the test with the selected duration
-    console.log("Starting test with duration:", duration);
+    onStartTest(duration);
   };
 
   return (
@@ -96,7 +93,6 @@ export function TestPageLayout({
           </div>
         </div>
         <div className="flex flex-col items-center justify-center space-y-4">
-          {children}
           <Button
             size="lg"
             className="w-full max-w-md text-lg"

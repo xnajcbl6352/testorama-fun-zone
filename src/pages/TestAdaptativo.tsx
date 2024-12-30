@@ -1,7 +1,12 @@
 import { BarChart3 } from "lucide-react";
 import { TestPageLayout } from "@/components/test/TestPageLayout";
+import { useState } from "react";
+import { TestInterface } from "@/components/test/TestInterface";
 
 const TestAdaptativo = () => {
+  const [hasStarted, setHasStarted] = useState(false);
+  const [selectedDuration, setSelectedDuration] = useState<number | null>(null);
+
   const benefits = [
     {
       icon: "🎯",
@@ -23,6 +28,21 @@ const TestAdaptativo = () => {
     "Revisa el informe final y obtén recomendaciones",
   ];
 
+  const handleStartTest = (duration: number | null) => {
+    setSelectedDuration(duration);
+    setHasStarted(true);
+  };
+
+  if (hasStarted) {
+    return (
+      <TestInterface
+        type="adaptativo"
+        title="Test Adaptativo"
+        duration={selectedDuration ?? undefined}
+      />
+    );
+  }
+
   return (
     <TestPageLayout
       title="Tests Adaptativos"
@@ -32,6 +52,7 @@ const TestAdaptativo = () => {
       description="El test que evoluciona contigo. Ajusta la dificultad según tu rendimiento y ofrece análisis detallados al finalizar."
       benefits={benefits}
       steps={steps}
+      onStartTest={handleStartTest}
     />
   );
 };
