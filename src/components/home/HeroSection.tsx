@@ -16,10 +16,10 @@ export function HeroSection() {
           tests adaptados a tu nivel y necesidades
         </p>
         
-        <div className="mb-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+        <div className="mb-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <Button
             size="lg"
-            className="group relative w-full overflow-hidden transition-all hover:scale-105 sm:w-auto"
+            className="group relative w-full overflow-hidden bg-primary text-white transition-all hover:scale-105 hover:shadow-lg sm:w-auto"
             onClick={() => navigate("/login")}
           >
             <span className="relative z-10">Inicia sesión para guardar tu progreso</span>
@@ -28,7 +28,7 @@ export function HeroSection() {
           <Button
             variant="outline"
             size="lg"
-            className="group w-full transition-all hover:scale-105 sm:w-auto"
+            className="group w-full border-2 border-primary/20 bg-white transition-all hover:scale-105 hover:border-primary hover:shadow-lg sm:w-auto"
             onClick={() => navigate("/register")}
           >
             <span>Descubre más tipos de test</span>

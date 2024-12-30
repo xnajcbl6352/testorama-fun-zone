@@ -32,7 +32,7 @@
 }
 
 .test-card {
-  @apply relative overflow-hidden rounded-xl bg-white p-6 shadow-lg transition-all hover:shadow-xl;
+  @apply relative overflow-hidden rounded-xl bg-white p-6 shadow-lg transition-all hover:shadow-xl hover:scale-105;
 }
 
 .test-card::before {
@@ -46,4 +46,8 @@
 
 .hero-gradient {
   @apply bg-gradient-to-br from-primary/10 via-background to-background;
+}
+
+.feature-icon {
+  @apply transition-transform duration-300 group-hover:scale-110;
 }
