@@ -25,7 +25,7 @@ export type StudentRecord = {
   address?: string | null;
   gdpr_consent?: boolean | null;
   registration_date?: string | null;
-  status?: string;
+  status: string;
   created_at?: string | null;
   updated_at?: string | null;
 };

@@ -3,20 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Edit, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-
-interface Student {
-  id: string;
-  first_name: string;
-  last_name: string;
-  dni: string;
-  email: string | null;
-  phone: string | null;
-  registration_date: string;
-  status: string;
-}
+import { type StudentRecord } from "./studentSchema";
 
 interface StudentListProps {
-  students: Student[];
+  students: StudentRecord[];
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
 }
@@ -46,7 +36,7 @@ export function StudentList({ students, onEdit, onDelete }: StudentListProps) {
               <td>{student.email}</td>
               <td>{student.phone}</td>
               <td>
-                {format(new Date(student.registration_date), "dd/MM/yyyy", {
+                {student.registration_date && format(new Date(student.registration_date), "dd/MM/yyyy", {
                   locale: es,
                 })}
               </td>
@@ -66,14 +56,14 @@ export function StudentList({ students, onEdit, onDelete }: StudentListProps) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => onEdit(student.id)}
+                    onClick={() => student.id && onEdit(student.id)}
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => onDelete(student.id)}
+                    onClick={() => student.id && onDelete(student.id)}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
