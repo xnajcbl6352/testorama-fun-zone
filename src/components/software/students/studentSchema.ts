@@ -15,18 +15,17 @@ export const studentSchema = z.object({
 
 export type StudentFormValues = z.infer<typeof studentSchema>;
 
-export type StudentRecord = {
+const StudentStatus = {
+  active: "active",
+  inactive: "inactive",
+} as const;
+
+export type StudentStatus = typeof StudentStatus[keyof typeof StudentStatus];
+
+export type StudentRecord = StudentFormValues & {
   id: string;
-  first_name: string;
-  last_name: string;
-  dni: string;
-  birth_date: string;
-  phone: string;
-  email: string | null;
-  address: string;
-  gdpr_consent: boolean;
   registration_date: string;
-  status: "active" | "inactive";
+  status: StudentStatus;
   created_at: string | null;
   updated_at: string | null;
 };

@@ -73,12 +73,13 @@ export const useStudents = () => {
         return false;
       }
 
+      const now = new Date().toISOString();
       const studentData = {
         ...values,
-        registration_date: new Date().toISOString(),
+        registration_date: now,
         status: "active" as const,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
+        created_at: now,
+        updated_at: now,
       };
 
       const { error } = await supabase
@@ -108,22 +109,24 @@ export const useStudents = () => {
     try {
       setIsLoading(true);
 
-      const { data: existingStudent, error: searchError } = await supabase
-        .from("students")
-        .select("id")
-        .eq("dni", values.dni || '')
-        .neq("id", id)
-        .single();
+      if (values.dni) {
+        const { data: existingStudent, error: searchError } = await supabase
+          .from("students")
+          .select("id")
+          .eq("dni", values.dni)
+          .neq("id", id)
+          .single();
 
-      if (searchError && searchError.code !== 'PGRST116') throw searchError;
+        if (searchError && searchError.code !== 'PGRST116') throw searchError;
 
-      if (existingStudent) {
-        toast({
-          title: "Error al actualizar alumno",
-          description: "Ya existe otro alumno con ese DNI",
-          variant: "destructive",
-        });
-        return false;
+        if (existingStudent) {
+          toast({
+            title: "Error al actualizar alumno",
+            description: "Ya existe otro alumno con ese DNI",
+            variant: "destructive",
+          });
+          return false;
+        }
       }
 
       const updateData = {
