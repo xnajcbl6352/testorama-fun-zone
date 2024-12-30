@@ -64,7 +64,7 @@ interface TestTypesSectionProps {
 
 export function TestTypesSection({ onTestSelect }: TestTypesSectionProps) {
   return (
-    <div className="container mx-auto px-6 py-12">
+    <div className="container mx-auto px-6 py-16 sm:py-24">
       <div className="mb-12 text-center">
         <h2 className="mb-4 text-3xl font-bold">Elige tu tipo de test</h2>
         <p className="text-gray-600">
@@ -72,7 +72,7 @@ export function TestTypesSection({ onTestSelect }: TestTypesSectionProps) {
         </p>
       </div>
 
-      <div className="grid animate-fade-in gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid animate-fade-in gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {testTypes.map((test) => (
           <TestTypeCard
             key={test.title}
