@@ -91,8 +91,16 @@ export function StudentManagement() {
 
       // Convert form values to match database schema
       const studentData: Omit<StudentRecord, 'id' | 'created_at' | 'updated_at'> = {
-        ...values,
+        first_name: values.first_name,
+        last_name: values.last_name,
+        dni: values.dni,
+        birth_date: values.birth_date,
+        phone: values.phone || null,
+        email: values.email || null,
+        address: values.address || null,
+        gdpr_consent: values.gdpr_consent,
         status: 'active',
+        registration_date: new Date().toISOString(),
       };
 
       const { error } = await supabase

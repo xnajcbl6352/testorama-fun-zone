@@ -13,7 +13,6 @@ export const studentSchema = z.object({
 
 export type StudentFormValues = z.infer<typeof studentSchema>;
 
-// Type that matches the database schema
 export type StudentRecord = {
   id?: string;
   first_name: string;
