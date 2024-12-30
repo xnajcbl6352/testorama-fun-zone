@@ -15,19 +15,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useRecords } from "@/hooks/useRecords";
-import { useStudents } from "@/hooks/useStudents";
 import { DocumentUpload } from "./DocumentUpload";
+import { StudentSelect } from "./form/StudentSelect";
+import { StatusSelect } from "./form/StatusSelect";
 import { useState } from "react";
 
 const formSchema = z.object({
@@ -42,12 +36,11 @@ type FormValues = z.infer<typeof formSchema>;
 interface RecordFormProps {
   open: boolean;
   onClose: () => void;
-  initialData?: FormValues;
+  initialData?: FormValues & { id: string };
 }
 
 export function RecordForm({ open, onClose, initialData }: RecordFormProps) {
   const { createRecord, updateRecord } = useRecords();
-  const { students } = useStudents();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -61,7 +54,7 @@ export function RecordForm({ open, onClose, initialData }: RecordFormProps) {
   const onSubmit = async (values: FormValues) => {
     try {
       setIsSubmitting(true);
-      if (initialData) {
+      if (initialData?.id) {
         await updateRecord.mutateAsync({
           id: initialData.id,
           ...values,
@@ -99,33 +92,7 @@ export function RecordForm({ open, onClose, initialData }: RecordFormProps) {
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="student_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Student</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a student" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {students?.map((student) => (
-                        <SelectItem key={student.id} value={student.id}>
-                          {student.first_name} {student.last_name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <StudentSelect form={form} />
 
             <FormField
               control={form.control}
@@ -141,31 +108,7 @@ export function RecordForm({ open, onClose, initialData }: RecordFormProps) {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="in_progress">In Progress</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <StatusSelect form={form} />
 
             <FormField
               control={form.control}

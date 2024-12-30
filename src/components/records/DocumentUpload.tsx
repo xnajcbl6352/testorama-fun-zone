@@ -38,10 +38,7 @@ export function DocumentUpload({ onUploadComplete, currentUrl }: DocumentUploadP
         .from('records')
         .upload(filePath, file, {
           cacheControl: '3600',
-          upsert: false,
-          onUploadProgress: (progress) => {
-            setProgress((progress.loaded / progress.total) * 100);
-          },
+          upsert: false
         });
 
       if (uploadError) throw uploadError;
