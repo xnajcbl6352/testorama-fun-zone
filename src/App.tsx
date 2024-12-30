@@ -1,41 +1,46 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { createClient } from "@supabase/supabase-js";
+import { SessionContextProvider, useSession } from "@supabase/auth-helpers-react";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import Index from "./pages/Index";
-import TestSimple from "./pages/TestSimple";
-import TestTematico from "./pages/TestTematico";
-import TestGamificado from "./pages/TestGamificado";
-import TestAdaptativo from "./pages/TestAdaptativo";
-import TestFallos from "./pages/TestFallos";
-import TestSimulado from "./pages/TestSimulado";
-import SoftwareManagement from "./pages/SoftwareManagement";
+import { Toaster } from "@/components/ui/toaster";
+import { Index } from "@/pages/Index";
+import { Login } from "@/pages/Login";
+import { StudentDashboard } from "@/components/student/StudentDashboard";
+import { supabase } from "@/integrations/supabase/client";
 
-const queryClient = new QueryClient();
+// Protected Route wrapper component
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const session = useSession();
+  
+  if (!session) {
+    return <Navigate to="/login" replace />;
+  }
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
+  return <>{children}</>;
+};
+
+function App() {
+  return (
+    <SessionContextProvider supabaseClient={supabase}>
+      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+        <Router>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/test/simple" element={<TestSimple />} />
-            <Route path="/test/tematico" element={<TestTematico />} />
-            <Route path="/test/gamificado" element={<TestGamificado />} />
-            <Route path="/test/adaptativo" element={<TestAdaptativo />} />
-            <Route path="/test/fallos" element={<TestFallos />} />
-            <Route path="/test/simulado" element={<TestSimulado />} />
-            <Route path="/software" element={<SoftwareManagement />} />
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <StudentDashboard />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </ThemeProvider>
-  </QueryClientProvider>
-);
+        </Router>
+        <Toaster />
+      </ThemeProvider>
+    </SessionContextProvider>
+  );
+}
 
 export default App;

@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
-import { useSession } from "@supabase/auth-helpers-react";
+import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, CreditCard, GraduationCap } from "lucide-react";
+import { Calendar, Clock, CreditCard, GraduationCap, LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useClasses } from "@/hooks/useClasses";
 import { ClassBookingDialog } from "./ClassBookingDialog";
 import { StudentProgress } from "./StudentProgress";
 import { type Class } from "@/types/class";
+import { useNavigate } from "react-router-dom";
 
 export function StudentDashboard() {
   const session = useSession();
+  const supabase = useSupabaseClient();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const { loadClasses } = useClasses();
   const [upcomingClasses, setUpcomingClasses] = useState<Class[]>([]);
@@ -38,6 +41,11 @@ export function StudentDashboard() {
     }
   };
 
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate("/login");
+  };
+
   if (!session) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -54,10 +62,16 @@ export function StudentDashboard() {
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Panel del Alumno</h1>
-        <Button onClick={() => setShowBooking(true)} className="gap-2">
-          <Calendar className="h-4 w-4" />
-          Reservar Clase
-        </Button>
+        <div className="flex gap-4">
+          <Button onClick={() => setShowBooking(true)} className="gap-2">
+            <Calendar className="h-4 w-4" />
+            Reservar Clase
+          </Button>
+          <Button variant="outline" onClick={handleSignOut} className="gap-2">
+            <LogOut className="h-4 w-4" />
+            Cerrar Sesión
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
