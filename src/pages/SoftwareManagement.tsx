@@ -14,6 +14,7 @@ import {
   Settings
 } from "lucide-react";
 import { StudentManagement } from "@/components/software/StudentManagement";
+import { SedesManagement } from "@/components/software/SedesManagement";
 
 const features = [
   {
@@ -115,6 +116,7 @@ export default function SoftwareManagement() {
             </Button>
             
             {activeModule === "Gestión de Alumnos" && <StudentManagement />}
+            {activeModule === "Gestión Multisección" && <SedesManagement />}
             {/* Otros módulos se añadirán aquí */}
           </div>
         )}
