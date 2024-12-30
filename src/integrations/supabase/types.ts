@@ -9,7 +9,98 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      records: {
+        Row: {
+          created_at: string | null
+          creation_date: string | null
+          dgt_response: Json | null
+          document_url: string | null
+          id: string
+          record_number: string
+          status: string
+          student_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          creation_date?: string | null
+          dgt_response?: Json | null
+          document_url?: string | null
+          id?: string
+          record_number: string
+          status?: string
+          student_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          creation_date?: string | null
+          dgt_response?: Json | null
+          document_url?: string | null
+          id?: string
+          record_number?: string
+          status?: string
+          student_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "records_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      students: {
+        Row: {
+          address: string | null
+          birth_date: string
+          created_at: string | null
+          dni: string
+          email: string | null
+          first_name: string
+          gdpr_consent: boolean | null
+          id: string
+          last_name: string
+          phone: string | null
+          registration_date: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          birth_date: string
+          created_at?: string | null
+          dni: string
+          email?: string | null
+          first_name: string
+          gdpr_consent?: boolean | null
+          id?: string
+          last_name: string
+          phone?: string | null
+          registration_date?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          birth_date?: string
+          created_at?: string | null
+          dni?: string
+          email?: string | null
+          first_name?: string
+          gdpr_consent?: boolean | null
+          id?: string
+          last_name?: string
+          phone?: string | null
+          registration_date?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
