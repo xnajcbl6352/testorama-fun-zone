@@ -10,3 +10,5 @@ export const studentSchema = z.object({
   address: z.string().optional(),
   gdpr_consent: z.boolean().default(false),
 });
+
+export type StudentFormValues = z.infer<typeof studentSchema>;

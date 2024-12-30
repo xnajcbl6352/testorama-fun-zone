@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import {
   Form,
   FormControl,
@@ -12,9 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { studentSchema } from "./studentSchema";
-
-export type StudentFormValues = z.infer<typeof studentSchema>;
+import { studentSchema, type StudentFormValues } from "./studentSchema";
 
 interface StudentFormProps {
   onSubmit: (values: StudentFormValues) => void;
