@@ -19,6 +19,7 @@ interface TestTypeCardProps {
   longDescription: string;
   icon: LucideIcon;
   difficulty?: "Fácil" | "Intermedio" | "Avanzado";
+  duration?: string;
   onClick: () => void;
 }
 
@@ -28,6 +29,7 @@ export function TestTypeCard({
   longDescription,
   icon: Icon,
   difficulty,
+  duration,
   onClick,
 }: TestTypeCardProps) {
   return (
@@ -42,12 +44,19 @@ export function TestTypeCard({
               <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
                 <Icon className="h-6 w-6 text-primary" />
               </div>
-              {difficulty && (
-                <span className="absolute right-4 top-4 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-                  {difficulty}
-                </span>
-              )}
-              <CardTitle className="text-xl">{title}</CardTitle>
+              <div className="flex flex-wrap gap-2">
+                {difficulty && (
+                  <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                    {difficulty}
+                  </span>
+                )}
+                {duration && (
+                  <span className="rounded-full bg-secondary/10 px-3 py-1 text-xs font-medium text-secondary">
+                    {duration}
+                  </span>
+                )}
+              </div>
+              <CardTitle className="mt-4 text-xl">{title}</CardTitle>
               <CardDescription>{description}</CardDescription>
             </CardHeader>
             <CardContent>
