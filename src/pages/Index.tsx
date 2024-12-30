@@ -8,7 +8,7 @@ import { ThemeToggle } from "@/components/home/ThemeToggle";
 import { TimerDialog } from "@/components/TimerDialog";
 import { Timer } from "@/components/Timer";
 
-const Index = () => {
+export function Index() {
   const navigate = useNavigate();
   const [showTimerDialog, setShowTimerDialog] = useState(false);
   const [selectedTestType, setSelectedTestType] = useState<string | null>(null);
@@ -47,6 +47,4 @@ const Index = () => {
       )}
     </div>
   );
-};
-
-export default Index;
+}
