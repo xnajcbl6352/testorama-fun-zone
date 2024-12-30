@@ -11,7 +11,8 @@ import {
   Bell,
   BarChart3,
   Shield,
-  Settings
+  Settings,
+  Wallet
 } from "lucide-react";
 import { StudentManagement } from "@/components/software/StudentManagement";
 import { SedesManagement } from "@/components/software/SedesManagement";
@@ -23,6 +24,7 @@ import { NotificacionesManagement } from "@/components/software/NotificacionesMa
 import { MarketingManagement } from "@/components/software/MarketingManagement";
 import { SeguridadManagement } from "@/components/software/SeguridadManagement";
 import { ConfiguracionManagement } from "@/components/software/ConfiguracionManagement";
+import { FinancialDashboard } from "@/components/software/financial/FinancialDashboard";
 
 const features = [
   {
@@ -74,6 +76,11 @@ const features = [
     icon: Settings,
     title: "Configuración",
     description: "Personalización y ajustes"
+  },
+  {
+    icon: Wallet,
+    title: "Dashboard Financiero",
+    description: "Análisis financiero y facturación"
   }
 ];
 
@@ -133,6 +140,7 @@ export default function SoftwareManagement() {
             {activeModule === "Marketing" && <MarketingManagement />}
             {activeModule === "Seguridad" && <SeguridadManagement />}
             {activeModule === "Configuración" && <ConfiguracionManagement />}
+            {activeModule === "Dashboard Financiero" && <FinancialDashboard />}
           </div>
         )}
 
