@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -32,7 +33,25 @@ export const useClasses = () => {
 
       if (error) throw error;
 
-      return (data || []) as Class[];
+      // Ensure the data matches our Class interface
+      const typedClasses: Class[] = (data || []).map(item => ({
+        ...item,
+        teacher: item.teacher ? {
+          first_name: item.teacher.first_name,
+          last_name: item.teacher.last_name
+        } : null,
+        student: item.student ? {
+          first_name: item.student.first_name,
+          last_name: item.student.last_name
+        } : null,
+        vehicle: item.vehicle ? {
+          plate_number: item.vehicle.plate_number,
+          brand: item.vehicle.brand,
+          model: item.vehicle.model
+        } : null
+      }));
+
+      return typedClasses;
     } catch (error: any) {
       toast({
         title: "Error al cargar clases",
