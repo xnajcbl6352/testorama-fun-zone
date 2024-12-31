@@ -1,39 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { 
-  Building2, 
-  Users, 
-  Car, 
-  BookOpen, 
-  Calendar, 
-  MessageSquare,
-  Bell,
-  BarChart3,
-  Shield,
-  Settings,
-  Wallet,
-  FileText,
-  Database,
-  Map,
-  FileSignature,
-  Building,
-  ArrowLeftRight,
-  Clock,
-  Smartphone,
-  Phone,
-  Send,
-  Mail,
-  Tag,
-  Globe,
-  Lock,
-  LifeBuoy,
-  GraduationCap,
-  Video,
-  LayoutDashboard,
-  CalendarClock,
-  Truck
-} from "lucide-react";
+import { FeatureGrid } from "@/components/software/features/FeatureGrid";
 import { StudentManagement } from "@/components/software/StudentManagement";
 import { SedesManagement } from "@/components/software/SedesManagement";
 import { VehiculosManagement } from "@/components/software/VehiculosManagement";
@@ -45,159 +13,6 @@ import { MarketingManagement } from "@/components/software/MarketingManagement";
 import { SeguridadManagement } from "@/components/software/SeguridadManagement";
 import { ConfiguracionManagement } from "@/components/software/ConfiguracionManagement";
 import { FinancialDashboard } from "@/components/software/financial/FinancialDashboard";
-
-const features = [
-  {
-    icon: LayoutDashboard,
-    title: "Dashboard",
-    description: "Vista general del sistema"
-  },
-  {
-    icon: Users,
-    title: "Gestión de Alumnos",
-    description: "Control completo de expedientes y seguimiento"
-  },
-  {
-    icon: FileText,
-    title: "Expedientes",
-    description: "Gestión de documentación oficial"
-  },
-  {
-    icon: Building2,
-    title: "Gestión Multisede",
-    description: "Administra múltiples sedes eficientemente"
-  },
-  {
-    icon: Wallet,
-    title: "Finanzas y Facturación",
-    description: "Control financiero y facturación"
-  },
-  {
-    icon: Database,
-    title: "Inventario",
-    description: "Gestión de materiales y recursos"
-  },
-  {
-    icon: Car,
-    title: "Vehículos",
-    description: "Control de flota y mantenimiento"
-  },
-  {
-    icon: Calendar,
-    title: "Clases y Exámenes",
-    description: "Programación y calendario"
-  },
-  {
-    icon: BookOpen,
-    title: "Material Didáctico",
-    description: "Recursos educativos digitales"
-  },
-  {
-    icon: BarChart3,
-    title: "Evaluaciones",
-    description: "Seguimiento del rendimiento"
-  },
-  {
-    icon: Map,
-    title: "GPS Tracking",
-    description: "Seguimiento de prácticas"
-  },
-  {
-    icon: FileSignature,
-    title: "Documentos Digitales",
-    description: "Gestión documental y firmas"
-  },
-  {
-    icon: Building,
-    title: "Integración DGT",
-    description: "Conexión con sistemas oficiales"
-  },
-  {
-    icon: ArrowLeftRight,
-    title: "Copias de Seguridad",
-    description: "Gestión de backups"
-  },
-  {
-    icon: Clock,
-    title: "Automatización",
-    description: "Tareas programadas"
-  },
-  {
-    icon: Smartphone,
-    title: "App de Alumnos",
-    description: "Gestión móvil para alumnos"
-  },
-  {
-    icon: Phone,
-    title: "App de Profesores",
-    description: "Gestión móvil para profesores"
-  },
-  {
-    icon: Send,
-    title: "WhatsApp",
-    description: "Integración de mensajería"
-  },
-  {
-    icon: Bell,
-    title: "Notificaciones",
-    description: "Sistema de alertas"
-  },
-  {
-    icon: MessageSquare,
-    title: "Mensajería Interna",
-    description: "Comunicación entre usuarios"
-  },
-  {
-    icon: Tag,
-    title: "Precios y Promociones",
-    description: "Gestión de tarifas"
-  },
-  {
-    icon: BarChart3,
-    title: "Marketing",
-    description: "Campañas y promociones"
-  },
-  {
-    icon: Globe,
-    title: "Generador Web",
-    description: "Creación de páginas web"
-  },
-  {
-    icon: Lock,
-    title: "Control de Acceso",
-    description: "Roles y permisos"
-  },
-  {
-    icon: Shield,
-    title: "Seguridad y RGPD",
-    description: "Protección de datos"
-  },
-  {
-    icon: LifeBuoy,
-    title: "Soporte",
-    description: "Sistema de tickets"
-  },
-  {
-    icon: GraduationCap,
-    title: "Cursos Especiales",
-    description: "CAP, ADR y otros"
-  },
-  {
-    icon: Video,
-    title: "Cursos Virtuales",
-    description: "Clases en streaming"
-  },
-  {
-    icon: CalendarClock,
-    title: "Reservas Avanzadas",
-    description: "Sistema de reservas"
-  },
-  {
-    icon: Truck,
-    title: "Control de Flota",
-    description: "Gestión avanzada de vehículos"
-  }
-];
 
 export default function SoftwareManagement() {
   const navigate = useNavigate();
@@ -220,21 +35,7 @@ export default function SoftwareManagement() {
         </div>
 
         {!activeModule ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-16">
-            {features.map((feature, index) => (
-              <div
-                key={index}
-                className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer"
-                onClick={() => handleModuleClick(feature.title)}
-              >
-                <div className="mb-4">
-                  <feature.icon className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="font-semibold mb-2">{feature.title}</h3>
-                <p className="text-sm text-gray-600">{feature.description}</p>
-              </div>
-            ))}
-          </div>
+          <FeatureGrid onFeatureSelect={handleModuleClick} />
         ) : (
           <div className="mb-16">
             <Button
