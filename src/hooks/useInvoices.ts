@@ -33,7 +33,6 @@ export const useInvoices = () => {
 
   const createInvoice = useMutation({
     mutationFn: async (input: InvoiceCreateInput) => {
-      // Generate invoice number if not provided
       const invoiceInput = {
         ...input,
         invoice_number: input.invoice_number || `INV-${Date.now()}`,
