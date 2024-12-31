@@ -1,4 +1,4 @@
-import { FileText, MoreHorizontal, Send } from "lucide-react";
+import { FileText, MoreHorizontal, Send, File } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -45,13 +45,14 @@ export function RecordList({
             <TableHead>Alumno</TableHead>
             <TableHead>Estado</TableHead>
             <TableHead>Fecha de Envío</TableHead>
+            <TableHead>Documentos</TableHead>
             <TableHead className="text-right">Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {records.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={5} className="text-center text-muted-foreground">
+              <TableCell colSpan={6} className="text-center text-muted-foreground">
                 No hay expedientes registrados
               </TableCell>
             </TableRow>
@@ -76,6 +77,22 @@ export function RecordList({
                   {record.dgt_submission_date
                     ? new Date(record.dgt_submission_date).toLocaleDateString()
                     : "-"}
+                </TableCell>
+                <TableCell>
+                  {record.document_url ? (
+                    <Button variant="ghost" size="sm" asChild className="h-8 w-8">
+                      <a
+                        href={record.document_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center"
+                      >
+                        <File className="h-4 w-4" />
+                      </a>
+                    </Button>
+                  ) : (
+                    "-"
+                  )}
                 </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>

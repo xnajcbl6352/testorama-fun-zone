@@ -26,8 +26,8 @@ import { useState } from "react";
 import type { RecordCreateInput } from "@/types/record";
 
 const formSchema = z.object({
-  student_id: z.string().min(1, "Please select a student"),
-  record_number: z.string().min(3, "Record number must be at least 3 characters"),
+  student_id: z.string().min(1, "Por favor selecciona un alumno"),
+  record_number: z.string().min(3, "El número de expediente debe tener al menos 3 caracteres"),
   status: z.enum(["pending", "in_progress", "completed"]),
   document_url: z.string().optional(),
 });
@@ -63,8 +63,8 @@ export function RecordForm({ open, onClose, initialData }: RecordFormProps) {
           ...values,
         });
         toast({
-          title: "Success",
-          description: "Record updated successfully",
+          title: "Éxito",
+          description: "Expediente actualizado correctamente",
         });
       } else {
         const recordInput: RecordCreateInput = {
@@ -75,8 +75,8 @@ export function RecordForm({ open, onClose, initialData }: RecordFormProps) {
         };
         await createRecord.mutateAsync(recordInput);
         toast({
-          title: "Success",
-          description: "Record created successfully",
+          title: "Éxito",
+          description: "Expediente creado correctamente",
         });
       }
       onClose();
@@ -96,7 +96,7 @@ export function RecordForm({ open, onClose, initialData }: RecordFormProps) {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>
-            {initialData ? "Edit Record" : "Create New Record"}
+            {initialData ? "Editar Expediente" : "Crear Nuevo Expediente"}
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -108,7 +108,7 @@ export function RecordForm({ open, onClose, initialData }: RecordFormProps) {
               name="record_number"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Record Number</FormLabel>
+                  <FormLabel>Número de Expediente</FormLabel>
                   <FormControl>
                     <Input placeholder="EXP-2024-001" {...field} />
                   </FormControl>
@@ -124,7 +124,7 @@ export function RecordForm({ open, onClose, initialData }: RecordFormProps) {
               name="document_url"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Document</FormLabel>
+                  <FormLabel>Documento</FormLabel>
                   <FormControl>
                     <DocumentUpload
                       onUploadComplete={field.onChange}
@@ -138,14 +138,14 @@ export function RecordForm({ open, onClose, initialData }: RecordFormProps) {
 
             <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" onClick={onClose}>
-                Cancel
+                Cancelar
               </Button>
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting
-                  ? "Saving..."
+                  ? "Guardando..."
                   : initialData
-                  ? "Update Record"
-                  : "Create Record"}
+                  ? "Actualizar Expediente"
+                  : "Crear Expediente"}
               </Button>
             </div>
           </form>
