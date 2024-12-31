@@ -5,3 +5,8 @@ export interface Student {
   dni: string;
   status: string;
 }
+
+export enum StudentStatus {
+  active = 'active',
+  inactive = 'inactive'
+}
