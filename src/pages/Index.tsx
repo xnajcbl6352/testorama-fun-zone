@@ -8,11 +8,16 @@ import { useNavigate } from "react-router-dom";
 export function Index() {
   const navigate = useNavigate();
 
+  const handleTestSelect = (test: any) => {
+    // Handle test selection
+    console.log("Selected test:", test);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary/5 to-background">
       <HeroSection />
       <FeaturesSection />
-      <TestTypesSection />
+      <TestTypesSection onTestSelect={handleTestSelect} />
       <ReviewsSection />
       
       <div className="container mx-auto px-4 py-16 text-center">

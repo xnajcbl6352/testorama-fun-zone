@@ -8,6 +8,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { useSession } from '@supabase/auth-helpers-react';
 import { CalendarHeader } from "./calendar/CalendarHeader";
 import { CalendarFilters } from "./calendar/CalendarFilters";
+import { CalendarSidebar } from "./calendar/CalendarSidebar";
 import { Class } from "@/types/class";
 import { useClasses } from "@/hooks/useClasses";
 import {
@@ -152,42 +153,44 @@ export function ProgramacionManagement() {
             setIsAddingClass={setIsAddingClass}
           />
           
-          <CalendarFilters 
-            filters={filters}
-            setFilters={setFilters}
-          />
-
-          <Card className="p-4">
-            <FullCalendar
-              plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-              initialView="timeGridWeek"
-              headerToolbar={{
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-              }}
-              editable={true}
-              selectable={true}
-              selectMirror={true}
-              dayMaxEvents={true}
-              weekends={true}
-              events={calendarEvents}
-              select={handleDateSelect}
-              eventClick={handleEventClick}
-              eventContent={eventContent}
-              height="auto"
-              slotMinTime="07:00:00"
-              slotMaxTime="21:00:00"
-              allDaySlot={false}
-              locale="es"
-              buttonText={{
-                today: 'Hoy',
-                month: 'Mes',
-                week: 'Semana',
-                day: 'Día'
-              }}
+          <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-4">
+            <CalendarSidebar 
+              onAddClass={() => setIsAddingClass(true)}
+              onFilterChange={setFilters}
             />
-          </Card>
+            
+            <Card className="p-4">
+              <FullCalendar
+                plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                initialView="timeGridWeek"
+                headerToolbar={{
+                  left: 'prev,next today',
+                  center: 'title',
+                  right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                }}
+                editable={true}
+                selectable={true}
+                selectMirror={true}
+                dayMaxEvents={true}
+                weekends={true}
+                events={calendarEvents}
+                select={handleDateSelect}
+                eventClick={handleEventClick}
+                eventContent={eventContent}
+                height="auto"
+                slotMinTime="07:00:00"
+                slotMaxTime="21:00:00"
+                allDaySlot={false}
+                locale="es"
+                buttonText={{
+                  today: 'Hoy',
+                  month: 'Mes',
+                  week: 'Semana',
+                  day: 'Día'
+                }}
+              />
+            </Card>
+          </div>
         </>
       )}
     </div>
