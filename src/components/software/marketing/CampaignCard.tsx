@@ -1,20 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Calendar, Target, Users, TrendingUp } from "lucide-react";
-
-interface CampaignCardProps {
-  campaign: {
-    status?: string;
-    name: string;
-    type: string;
-    start_date: string;
-    end_date?: string;
-    metrics?: {
-      reach?: number;
-      conversions?: number;
-      roi?: string;
-    };
-  };
-}
+import { CampaignCardProps } from "@/types/campaign";
 
 export function CampaignCard({ campaign }: CampaignCardProps) {
   const getStatusColor = (status?: string) => {

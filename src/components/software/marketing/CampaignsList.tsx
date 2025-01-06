@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { CampaignCard } from "./CampaignCard";
 import { useState } from "react";
+import { Campaign } from "@/types/campaign";
 
 const useCampaigns = () => {
   return useQuery({
@@ -17,7 +18,16 @@ const useCampaigns = () => {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data;
+
+      // Transform the data to ensure metrics is properly typed
+      return data.map((campaign): Campaign => ({
+        ...campaign,
+        metrics: typeof campaign.metrics === 'object' ? campaign.metrics : {
+          reach: 0,
+          conversions: 0,
+          roi: '0%'
+        }
+      }));
     }
   });
 };
