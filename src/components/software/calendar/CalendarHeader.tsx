@@ -1,40 +1,51 @@
-import { Calendar, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 interface CalendarHeaderProps {
-  isAddingClass: boolean;
-  setIsAddingClass: (value: boolean) => void;
-  onAddClass: () => void;
+  currentDate: Date;
+  onPrevious: () => void;
+  onNext: () => void;
+  onToday: () => void;
 }
 
-export function CalendarHeader({ isAddingClass, setIsAddingClass, onAddClass }: CalendarHeaderProps) {
+export function CalendarHeader({
+  currentDate,
+  onPrevious,
+  onNext,
+  onToday
+}: CalendarHeaderProps) {
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        <Calendar className="h-6 w-6 text-primary" />
-        <h2 className="text-2xl font-bold">Programación de Clases</h2>
-      </div>
-      <Dialog open={isAddingClass} onOpenChange={setIsAddingClass}>
-        <DialogTrigger asChild>
-          <Button className="gap-2" onClick={onAddClass}>
-            <Plus className="h-4 w-4" />
-            Nueva Clase
+    <div className="flex items-center justify-between py-4">
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={onPrevious}
+          >
+            <ChevronLeft className="h-4 w-4" />
           </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Programar Nueva Clase</DialogTitle>
-          </DialogHeader>
-          {/* Class creation form will be implemented in the next step */}
-        </DialogContent>
-      </Dialog>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={onNext}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onToday}
+          >
+            Hoy
+          </Button>
+        </div>
+        <h2 className="text-lg font-semibold">
+          {format(currentDate, "MMMM yyyy", { locale: es })}
+        </h2>
+      </div>
     </div>
   );
 }
