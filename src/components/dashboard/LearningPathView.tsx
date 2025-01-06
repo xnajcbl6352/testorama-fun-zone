@@ -42,7 +42,7 @@ export function LearningPathView() {
         const { data, error } = await supabase
           .from("learning_paths")
           .select("*")
-          .single();
+          .maybeSingle();
 
         if (error) throw error;
 
@@ -54,6 +54,21 @@ export function LearningPathView() {
             recommendations: supabasePath.recommendations || [],
           };
           setLearningPath(transformedPath);
+        } else {
+          // Handle case where no learning path exists
+          setLearningPath({
+            current_modules: [],
+            completed_modules: [],
+            recommendations: [{
+              type: "Getting Started",
+              description: "Welcome! Your learning path will be generated based on your progress."
+            }]
+          });
+          toast({
+            title: "No Learning Path Found",
+            description: "A default learning path has been created for you.",
+            variant: "default",
+          });
         }
       } catch (error) {
         console.error('Error fetching learning path:', error);
