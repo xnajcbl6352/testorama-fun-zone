@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Brain, BookOpen, GraduationCap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface Module {
   id: string;
@@ -32,28 +33,67 @@ interface SupabaseLearningPath {
 
 export function LearningPathView() {
   const [learningPath, setLearningPath] = useState<LearningPath | null>(null);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchLearningPath = async () => {
-      const { data, error } = await supabase
-        .from("learning_paths")
-        .select("*")
-        .single();
+      try {
+        const { data, error } = await supabase
+          .from("learning_paths")
+          .select("*")
+          .single();
 
-      if (!error && data) {
-        const supabasePath = data as SupabaseLearningPath;
-        // Transform the data to match our interface
-        const transformedPath: LearningPath = {
-          current_modules: supabasePath.current_modules || [],
-          completed_modules: supabasePath.completed_modules || [],
-          recommendations: supabasePath.recommendations || [],
-        };
-        setLearningPath(transformedPath);
+        if (error) throw error;
+
+        if (data) {
+          const supabasePath = data as SupabaseLearningPath;
+          const transformedPath: LearningPath = {
+            current_modules: supabasePath.current_modules || [],
+            completed_modules: supabasePath.completed_modules || [],
+            recommendations: supabasePath.recommendations || [],
+          };
+          setLearningPath(transformedPath);
+        }
+      } catch (error) {
+        console.error('Error fetching learning path:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load learning path",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchLearningPath();
-  }, []);
+  }, [toast]);
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-primary animate-pulse" />
+              Loading Learning Path...
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="space-y-2">
+                  <div className="h-6 bg-gray-100 rounded animate-pulse" />
+                  <div className="h-4 bg-gray-100 rounded animate-pulse" />
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   if (!learningPath) return null;
 
@@ -75,9 +115,17 @@ export function LearningPathView() {
                     <BookOpen className="h-4 w-4 text-muted-foreground" />
                     <span className="font-medium">{module.name}</span>
                   </div>
-                  <Badge variant="outline">{module.type}</Badge>
+                  <Badge 
+                    variant="outline" 
+                    className="animate-in fade-in slide-in-from-right duration-300"
+                  >
+                    {module.type}
+                  </Badge>
                 </div>
-                <Progress value={module.progress} />
+                <Progress 
+                  value={module.progress} 
+                  className="animate-in fade-in slide-in-from-bottom duration-500"
+                />
               </div>
             ))}
           </div>
@@ -96,7 +144,8 @@ export function LearningPathView() {
             {learningPath.recommendations.map((rec, index) => (
               <div
                 key={index}
-                className="p-4 border rounded-lg bg-muted/50"
+                className="p-4 border rounded-lg bg-muted/50 animate-in fade-in slide-in-from-bottom duration-500"
+                style={{ animationDelay: `${index * 100}ms` }}
               >
                 <Badge className="mb-2">{rec.type}</Badge>
                 <p className="text-sm text-muted-foreground">

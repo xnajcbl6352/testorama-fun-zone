@@ -9,33 +9,84 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      achievement_progress: {
+        Row: {
+          achievement_id: string | null
+          current_progress: number | null
+          id: string
+          last_updated: string | null
+          student_id: string | null
+        }
+        Insert: {
+          achievement_id?: string | null
+          current_progress?: number | null
+          id?: string
+          last_updated?: string | null
+          student_id?: string | null
+        }
+        Update: {
+          achievement_id?: string | null
+          current_progress?: number | null
+          id?: string
+          last_updated?: string | null
+          student_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "achievement_progress_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "achievement_progress_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       achievements: {
         Row: {
+          category: Database["public"]["Enums"]["achievement_category"] | null
           created_at: string
+          criteria: Json | null
           description: string
           icon_url: string | null
           id: string
           name: string
+          next_tier_threshold: number | null
           points: number | null
           requirements: Json | null
+          tier: Database["public"]["Enums"]["achievement_tier"] | null
         }
         Insert: {
+          category?: Database["public"]["Enums"]["achievement_category"] | null
           created_at?: string
+          criteria?: Json | null
           description: string
           icon_url?: string | null
           id?: string
           name: string
+          next_tier_threshold?: number | null
           points?: number | null
           requirements?: Json | null
+          tier?: Database["public"]["Enums"]["achievement_tier"] | null
         }
         Update: {
+          category?: Database["public"]["Enums"]["achievement_category"] | null
           created_at?: string
+          criteria?: Json | null
           description?: string
           icon_url?: string | null
           id?: string
           name?: string
+          next_tier_threshold?: number | null
           points?: number | null
           requirements?: Json | null
+          tier?: Database["public"]["Enums"]["achievement_tier"] | null
         }
         Relationships: []
       }
@@ -454,6 +505,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      achievement_category: "Speed" | "Accuracy" | "Persistence"
+      achievement_tier: "Bronze" | "Silver" | "Gold"
       class_status: "scheduled" | "completed" | "cancelled"
       class_type: "theoretical" | "practical" | "exam"
       learning_style: "visual" | "auditory" | "kinesthetic" | "mixed"
