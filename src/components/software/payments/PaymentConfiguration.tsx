@@ -34,30 +34,27 @@ export function PaymentConfiguration() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Clock className="h-5 w-5" />
-            Plazos de Pago
+            <Settings className="h-5 w-5" />
+            Configuración de Impuestos
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label htmlFor="plazo-matricula">Plazo para Matrícula (días)</Label>
+            <Label htmlFor="iva-rate">Tipo de IVA (%)</Label>
             <Input
-              id="plazo-matricula"
+              id="iva-rate"
               type="number"
-              defaultValue={30}
+              defaultValue={21}
               className="mt-1"
             />
           </div>
-          <div>
-            <Label htmlFor="plazo-mensualidad">
-              Plazo para Mensualidad (días)
-            </Label>
-            <Input
-              id="plazo-mensualidad"
-              type="number"
-              defaultValue={10}
-              className="mt-1"
-            />
+          <div className="flex items-center space-x-2">
+            <Switch id="auto-tax" defaultChecked />
+            <Label htmlFor="auto-tax">Calcular impuestos automáticamente</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Switch id="show-tax" defaultChecked />
+            <Label htmlFor="show-tax">Mostrar desglose de impuestos</Label>
           </div>
         </CardContent>
       </Card>
@@ -66,24 +63,30 @@ export function PaymentConfiguration() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Bell className="h-5 w-5" />
-            Recordatorios Automáticos
+            Facturación Automática
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center space-x-2">
-            <Switch id="recordatorio-vencimiento" defaultChecked />
-            <Label htmlFor="recordatorio-vencimiento">
-              Recordatorio de vencimiento
+            <Switch id="auto-invoice" defaultChecked />
+            <Label htmlFor="auto-invoice">
+              Generar facturas automáticamente
             </Label>
           </div>
           <div>
-            <Label htmlFor="dias-anticipacion">
-              Días de anticipación para recordatorio
-            </Label>
+            <Label htmlFor="invoice-prefix">Prefijo de Factura</Label>
             <Input
-              id="dias-anticipacion"
+              id="invoice-prefix"
+              defaultValue="FACT-"
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label htmlFor="next-number">Próximo Número</Label>
+            <Input
+              id="next-number"
               type="number"
-              defaultValue={3}
+              defaultValue={1}
               className="mt-1"
             />
           </div>
