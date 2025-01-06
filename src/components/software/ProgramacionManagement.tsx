@@ -7,7 +7,6 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { useSession } from '@supabase/auth-helpers-react';
 import { CalendarHeader } from "./calendar/CalendarHeader";
-import { CalendarFilters } from "./calendar/CalendarFilters";
 import { CalendarSidebar } from "./calendar/CalendarSidebar";
 import { Class } from "@/types/class";
 import { useClasses } from "@/hooks/useClasses";
@@ -17,6 +16,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { supabase } from "@/integrations/supabase/client";
 
 export function ProgramacionManagement() {
   const [classes, setClasses] = useState<Class[]>([]);
@@ -29,6 +29,29 @@ export function ProgramacionManagement() {
   const { toast } = useToast();
   const session = useSession();
   const { isLoading, loadClasses } = useClasses();
+
+  // Set up real-time subscription
+  useEffect(() => {
+    const channel = supabase
+      .channel('classes-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'classes'
+        },
+        (payload) => {
+          console.log('Real-time update:', payload);
+          loadClasses().then(setClasses);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [loadClasses]);
 
   useEffect(() => {
     if (session) {
@@ -88,7 +111,9 @@ export function ProgramacionManagement() {
       teacher: classItem.teacher,
       student: classItem.student,
       vehicle: classItem.vehicle,
-      statusIcon: getStatusIcon(classItem.status)
+      statusIcon: getStatusIcon(classItem.status),
+      payment_status: classItem.payment_status,
+      route_plan: classItem.route_plan
     }
   }));
 
@@ -123,6 +148,9 @@ export function ProgramacionManagement() {
                 {eventInfo.event.extendedProps.statusIcon} {' '}
                 {eventInfo.event.extendedProps.student?.first_name} {eventInfo.event.extendedProps.student?.last_name}
               </div>
+              {eventInfo.event.extendedProps.payment_status === 'pending' && (
+                <div className="text-xs text-yellow-500">⚠️ Pago pendiente</div>
+              )}
             </div>
           </TooltipTrigger>
           <TooltipContent>
@@ -133,6 +161,10 @@ export function ProgramacionManagement() {
                 <p><strong>Vehículo:</strong> {eventInfo.event.extendedProps.vehicle.brand} {eventInfo.event.extendedProps.vehicle.model}</p>
               )}
               <p><strong>Estado:</strong> {eventInfo.event.extendedProps.status}</p>
+              <p><strong>Estado de pago:</strong> {eventInfo.event.extendedProps.payment_status}</p>
+              {eventInfo.event.extendedProps.route_plan && (
+                <p><strong>Ruta planificada:</strong> Sí</p>
+              )}
             </div>
           </TooltipContent>
         </Tooltip>

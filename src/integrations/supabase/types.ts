@@ -93,11 +93,15 @@ export type Database = {
       classes: {
         Row: {
           attendance_marked: boolean | null
+          cancellation_reason: string | null
+          cancelled_at: string | null
           created_at: string | null
           date: string
           end_time: string
           id: string
           notes: string | null
+          payment_status: Database["public"]["Enums"]["payment_status"] | null
+          route_plan: Json | null
           start_time: string
           status: Database["public"]["Enums"]["class_status"] | null
           student_id: string
@@ -108,11 +112,15 @@ export type Database = {
         }
         Insert: {
           attendance_marked?: boolean | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
           created_at?: string | null
           date: string
           end_time: string
           id?: string
           notes?: string | null
+          payment_status?: Database["public"]["Enums"]["payment_status"] | null
+          route_plan?: Json | null
           start_time: string
           status?: Database["public"]["Enums"]["class_status"] | null
           student_id: string
@@ -123,11 +131,15 @@ export type Database = {
         }
         Update: {
           attendance_marked?: boolean | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
           created_at?: string | null
           date?: string
           end_time?: string
           id?: string
           notes?: string | null
+          payment_status?: Database["public"]["Enums"]["payment_status"] | null
+          route_plan?: Json | null
           start_time?: string
           status?: Database["public"]["Enums"]["class_status"] | null
           student_id?: string

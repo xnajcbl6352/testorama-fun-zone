@@ -2,6 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Plus, Filter, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
 
 interface CalendarSidebarProps {
   onAddClass: () => void;
@@ -9,6 +12,27 @@ interface CalendarSidebarProps {
 }
 
 export function CalendarSidebar({ onAddClass, onFilterChange }: CalendarSidebarProps) {
+  const [selectedType, setSelectedType] = useState<string>('');
+  const [selectedStatus, setSelectedStatus] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>('');
+
+  const handleTypeSelect = (type: string) => {
+    const newType = selectedType === type ? '' : type;
+    setSelectedType(newType);
+    onFilterChange({ type: newType, status: selectedStatus, searchTerm });
+  };
+
+  const handleStatusSelect = (status: string) => {
+    const newStatus = selectedStatus === status ? '' : status;
+    setSelectedStatus(newStatus);
+    onFilterChange({ type: selectedType, status: newStatus, searchTerm });
+  };
+
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    onFilterChange({ type: selectedType, status: selectedStatus, searchTerm: term });
+  };
+
   return (
     <Card className="p-4 space-y-6">
       <div className="space-y-2">
@@ -19,38 +43,73 @@ export function CalendarSidebar({ onAddClass, onFilterChange }: CalendarSidebarP
       </div>
 
       <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4" />
-          <h3 className="font-semibold">Filtros</h3>
-        </div>
-        
         <div className="space-y-2">
-          <h4 className="text-sm font-medium">Tipo de Clase</h4>
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="outline" className="cursor-pointer hover:bg-primary/10">
-              Teórica
-            </Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-primary/10">
-              Práctica
-            </Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-primary/10">
-              Examen
-            </Badge>
-          </div>
+          <Label>Buscar</Label>
+          <Input
+            placeholder="Buscar por nombre..."
+            value={searchTerm}
+            onChange={(e) => handleSearch(e.target.value)}
+          />
         </div>
 
-        <div className="space-y-2">
-          <h4 className="text-sm font-medium">Estado</h4>
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="outline" className="cursor-pointer hover:bg-primary/10">
-              Programada
-            </Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-primary/10">
-              Completada
-            </Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-primary/10">
-              Cancelada
-            </Badge>
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Filter className="h-4 w-4" />
+            <h3 className="font-semibold">Filtros</h3>
+          </div>
+          
+          <div className="space-y-2">
+            <h4 className="text-sm font-medium">Tipo de Clase</h4>
+            <div className="flex flex-wrap gap-2">
+              <Badge 
+                variant={selectedType === 'theoretical' ? 'default' : 'outline'}
+                className="cursor-pointer hover:bg-primary/10"
+                onClick={() => handleTypeSelect('theoretical')}
+              >
+                Teórica
+              </Badge>
+              <Badge 
+                variant={selectedType === 'practical' ? 'default' : 'outline'}
+                className="cursor-pointer hover:bg-primary/10"
+                onClick={() => handleTypeSelect('practical')}
+              >
+                Práctica
+              </Badge>
+              <Badge 
+                variant={selectedType === 'exam' ? 'default' : 'outline'}
+                className="cursor-pointer hover:bg-primary/10"
+                onClick={() => handleTypeSelect('exam')}
+              >
+                Examen
+              </Badge>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <h4 className="text-sm font-medium">Estado</h4>
+            <div className="flex flex-wrap gap-2">
+              <Badge 
+                variant={selectedStatus === 'scheduled' ? 'default' : 'outline'}
+                className="cursor-pointer hover:bg-primary/10"
+                onClick={() => handleStatusSelect('scheduled')}
+              >
+                Programada
+              </Badge>
+              <Badge 
+                variant={selectedStatus === 'completed' ? 'default' : 'outline'}
+                className="cursor-pointer hover:bg-primary/10"
+                onClick={() => handleStatusSelect('completed')}
+              >
+                Completada
+              </Badge>
+              <Badge 
+                variant={selectedStatus === 'cancelled' ? 'default' : 'outline'}
+                className="cursor-pointer hover:bg-primary/10"
+                onClick={() => handleStatusSelect('cancelled')}
+              >
+                Cancelada
+              </Badge>
+            </div>
           </div>
         </div>
       </div>
