@@ -20,19 +20,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useStudents } from "@/hooks/useStudents";
 import { useInvoices } from "@/hooks/useInvoices";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { StudentSelect } from "@/components/records/form/StudentSelect";
 
 const formSchema = z.object({
   student_id: z.string().min(1, "Por favor selecciona un alumno"),
   invoice_number: z.string().optional(),
   amount: z.string().min(1, "El importe es requerido"),
   due_date: z.string().min(1, "La fecha de vencimiento es requerida"),
+  concept: z.string().min(1, "El concepto es requerido"),
 });
 
 interface InvoiceFormProps {
@@ -41,7 +36,6 @@ interface InvoiceFormProps {
 }
 
 export function InvoiceForm({ open, onClose }: InvoiceFormProps) {
-  const { students } = useStudents();
   const { createInvoice } = useInvoices();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -51,6 +45,7 @@ export function InvoiceForm({ open, onClose }: InvoiceFormProps) {
       student_id: "",
       invoice_number: "",
       amount: "",
+      concept: "",
       due_date: new Date().toISOString().split("T")[0],
     },
   });
@@ -81,30 +76,7 @@ export function InvoiceForm({ open, onClose }: InvoiceFormProps) {
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="student_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Alumno</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecciona un alumno" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {students?.map((student) => (
-                        <SelectItem key={student.id} value={student.id}>
-                          {student.first_name} {student.last_name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <StudentSelect form={form} />
 
             <FormField
               control={form.control}
@@ -114,6 +86,20 @@ export function InvoiceForm({ open, onClose }: InvoiceFormProps) {
                   <FormLabel>Número de Factura (Opcional)</FormLabel>
                   <FormControl>
                     <Input placeholder="INV-2024-001" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="concept"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Concepto</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Clases de conducir" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -14,7 +14,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { formatCurrency } from "@/lib/utils";
-import { Euro, Users, FileText } from "lucide-react";
+import { Euro, Users, FileText, AlertTriangle } from "lucide-react";
 
 const COLORS = ["#2563EB", "#22C55E", "#EF4444"];
 
@@ -49,43 +49,60 @@ export function FinancialDashboard() {
   const totalRevenue = invoices?.reduce((sum, invoice) => sum + invoice.amount, 0) || 0;
   const pendingAmount = invoices?.reduce((sum, invoice) => 
     invoice.status === 'pending' ? sum + invoice.amount : sum, 0) || 0;
+  const overdueAmount = invoices?.reduce((sum, invoice) => 
+    invoice.status === 'overdue' ? sum + invoice.amount : sum, 0) || 0;
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium">Ingresos Totales</CardTitle>
             <Euro className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-primary">{formatCurrency(totalRevenue)}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              +20.1% from last month
+              +20.1% respecto al mes anterior
             </p>
           </CardContent>
         </Card>
+
         <Card className="bg-gradient-to-br from-orange-500/5 to-orange-500/10 border-orange-500/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Amount</CardTitle>
+            <CardTitle className="text-sm font-medium">Pagos Pendientes</CardTitle>
             <FileText className="h-4 w-4 text-orange-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-orange-500">{formatCurrency(pendingAmount)}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              {((pendingAmount / totalRevenue) * 100).toFixed(1)}% of total revenue
+              {((pendingAmount / totalRevenue) * 100).toFixed(1)}% del total
             </p>
           </CardContent>
         </Card>
+
+        <Card className="bg-gradient-to-br from-red-500/5 to-red-500/10 border-red-500/20">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pagos Vencidos</CardTitle>
+            <AlertTriangle className="h-4 w-4 text-red-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-red-500">{formatCurrency(overdueAmount)}</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {((overdueAmount / totalRevenue) * 100).toFixed(1)}% del total
+            </p>
+          </CardContent>
+        </Card>
+
         <Card className="bg-gradient-to-br from-green-500/5 to-green-500/10 border-green-500/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Students</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Alumnos</CardTitle>
             <Users className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-500">{invoices?.length || 0}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              Active students this month
+              Alumnos activos este mes
             </p>
           </CardContent>
         </Card>
@@ -94,7 +111,7 @@ export function FinancialDashboard() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Monthly Revenue</CardTitle>
+            <CardTitle>Ingresos Mensuales</CardTitle>
           </CardHeader>
           <CardContent className="pt-4">
             <ResponsiveContainer width="100%" height={300}>
@@ -115,7 +132,7 @@ export function FinancialDashboard() {
                 <Bar 
                   dataKey="amount" 
                   fill="#2563EB" 
-                  name="Revenue"
+                  name="Ingresos"
                   radius={[4, 4, 0, 0]}
                 />
               </BarChart>
@@ -125,7 +142,7 @@ export function FinancialDashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Invoice Status Distribution</CardTitle>
+            <CardTitle>Distribución de Facturas</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
