@@ -1,5 +1,6 @@
 import { Book, Brain, Trophy, BarChart3, FileQuestion, Clock } from "lucide-react";
 import { TestTypeCard } from "@/components/TestTypeCard";
+import { useNavigate } from "react-router-dom";
 
 const testTypes = [
   {
@@ -58,11 +59,14 @@ const testTypes = [
   },
 ];
 
-interface TestTypesSectionProps {
-  onTestSelect: (path: string) => void;
-}
+export function TestTypesSection() {
+  const navigate = useNavigate();
 
-export function TestTypesSection({ onTestSelect }: TestTypesSectionProps) {
+  const handleTestSelect = (path: string) => {
+    console.info("Selected test:", path);
+    navigate(path);
+  };
+
   return (
     <div className="container mx-auto px-6 py-16 sm:py-24">
       <div className="mb-12 text-center">
@@ -82,7 +86,7 @@ export function TestTypesSection({ onTestSelect }: TestTypesSectionProps) {
             icon={test.icon}
             difficulty={test.difficulty}
             duration={test.duration}
-            onClick={() => onTestSelect(test.path)}
+            onClick={() => handleTestSelect(test.path)}
           />
         ))}
       </div>
