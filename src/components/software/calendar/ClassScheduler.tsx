@@ -72,6 +72,10 @@ export function ClassScheduler() {
     }
   };
 
+  const handleAddClass = () => {
+    setIsAddingClass(true);
+  };
+
   const filteredClasses = classes.filter(classItem => {
     const matchesType = !filters.type || classItem.type === filters.type;
     const matchesStatus = !filters.status || classItem.status === filters.status;
@@ -108,12 +112,14 @@ export function ClassScheduler() {
       ) : (
         <>
           <CalendarHeader 
-            onAddClass={() => setIsAddingClass(true)}
+            isAddingClass={isAddingClass}
+            setIsAddingClass={setIsAddingClass}
+            onAddClass={handleAddClass}
           />
           
           <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-4">
             <CalendarSidebar 
-              onAddClass={() => setIsAddingClass(true)}
+              onAddClass={handleAddClass}
               onFilterChange={setFilters}
             />
             
