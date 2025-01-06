@@ -6,6 +6,7 @@ import { StudentManagement } from "@/components/software/StudentManagement";
 import { PaymentManagement } from "@/components/software/payments/PaymentManagement";
 import { ReportsDashboard } from "@/components/software/reports/ReportsDashboard";
 import { MarketingManagement } from "@/components/software/marketing/MarketingManagement";
+import { InstructorPortal } from "@/components/software/instructor/InstructorPortal";
 import { 
   Calendar, 
   LayoutDashboard, 
@@ -17,7 +18,8 @@ import {
   Users,
   ChevronLeft,
   Menu,
-  Target
+  Target,
+  ChalkboardTeacher
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -48,6 +50,7 @@ export default function SoftwareManagement() {
     { id: "documents", label: "Documentos", icon: Files },
     { id: "vehicles", label: "Vehículos", icon: Car },
     { id: "marketing", label: "Marketing", icon: Target },
+    { id: "instructor", label: "Portal del Profesor", icon: ChalkboardTeacher },
   ];
 
   const handleTabChange = (tabId: string) => {
@@ -112,11 +115,8 @@ export default function SoftwareManagement() {
               {activeTab === "payments" && <PaymentManagement />}
               {activeTab === "vehicles" && <VehiculosManagement />}
               {activeTab === "marketing" && <MarketingManagement />}
-              {activeTab === "reports" && (
-                <div className="space-y-4">
-                  <ReportsDashboard />
-                </div>
-              )}
+              {activeTab === "instructor" && <InstructorPortal />}
+              {activeTab === "reports" && <ReportsDashboard />}
             </div>
           </div>
         </SidebarInset>
