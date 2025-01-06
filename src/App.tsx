@@ -11,6 +11,7 @@ import TestGamificado from "@/pages/TestGamificado";
 import TestAdaptativo from "@/pages/TestAdaptativo";
 import TestFallos from "@/pages/TestFallos";
 import TestSimulado from "@/pages/TestSimulado";
+import DocumentManagement from "@/pages/DocumentManagement";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -31,6 +32,7 @@ export default function App() {
             <Route path="/" element={<Index />} />
             <Route path="/dashboard" element={<StudentDashboard />} />
             <Route path="/software" element={<SoftwareManagement />} />
+            <Route path="/software/documents" element={<DocumentManagement />} />
             <Route path="/test/simple" element={<TestSimple />} />
             <Route path="/test/tematico" element={<TestTematico />} />
             <Route path="/test/gamificado" element={<TestGamificado />} />

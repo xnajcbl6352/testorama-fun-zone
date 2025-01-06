@@ -1,12 +1,14 @@
 import { ProgramacionManagement } from "@/components/software/ProgramacionManagement";
 import { FinancialDashboard } from "@/components/software/financial/FinancialDashboard";
 import { InvoiceList } from "@/components/software/invoices/InvoiceList";
-import { Calendar, LayoutDashboard, Receipt, CreditCard, FileBarChart } from "lucide-react";
+import { Calendar, LayoutDashboard, Receipt, CreditCard, FileBarChart, Files } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function SoftwareManagement() {
   const [activeTab, setActiveTab] = useState("calendar");
+  const navigate = useNavigate();
 
   const tabs = [
     { id: "calendar", label: "Calendario", icon: Calendar },
@@ -14,7 +16,16 @@ export default function SoftwareManagement() {
     { id: "invoices", label: "Facturas", icon: Receipt },
     { id: "payments", label: "Pagos", icon: CreditCard },
     { id: "reports", label: "Informes", icon: FileBarChart },
+    { id: "documents", label: "Documentos", icon: Files },
   ];
+
+  const handleTabChange = (tabId: string) => {
+    if (tabId === "documents") {
+      navigate("/software/documents");
+    } else {
+      setActiveTab(tabId);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50/40">
@@ -32,7 +43,7 @@ export default function SoftwareManagement() {
           {tabs.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
-              onClick={() => setActiveTab(id)}
+              onClick={() => handleTabChange(id)}
               className={cn(
                 "flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors",
                 "hover:text-blue-600 relative",
