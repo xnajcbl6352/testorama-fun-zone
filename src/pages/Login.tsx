@@ -18,6 +18,24 @@ export function Login() {
     }
   }, [session, navigate]);
 
+  // Listen for auth errors
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'USER_DELETED' || event === 'SIGNED_OUT') {
+        toast({
+          title: "Sesión finalizada",
+          description: "Has cerrado sesión correctamente",
+        });
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [toast]);
+
   return (
     <div className="container mx-auto flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-md">
@@ -43,16 +61,6 @@ export function Login() {
             onlyThirdPartyProviders={false}
             magicLink={false}
             showLinks={true}
-            onError={(error) => {
-              console.error('Auth error:', error);
-              toast({
-                title: "Error de autenticación",
-                description: error.message === "Email logins are disabled" 
-                  ? "El inicio de sesión por correo electrónico está deshabilitado"
-                  : "Por favor, verifica tus credenciales e intenta de nuevo",
-                variant: "destructive",
-              });
-            }}
             localization={{
               variables: {
                 sign_in: {
