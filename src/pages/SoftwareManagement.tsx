@@ -1,7 +1,8 @@
 import { ProgramacionManagement } from "@/components/software/ProgramacionManagement";
 import { FinancialDashboard } from "@/components/software/financial/FinancialDashboard";
 import { InvoiceList } from "@/components/software/invoices/InvoiceList";
-import { Calendar, LayoutDashboard, Receipt, CreditCard, FileBarChart, Files } from "lucide-react";
+import { VehiculosManagement } from "@/components/software/VehiculosManagement";
+import { Calendar, LayoutDashboard, Receipt, CreditCard, FileBarChart, Files, Car } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -17,6 +18,7 @@ export default function SoftwareManagement() {
     { id: "payments", label: "Pagos", icon: CreditCard },
     { id: "reports", label: "Informes", icon: FileBarChart },
     { id: "documents", label: "Documentos", icon: Files },
+    { id: "vehicles", label: "Vehículos", icon: Car },
   ];
 
   const handleTabChange = (tabId: string) => {
@@ -62,6 +64,7 @@ export default function SoftwareManagement() {
           {activeTab === "calendar" && <ProgramacionManagement />}
           {activeTab === "dashboard" && <FinancialDashboard />}
           {activeTab === "invoices" && <InvoiceList />}
+          {activeTab === "vehicles" && <VehiculosManagement />}
           {activeTab === "payments" && (
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-12">
               <div className="flex flex-col items-center justify-center text-center space-y-3">
