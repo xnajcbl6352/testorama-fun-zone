@@ -15,6 +15,7 @@ import { useClasses } from "@/hooks/useClasses";
 import { supabase } from "@/integrations/supabase/client";
 import type { Class } from "@/types/class";
 import { ClassCard } from "./ClassCard";
+import { EventImpl } from '@fullcalendar/core/internal';
 
 export function ClassScheduler() {
   const [selectedClass, setSelectedClass] = useState<Class | null>(null);
@@ -104,6 +105,13 @@ export function ClassScheduler() {
     }
   };
 
+  const handleEventClick = (info: { event: EventImpl }) => {
+    const classData = classes.find(c => c.id === info.event.id);
+    if (classData) {
+      setSelectedClass(classData);
+    }
+  };
+
   return (
     <div className="space-y-4">
       <CalendarTopNav 
@@ -128,7 +136,7 @@ export function ClassScheduler() {
           events={calendarEvents}
           eventDrop={handleEventDrop}
           select={() => setIsAddingClass(true)}
-          eventClick={({ event }) => setSelectedClass(classes.find(c => c.id === event.id) || null)}
+          eventClick={handleEventClick}
           height="auto"
           slotMinTime="08:00:00"
           slotMaxTime="20:00:00"
@@ -138,8 +146,13 @@ export function ClassScheduler() {
           snapDuration="00:15:00"
           eventContent={(eventInfo) => (
             <ClassCard
-              classData={classes.find(c => c.id === eventInfo.event.id) || eventInfo.event}
-              onClick={() => setSelectedClass(classes.find(c => c.id === eventInfo.event.id) || null)}
+              classData={classes.find(c => c.id === eventInfo.event.id)}
+              onClick={() => {
+                const classData = classes.find(c => c.id === eventInfo.event.id);
+                if (classData) {
+                  setSelectedClass(classData);
+                }
+              }}
             />
           )}
         />

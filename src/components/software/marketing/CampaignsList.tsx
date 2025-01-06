@@ -2,20 +2,7 @@ import { useEffect, useState } from "react";
 import { CampaignCard } from "./CampaignCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-
-interface Campaign {
-  id: string;
-  name: string;
-  type: string;
-  status: string;
-  start_date: string;
-  end_date?: string;
-  metrics: {
-    reach?: number;
-    conversions?: number;
-    roi?: string;
-  };
-}
+import { Campaign } from "@/types/campaign";
 
 export function CampaignsList() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -43,9 +30,9 @@ export function CampaignsList() {
         start_date: campaign.start_date,
         end_date: campaign.end_date,
         metrics: typeof campaign.metrics === 'object' ? {
-          reach: campaign.metrics?.reach as number,
-          conversions: campaign.metrics?.conversions as number,
-          roi: campaign.metrics?.roi as string,
+          reach: campaign.metrics?.reach as number || 0,
+          conversions: campaign.metrics?.conversions as number || 0,
+          roi: campaign.metrics?.roi as string || '0%',
         } : {
           reach: 0,
           conversions: 0,
@@ -74,12 +61,7 @@ export function CampaignsList() {
       {campaigns.map((campaign) => (
         <CampaignCard
           key={campaign.id}
-          name={campaign.name}
-          type={campaign.type}
-          status={campaign.status}
-          start_date={campaign.start_date}
-          end_date={campaign.end_date}
-          metrics={campaign.metrics}
+          campaign={campaign}
         />
       ))}
     </div>
