@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -7,7 +6,6 @@ import {
   Clock, 
   CreditCard, 
   GraduationCap, 
-  LogOut, 
   BookOpen,
   Trophy,
   Target
@@ -17,7 +15,6 @@ import { useClasses } from "@/hooks/useClasses";
 import { ClassBookingDialog } from "./ClassBookingDialog";
 import { StudentProgress } from "./StudentProgress";
 import { type Class } from "@/types/class";
-import { useNavigate } from "react-router-dom";
 import { AchievementsDisplay } from "../dashboard/AchievementsDisplay";
 import { LearningPathView } from "../dashboard/LearningPathView";
 import { Badge } from "@/components/ui/badge";
@@ -29,9 +26,6 @@ interface StudentStats {
 }
 
 export function StudentDashboard() {
-  const session = useSession();
-  const supabase = useSupabaseClient();
-  const navigate = useNavigate();
   const { toast } = useToast();
   const { loadClasses } = useClasses();
   const [upcomingClasses, setUpcomingClasses] = useState<Class[]>([]);
@@ -42,74 +36,6 @@ export function StudentDashboard() {
     totalPoints: 0
   });
 
-  useEffect(() => {
-    if (!session) {
-      navigate("/login");
-      return;
-    }
-
-    const loadStudentData = async () => {
-      try {
-        // Load upcoming classes
-        const classes = await loadClasses();
-        const upcoming = classes.filter(
-          (c) => new Date(c.date + "T" + c.start_time) > new Date()
-        );
-        setUpcomingClasses(upcoming);
-
-        // Load student stats
-        const { data: profileData } = await supabase
-          .from("student_profiles")
-          .select("points")
-          .eq("id", session.user.id)
-          .single();
-
-        const { count: classesCount } = await supabase
-          .from("classes")
-          .select("*", { count: 'exact', head: true })
-          .eq("student_id", session.user.id);
-
-        const { data: learningPath } = await supabase
-          .from("learning_paths")
-          .select("completed_modules")
-          .eq("student_id", session.user.id)
-          .single();
-
-        setStats({
-          totalClasses: classesCount || 0,
-          completedModules: learningPath?.completed_modules?.length || 0,
-          totalPoints: profileData?.points || 0
-        });
-
-      } catch (error: any) {
-        toast({
-          title: "Error",
-          description: "No se pudieron cargar los datos del estudiante",
-          variant: "destructive",
-        });
-      }
-    };
-
-    loadStudentData();
-  }, [session, loadClasses, supabase, navigate, toast]);
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    navigate("/login");
-  };
-
-  if (!session) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <Card className="w-[350px]">
-          <CardHeader>
-            <CardTitle>Inicia sesión para continuar</CardTitle>
-          </CardHeader>
-        </Card>
-      </div>
-    );
-  }
-
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex justify-between items-center">
@@ -118,10 +44,6 @@ export function StudentDashboard() {
           <Button onClick={() => setShowBooking(true)} className="gap-2">
             <Calendar className="h-4 w-4" />
             Reservar Clase
-          </Button>
-          <Button variant="outline" onClick={handleSignOut} className="gap-2">
-            <LogOut className="h-4 w-4" />
-            Cerrar Sesión
           </Button>
         </div>
       </div>
