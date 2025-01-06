@@ -167,6 +167,51 @@ export type Database = {
         }
         Relationships: []
       }
+      campaigns: {
+        Row: {
+          ab_test_config: Json | null
+          budget: number | null
+          created_at: string | null
+          end_date: string | null
+          id: string
+          metrics: Json | null
+          name: string
+          start_date: string
+          status: string | null
+          target_audience: Json | null
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          ab_test_config?: Json | null
+          budget?: number | null
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          metrics?: Json | null
+          name: string
+          start_date: string
+          status?: string | null
+          target_audience?: Json | null
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          ab_test_config?: Json | null
+          budget?: number | null
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          metrics?: Json | null
+          name?: string
+          start_date?: string
+          status?: string | null
+          target_audience?: Json | null
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       classes: {
         Row: {
           attendance_marked: boolean | null
@@ -249,6 +294,41 @@ export type Database = {
           },
         ]
       }
+      feedback: {
+        Row: {
+          comment: string | null
+          created_at: string | null
+          id: string
+          rating: number | null
+          student_id: string | null
+          type: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string | null
+          id?: string
+          rating?: number | null
+          student_id?: string | null
+          type: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string | null
+          id?: string
+          rating?: number | null
+          student_id?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoices: {
         Row: {
           amount: number
@@ -286,6 +366,59 @@ export type Database = {
             columns: ["student_id"]
             isOneToOne: false
             referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leads: {
+        Row: {
+          campaign_id: string | null
+          created_at: string | null
+          email: string
+          first_name: string
+          id: string
+          last_contact: string | null
+          last_name: string
+          notes: string | null
+          phone: string | null
+          source: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          campaign_id?: string | null
+          created_at?: string | null
+          email: string
+          first_name: string
+          id?: string
+          last_contact?: string | null
+          last_name: string
+          notes?: string | null
+          phone?: string | null
+          source?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          campaign_id?: string | null
+          created_at?: string | null
+          email?: string
+          first_name?: string
+          id?: string
+          last_contact?: string | null
+          last_name?: string
+          notes?: string | null
+          phone?: string | null
+          source?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
             referencedColumns: ["id"]
           },
         ]
@@ -395,6 +528,84 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      pricing_packages: {
+        Row: {
+          base_price: number
+          created_at: string | null
+          description: string | null
+          features: Json | null
+          id: string
+          is_active: boolean | null
+          name: string
+          seasonal_multiplier: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          base_price: number
+          created_at?: string | null
+          description?: string | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          seasonal_multiplier?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          base_price?: number
+          created_at?: string | null
+          description?: string | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          seasonal_multiplier?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      promotions: {
+        Row: {
+          code: string
+          conditions: Json | null
+          created_at: string | null
+          end_date: string | null
+          id: string
+          start_date: string
+          type: string
+          updated_at: string | null
+          usage_count: number | null
+          usage_limit: number | null
+          value: number
+        }
+        Insert: {
+          code: string
+          conditions?: Json | null
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          start_date: string
+          type: string
+          updated_at?: string | null
+          usage_count?: number | null
+          usage_limit?: number | null
+          value: number
+        }
+        Update: {
+          code?: string
+          conditions?: Json | null
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          start_date?: string
+          type?: string
+          updated_at?: string | null
+          usage_count?: number | null
+          usage_limit?: number | null
+          value?: number
+        }
+        Relationships: []
       }
       records: {
         Row: {
