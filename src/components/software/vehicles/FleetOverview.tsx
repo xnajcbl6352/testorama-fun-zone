@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Car, Tool, Clock, CheckCircle } from "lucide-react";
+import { Car, Wrench, Clock, CheckCircle } from "lucide-react";
 
 interface FleetStats {
   total: number;
@@ -29,7 +29,7 @@ export function FleetOverview({ stats }: FleetOverviewProps) {
     {
       title: "En Mantenimiento",
       value: stats.maintenance,
-      icon: Tool,
+      icon: Wrench,
       color: "text-yellow-600",
     },
     {

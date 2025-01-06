@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Car, Tool, Calendar, AlertTriangle } from "lucide-react";
+import { Car, Wrench, Calendar, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Vehicle {
@@ -97,7 +97,7 @@ export function VehicleCard({ vehicle, onEdit, onMaintenance }: VehicleCardProps
           onClick={handleMaintenanceClick}
           disabled={isLoading}
         >
-          <Tool className="h-4 w-4 mr-2" />
+          <Wrench className="h-4 w-4 mr-2" />
           Mantenimiento
         </Button>
       </div>
