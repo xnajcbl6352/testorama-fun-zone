@@ -1,59 +1,100 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { PaymentSummaryCards } from "./reports/PaymentSummaryCards";
-import { PaymentTrendsChart } from "./reports/PaymentTrendsChart";
+import { formatCurrency } from "@/lib/utils";
+import { CreditCard, History, Calendar, Wallet } from "lucide-react";
 
 export function PaymentOverview() {
-  const { data: stats } = useQuery({
+  const { data: paymentStats } = useQuery({
     queryKey: ["payment-stats"],
     queryFn: async () => {
-      const now = new Date();
-      const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-      const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-
-      const { data: monthlyIncome } = await supabase
+      const { data, error } = await supabase
         .from("payments")
-        .select("amount")
-        .gte("payment_date", firstDayOfMonth.toISOString())
-        .lte("payment_date", lastDayOfMonth.toISOString());
+        .select(`
+          amount,
+          payment_date,
+          method,
+          invoice:invoice_id (
+            status
+          )
+        `);
 
-      const { data: pendingPayments } = await supabase
-        .from("invoices")
-        .select("amount")
-        .eq("status", "pending");
-
-      const { data: upcomingPayments } = await supabase
-        .from("invoices")
-        .select("amount, due_date")
-        .eq("status", "pending")
-        .gte("due_date", new Date().toISOString())
-        .lte("due_date", new Date(now.setDate(now.getDate() + 30)).toISOString());
-
-      return {
-        monthlyIncome: monthlyIncome?.reduce((sum, p) => sum + p.amount, 0) || 0,
-        pendingAmount: pendingPayments?.reduce((sum, p) => sum + p.amount, 0) || 0,
-        upcomingPayments: upcomingPayments?.length || 0,
-      };
+      if (error) throw error;
+      return data;
     },
   });
 
-  const chartData = [
-    { name: "Ene", ingresos: 4000, gastos: 2400 },
-    { name: "Feb", ingresos: 3000, gastos: 1398 },
-    { name: "Mar", ingresos: 2000, gastos: 9800 },
-    { name: "Abr", ingresos: 2780, gastos: 3908 },
-    { name: "May", ingresos: 1890, gastos: 4800 },
-    { name: "Jun", ingresos: 2390, gastos: 3800 },
-  ];
+  const totalPayments = paymentStats?.reduce((sum, payment) => sum + payment.amount, 0) || 0;
+  const pendingPayments = paymentStats?.filter(payment => payment.invoice.status === 'pending').length || 0;
 
   return (
-    <div className="space-y-6">
-      <PaymentSummaryCards
-        totalIncome={stats?.monthlyIncome || 0}
-        pendingAmount={stats?.pendingAmount || 0}
-        upcomingPayments={stats?.upcomingPayments || 0}
-      />
-      <PaymentTrendsChart data={chartData} />
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">
+            Total Recaudado
+          </CardTitle>
+          <Wallet className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{formatCurrency(totalPayments)}</div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">
+            Pagos Pendientes
+          </CardTitle>
+          <History className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{pendingPayments}</div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">
+            Pagos del Mes
+          </CardTitle>
+          <Calendar className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">
+            {paymentStats?.filter(payment => {
+              const paymentDate = new Date(payment.payment_date);
+              const now = new Date();
+              return paymentDate.getMonth() === now.getMonth() &&
+                     paymentDate.getFullYear() === now.getFullYear();
+            }).length || 0}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">
+            Método más usado
+          </CardTitle>
+          <CreditCard className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold capitalize">
+            {paymentStats?.reduce((acc, curr) => {
+              const count = acc[curr.method] || 0;
+              return { ...acc, [curr.method]: count + 1 };
+            }, {} as Record<string, number>)
+            // Get the method with the highest count
+            && Object.entries(
+              paymentStats.reduce((acc, curr) => {
+                const count = acc[curr.method] || 0;
+                return { ...acc, [curr.method]: count + 1 };
+              }, {} as Record<string, number>)
+            ).sort(([,a], [,b]) => b - a)[0]?.[0] || 'N/A'}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
