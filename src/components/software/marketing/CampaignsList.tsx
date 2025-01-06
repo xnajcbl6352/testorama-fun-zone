@@ -3,6 +3,7 @@ import { CampaignCard } from "./CampaignCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Campaign } from "@/types/campaign";
+import { Json } from "@/integrations/supabase/types";
 
 export function CampaignsList() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -22,23 +23,23 @@ export function CampaignsList() {
       if (error) throw error;
 
       // Transform the data to match the Campaign interface
-      const transformedCampaigns: Campaign[] = (data || []).map(campaign => ({
-        id: campaign.id,
-        name: campaign.name,
-        type: campaign.type,
-        status: campaign.status,
-        start_date: campaign.start_date,
-        end_date: campaign.end_date,
-        metrics: typeof campaign.metrics === 'object' ? {
-          reach: campaign.metrics?.reach as number || 0,
-          conversions: campaign.metrics?.conversions as number || 0,
-          roi: campaign.metrics?.roi as string || '0%',
-        } : {
-          reach: 0,
-          conversions: 0,
-          roi: '0%'
-        }
-      }));
+      const transformedCampaigns: Campaign[] = (data || []).map(campaign => {
+        const metrics = campaign.metrics as { [key: string]: Json };
+        
+        return {
+          id: campaign.id,
+          name: campaign.name,
+          type: campaign.type,
+          status: campaign.status,
+          start_date: campaign.start_date,
+          end_date: campaign.end_date,
+          metrics: {
+            reach: typeof metrics?.reach === 'number' ? metrics.reach : 0,
+            conversions: typeof metrics?.conversions === 'number' ? metrics.conversions : 0,
+            roi: typeof metrics?.roi === 'string' ? metrics.roi : '0%',
+          }
+        };
+      });
 
       setCampaigns(transformedCampaigns);
     } catch (error: any) {
