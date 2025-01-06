@@ -16,6 +16,18 @@ export function Login() {
     }
   }, [session, navigate]);
 
+  if (!supabase) {
+    return (
+      <div className="container mx-auto flex min-h-screen items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="text-center">Cargando...</CardTitle>
+          </CardHeader>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-md">
