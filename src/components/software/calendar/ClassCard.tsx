@@ -1,6 +1,12 @@
 import { cn } from "@/lib/utils";
 import { Book, Car, GraduationCap } from "lucide-react";
 import type { Class } from "@/types/class";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ClassCardProps {
   classData: Class;
@@ -34,35 +40,58 @@ export function ClassCard({ classData, onClick }: ClassCardProps) {
     }
   };
 
-  return (
-    <div
-      onClick={onClick}
-      className={cn(
-        "p-2 rounded-md border cursor-pointer hover:shadow-md transition-shadow",
-        getBackgroundColor(classData.type)
-      )}
-    >
-      <div className="flex items-center justify-between mb-1">
-        <span className="text-sm font-medium">
-          {classData.start_time} - {classData.end_time}
-        </span>
-        {getTypeIcon(classData.type)}
-      </div>
-      
-      <div className="text-sm font-medium mb-1">
+  const tooltipContent = (
+    <div className="space-y-1">
+      <div className="font-medium">
         {classData.student?.first_name} {classData.student?.last_name}
       </div>
-      
-      <div className="text-xs text-gray-600">
+      <div className="text-sm text-gray-500">
         {classData.teacher?.first_name} {classData.teacher?.last_name}
       </div>
-      
-      {classData.type === 'practical' && classData.vehicle && (
-        <div className="text-xs text-gray-600 flex items-center gap-1 mt-1">
-          <Car className="h-3 w-3" />
-          {classData.vehicle.brand} {classData.vehicle.model}
-        </div>
-      )}
+      <div className="text-sm">
+        {classData.start_time} - {classData.end_time}
+      </div>
     </div>
+  );
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div
+            onClick={onClick}
+            className={cn(
+              "p-2 rounded-md border cursor-pointer hover:shadow-md transition-shadow",
+              getBackgroundColor(classData.type)
+            )}
+          >
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-sm font-medium">
+                {classData.start_time} - {classData.end_time}
+              </span>
+              {getTypeIcon(classData.type)}
+            </div>
+            
+            <div className="text-sm font-medium mb-1">
+              {classData.student?.first_name} {classData.student?.last_name}
+            </div>
+            
+            <div className="text-xs text-gray-600">
+              {classData.teacher?.first_name} {classData.teacher?.last_name}
+            </div>
+            
+            {classData.type === 'practical' && classData.vehicle && (
+              <div className="text-xs text-gray-600 flex items-center gap-1 mt-1">
+                <Car className="h-3 w-3" />
+                {classData.vehicle.brand} {classData.vehicle.model}
+              </div>
+            )}
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>
+          {tooltipContent}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }

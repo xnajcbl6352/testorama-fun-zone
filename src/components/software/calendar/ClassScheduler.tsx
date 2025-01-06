@@ -15,7 +15,7 @@ import { useClasses } from "@/hooks/useClasses";
 import { supabase } from "@/integrations/supabase/client";
 import type { Class } from "@/types/class";
 import { ClassCard } from "./ClassCard";
-import { EventImpl } from '@fullcalendar/core/internal';
+import { format } from "date-fns";
 
 export function ClassScheduler() {
   const [selectedClass, setSelectedClass] = useState<Class | null>(null);
@@ -23,10 +23,10 @@ export function ClassScheduler() {
   const [isCancelling, setIsCancelling] = useState(false);
   const [view, setView] = useState('timeGridWeek');
   const [selectedLocation, setSelectedLocation] = useState<string>('all');
+  const [selectedDate, setSelectedDate] = useState<{ start: string; end: string } | null>(null);
   const { toast } = useToast();
   const { isLoading, loadClasses } = useClasses();
   const [classes, setClasses] = useState<Class[]>([]);
-  const [currentDate, setCurrentDate] = useState(new Date());
 
   useEffect(() => {
     const channel = supabase
@@ -61,7 +61,7 @@ export function ClassScheduler() {
       case 'practical':
         return '#34d399'; // Green
       case 'exam':
-        return '#f87171'; // Orange
+        return '#f87171'; // Red
       default:
         return '#94a3b8';
     }
@@ -77,21 +77,29 @@ export function ClassScheduler() {
     start: `${classItem.date}T${classItem.start_time}`,
     end: `${classItem.date}T${classItem.end_time}`,
     backgroundColor: getEventColor(classItem.type),
-    extendedProps: {
-      type: classItem.type,
-      status: classItem.status,
-      teacher: classItem.teacher,
-      student: classItem.student,
-      vehicle: classItem.vehicle,
-      payment_status: classItem.payment_status,
-      route_plan: classItem.route_plan,
-      location: classItem.location
-    }
+    extendedProps: classItem
   }));
 
-  const handleEventDrop = async ({ event }: any) => {
+  const handleEventDrop = async ({ event, oldEvent }: any) => {
     try {
-      // Implementation pending for drag and drop
+      const classData = classes.find(c => c.id === event.id);
+      if (!classData) return;
+
+      const newStart = format(event.start, "HH:mm:ss");
+      const newEnd = format(event.end, "HH:mm:ss");
+      const newDate = format(event.start, "yyyy-MM-dd");
+
+      const { error } = await supabase
+        .from('classes')
+        .update({
+          date: newDate,
+          start_time: newStart,
+          end_time: newEnd
+        })
+        .eq('id', event.id);
+
+      if (error) throw error;
+
       toast({
         title: "Clase reprogramada",
         description: "La clase ha sido reprogramada exitosamente.",
@@ -102,10 +110,20 @@ export function ClassScheduler() {
         description: error.message,
         variant: "destructive",
       });
+      // Revert the drag if there's an error
+      event.revert();
     }
   };
 
-  const handleEventClick = (info: { event: EventImpl }) => {
+  const handleSelect = (selectInfo: any) => {
+    setSelectedDate({
+      start: format(selectInfo.start, "HH:mm:ss"),
+      end: format(selectInfo.end, "HH:mm:ss")
+    });
+    setIsAddingClass(true);
+  };
+
+  const handleEventClick = (info: any) => {
     const classData = classes.find(c => c.id === info.event.id);
     if (classData) {
       setSelectedClass(classData);
@@ -120,7 +138,6 @@ export function ClassScheduler() {
         selectedLocation={selectedLocation}
         onLocationChange={setSelectedLocation}
         onAddClass={() => setIsAddingClass(true)}
-        currentDate={currentDate}
       />
 
       <Card className="p-4">
@@ -135,7 +152,7 @@ export function ClassScheduler() {
           weekends={true}
           events={calendarEvents}
           eventDrop={handleEventDrop}
-          select={() => setIsAddingClass(true)}
+          select={handleSelect}
           eventClick={handleEventClick}
           height="auto"
           slotMinTime="08:00:00"
@@ -146,7 +163,7 @@ export function ClassScheduler() {
           snapDuration="00:15:00"
           eventContent={(eventInfo) => (
             <ClassCard
-              classData={classes.find(c => c.id === eventInfo.event.id)}
+              classData={classes.find(c => c.id === eventInfo.event.id) as Class}
               onClick={() => {
                 const classData = classes.find(c => c.id === eventInfo.event.id);
                 if (classData) {
@@ -170,7 +187,11 @@ export function ClassScheduler() {
 
       <NewClassModal
         open={isAddingClass}
-        onClose={() => setIsAddingClass(false)}
+        onClose={() => {
+          setIsAddingClass(false);
+          setSelectedDate(null);
+        }}
+        initialTime={selectedDate}
       />
 
       <CancellationModal
