@@ -11,14 +11,29 @@ import {
 } from "recharts";
 
 interface PaymentTrendsProps {
-  data: Array<{
-    name: string;
-    ingresos: number;
-    gastos: number;
-  }>;
+  period: string;
 }
 
-export function PaymentTrendsChart({ data }: PaymentTrendsProps) {
+const generateSampleData = (period: string) => {
+  const data = [];
+  const now = new Date();
+  const periods = period === 'month' ? 12 : 6;
+  
+  for (let i = 0; i < periods; i++) {
+    const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    data.unshift({
+      name: date.toLocaleDateString('es-ES', { month: 'short', year: '2-digit' }),
+      ingresos: Math.floor(Math.random() * 10000) + 5000,
+      gastos: Math.floor(Math.random() * 5000) + 2000,
+    });
+  }
+  
+  return data;
+};
+
+export function PaymentTrendsChart({ period }: PaymentTrendsProps) {
+  const data = generateSampleData(period);
+
   return (
     <Card className="col-span-full lg:col-span-1">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
