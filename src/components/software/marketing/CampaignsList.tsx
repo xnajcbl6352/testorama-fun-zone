@@ -1,79 +1,87 @@
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Search, Plus } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useState } from "react";
 import { CampaignCard } from "./CampaignCard";
-import { useState } from "react";
-import { Campaign } from "@/types/campaign";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
-const useCampaigns = () => {
-  return useQuery({
-    queryKey: ['campaigns'],
-    queryFn: async () => {
+interface Campaign {
+  id: string;
+  name: string;
+  type: string;
+  status: string;
+  start_date: string;
+  end_date?: string;
+  metrics: {
+    reach?: number;
+    conversions?: number;
+    roi?: string;
+  };
+}
+
+export function CampaignsList() {
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    loadCampaigns();
+  }, []);
+
+  const loadCampaigns = async () => {
+    try {
       const { data, error } = await supabase
         .from('campaigns')
-        .select('*')
-        .order('created_at', { ascending: false });
-      
+        .select('*');
+
       if (error) throw error;
 
-      // Transform the data to ensure metrics is properly typed
-      return data.map((campaign): Campaign => ({
-        ...campaign,
-        metrics: typeof campaign.metrics === 'object' ? campaign.metrics : {
+      // Transform the data to match the Campaign interface
+      const transformedCampaigns: Campaign[] = (data || []).map(campaign => ({
+        id: campaign.id,
+        name: campaign.name,
+        type: campaign.type,
+        status: campaign.status,
+        start_date: campaign.start_date,
+        end_date: campaign.end_date,
+        metrics: typeof campaign.metrics === 'object' ? {
+          reach: campaign.metrics?.reach as number,
+          conversions: campaign.metrics?.conversions as number,
+          roi: campaign.metrics?.roi as string,
+        } : {
           reach: 0,
           conversions: 0,
           roi: '0%'
         }
       }));
+
+      setCampaigns(transformedCampaigns);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
-  });
-};
-
-export function CampaignsList() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const { toast } = useToast();
-  const { data: campaigns = [], isLoading } = useCampaigns();
-
-  const filteredCampaigns = campaigns.filter(campaign =>
-    campaign.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    campaign.type?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const handleAddCampaign = () => {
-    toast({
-      title: "Feature in development",
-      description: "The campaign creation feature will be available soon.",
-    });
   };
 
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
-          <Input
-            className="pl-10"
-            placeholder="Search campaigns..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        <Button onClick={handleAddCampaign} className="gap-2">
-          <Plus className="h-4 w-4" />
-          New Campaign
-        </Button>
-      </div>
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {isLoading ? (
-          <p>Loading campaigns...</p>
-        ) : filteredCampaigns.map((campaign) => (
-          <CampaignCard key={campaign.id} campaign={campaign} />
-        ))}
-      </div>
+  return (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {campaigns.map((campaign) => (
+        <CampaignCard
+          key={campaign.id}
+          name={campaign.name}
+          type={campaign.type}
+          status={campaign.status}
+          start_date={campaign.start_date}
+          end_date={campaign.end_date}
+          metrics={campaign.metrics}
+        />
+      ))}
     </div>
   );
 }
