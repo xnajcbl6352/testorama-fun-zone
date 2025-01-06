@@ -90,6 +90,83 @@ export type Database = {
         }
         Relationships: []
       }
+      automation_logs: {
+        Row: {
+          created_at: string | null
+          details: Json | null
+          id: string
+          status: string
+          task_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          status: string
+          task_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          status?: string
+          task_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_logs_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "automation_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      automation_tasks: {
+        Row: {
+          action_config: Json
+          action_type: string
+          created_at: string | null
+          id: string
+          last_run: string | null
+          name: string
+          next_run: string | null
+          status: string | null
+          trigger_config: Json
+          trigger_type: string
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          action_config: Json
+          action_type: string
+          created_at?: string | null
+          id?: string
+          last_run?: string | null
+          name: string
+          next_run?: string | null
+          status?: string | null
+          trigger_config: Json
+          trigger_type: string
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          action_config?: Json
+          action_type?: string
+          created_at?: string | null
+          id?: string
+          last_run?: string | null
+          name?: string
+          next_run?: string | null
+          status?: string | null
+          trigger_config?: Json
+          trigger_type?: string
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       classes: {
         Row: {
           attendance_marked: boolean | null
@@ -247,6 +324,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notification_templates: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          name: string
+          subject: string | null
+          type: string
+          updated_at: string | null
+          variables: Json | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          name: string
+          subject?: string | null
+          type: string
+          updated_at?: string | null
+          variables?: Json | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          name?: string
+          subject?: string | null
+          type?: string
+          updated_at?: string | null
+          variables?: Json | null
+        }
+        Relationships: []
       }
       payments: {
         Row: {
