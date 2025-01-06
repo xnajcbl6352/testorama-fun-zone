@@ -41,9 +41,13 @@ const formSchema = z.object({
 interface NewClassModalProps {
   open: boolean;
   onClose: () => void;
+  initialTime?: {
+    start: string;
+    end: string;
+  };
 }
 
-export function NewClassModal({ open, onClose }: NewClassModalProps) {
+export function NewClassModal({ open, onClose, initialTime }: NewClassModalProps) {
   const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

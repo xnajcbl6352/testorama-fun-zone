@@ -24,6 +24,7 @@ export function ClassScheduler() {
   const [view, setView] = useState('timeGridWeek');
   const [selectedLocation, setSelectedLocation] = useState<string>('all');
   const [selectedDate, setSelectedDate] = useState<{ start: string; end: string } | null>(null);
+  const [currentDate, setCurrentDate] = useState(new Date());
   const { toast } = useToast();
   const { isLoading, loadClasses } = useClasses();
   const [classes, setClasses] = useState<Class[]>([]);
@@ -138,6 +139,7 @@ export function ClassScheduler() {
         selectedLocation={selectedLocation}
         onLocationChange={setSelectedLocation}
         onAddClass={() => setIsAddingClass(true)}
+        currentDate={currentDate}
       />
 
       <Card className="p-4">
