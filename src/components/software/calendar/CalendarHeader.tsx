@@ -11,9 +11,10 @@ import {
 interface CalendarHeaderProps {
   isAddingClass: boolean;
   setIsAddingClass: (value: boolean) => void;
+  onAddClass: () => void;
 }
 
-export function CalendarHeader({ isAddingClass, setIsAddingClass }: CalendarHeaderProps) {
+export function CalendarHeader({ isAddingClass, setIsAddingClass, onAddClass }: CalendarHeaderProps) {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2">
@@ -22,7 +23,7 @@ export function CalendarHeader({ isAddingClass, setIsAddingClass }: CalendarHead
       </div>
       <Dialog open={isAddingClass} onOpenChange={setIsAddingClass}>
         <DialogTrigger asChild>
-          <Button className="gap-2">
+          <Button className="gap-2" onClick={onAddClass}>
             <Plus className="h-4 w-4" />
             Nueva Clase
           </Button>
