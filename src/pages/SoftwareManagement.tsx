@@ -1,59 +1,57 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ProgramacionManagement } from "@/components/software/ProgramacionManagement";
 import { FinancialDashboard } from "@/components/software/financial/FinancialDashboard";
 import { InvoiceList } from "@/components/software/invoices/InvoiceList";
-import { ProgramacionManagement } from "@/components/software/ProgramacionManagement";
-import { LayoutDashboard, Receipt, CreditCard, FileBarChart, Calendar } from "lucide-react";
+import { Calendar, LayoutDashboard, Receipt, CreditCard, FileBarChart } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 export default function SoftwareManagement() {
+  const [activeTab, setActiveTab] = useState("calendar");
+
+  const tabs = [
+    { id: "calendar", label: "Calendario", icon: Calendar },
+    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { id: "invoices", label: "Facturas", icon: Receipt },
+    { id: "payments", label: "Pagos", icon: CreditCard },
+    { id: "reports", label: "Informes", icon: FileBarChart },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50/40">
       <div className="container mx-auto p-6 space-y-8">
         <div className="flex flex-col space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold tracking-tight text-blue-600">
             Software de Gestión
           </h1>
           <p className="text-muted-foreground">
             Gestiona tu autoescuela de manera eficiente
           </p>
         </div>
-        
-        <Tabs defaultValue="calendar" className="space-y-6">
-          <TabsList className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <TabsTrigger value="calendar" className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              Calendario
-            </TabsTrigger>
-            <TabsTrigger value="overview" className="flex items-center gap-2">
-              <LayoutDashboard className="h-4 w-4" />
-              Dashboard
-            </TabsTrigger>
-            <TabsTrigger value="invoices" className="flex items-center gap-2">
-              <Receipt className="h-4 w-4" />
-              Facturas
-            </TabsTrigger>
-            <TabsTrigger value="payments" className="flex items-center gap-2">
-              <CreditCard className="h-4 w-4" />
-              Pagos
-            </TabsTrigger>
-            <TabsTrigger value="reports" className="flex items-center gap-2">
-              <FileBarChart className="h-4 w-4" />
-              Informes
-            </TabsTrigger>
-          </TabsList>
 
-          <TabsContent value="calendar">
-            <ProgramacionManagement />
-          </TabsContent>
+        <nav className="flex space-x-1 border-b">
+          {tabs.map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              onClick={() => setActiveTab(id)}
+              className={cn(
+                "flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors",
+                "hover:text-blue-600 relative",
+                activeTab === id
+                  ? "text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600"
+                  : "text-muted-foreground"
+              )}
+            >
+              <Icon className="h-4 w-4" />
+              {label}
+            </button>
+          ))}
+        </nav>
 
-          <TabsContent value="overview" className="space-y-6">
-            <FinancialDashboard />
-          </TabsContent>
-
-          <TabsContent value="invoices">
-            <InvoiceList />
-          </TabsContent>
-
-          <TabsContent value="payments">
+        <div className="mt-6">
+          {activeTab === "calendar" && <ProgramacionManagement />}
+          {activeTab === "dashboard" && <FinancialDashboard />}
+          {activeTab === "invoices" && <InvoiceList />}
+          {activeTab === "payments" && (
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-12">
               <div className="flex flex-col items-center justify-center text-center space-y-3">
                 <CreditCard className="h-12 w-12 text-muted-foreground/50" />
@@ -63,9 +61,8 @@ export default function SoftwareManagement() {
                 </p>
               </div>
             </div>
-          </TabsContent>
-
-          <TabsContent value="reports">
+          )}
+          {activeTab === "reports" && (
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-12">
               <div className="flex flex-col items-center justify-center text-center space-y-3">
                 <FileBarChart className="h-12 w-12 text-muted-foreground/50" />
@@ -75,8 +72,8 @@ export default function SoftwareManagement() {
                 </p>
               </div>
             </div>
-          </TabsContent>
-        </Tabs>
+          )}
+        </div>
       </div>
     </div>
   );
