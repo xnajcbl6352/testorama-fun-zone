@@ -4,6 +4,7 @@ import { InvoiceList } from "@/components/software/invoices/InvoiceList";
 import { VehiculosManagement } from "@/components/software/VehiculosManagement";
 import { StudentManagement } from "@/components/software/StudentManagement";
 import { PaymentManagement } from "@/components/software/payments/PaymentManagement";
+import { ReportsDashboard } from "@/components/software/reports/ReportsDashboard";
 import { 
   Calendar, 
   LayoutDashboard, 
@@ -108,14 +109,8 @@ export default function SoftwareManagement() {
               {activeTab === "payments" && <PaymentManagement />}
               {activeTab === "vehicles" && <VehiculosManagement />}
               {activeTab === "reports" && (
-                <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-12">
-                  <div className="flex flex-col items-center justify-center text-center space-y-3">
-                    <FileBarChart className="h-12 w-12 text-muted-foreground/50" />
-                    <h3 className="text-lg font-semibold">Módulo de informes</h3>
-                    <p className="text-muted-foreground text-sm">
-                      Esta funcionalidad estará disponible próximamente
-                    </p>
-                  </div>
+                <div className="space-y-4">
+                  <ReportsDashboard />
                 </div>
               )}
             </div>
