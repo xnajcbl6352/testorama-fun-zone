@@ -31,4 +31,8 @@ export interface Class {
   teacher: Teacher | null;
   student: Student | null;
   vehicle: Vehicle | null;
+  payment_status?: "pending" | "paid" | "overdue" | null;
+  route_plan?: Record<string, any> | null;
+  cancellation_reason?: string | null;
+  cancelled_at?: string | null;
 }
