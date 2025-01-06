@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { 
   Search, Upload, Grid, List, Filter, 
   FileText, File, FileImage, 
-  MoreVertical, ArrowLeft
+  MoreVertical, ArrowLeft,
+  Users, Car, Briefcase, Scale
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,29 +34,49 @@ export default function DocumentManagement() {
       id: "1",
       name: "Licencia de conducir.pdf",
       type: "pdf",
-      category: "Licencias",
+      category: "student",
       status: "active",
       lastModified: new Date(),
       size: "2.5 MB",
+      owner: "Juan Pérez"
     },
     {
       id: "2",
       name: "Manual de prácticas.docx",
       type: "doc",
-      category: "Manuales",
+      category: "staff",
       status: "archived",
       lastModified: new Date(),
       size: "1.8 MB",
+      owner: "María García"
     },
-    // Add more mock documents as needed
+    {
+      id: "3",
+      name: "Seguro vehículo.pdf",
+      type: "pdf",
+      category: "vehicle",
+      status: "active",
+      lastModified: new Date(),
+      size: "3.2 MB",
+      owner: "Admin"
+    },
+    {
+      id: "4",
+      name: "Contrato legal.pdf",
+      type: "pdf",
+      category: "legal",
+      status: "active",
+      lastModified: new Date(),
+      size: "1.5 MB",
+      owner: "Departamento Legal"
+    },
   ];
 
   const categories = [
-    "Todos",
-    "Licencias",
-    "Manuales",
-    "Certificados",
-    "Formularios",
+    { id: "student", label: "Documentos de Alumnos", icon: Users },
+    { id: "vehicle", label: "Documentos de Vehículos", icon: Car },
+    { id: "staff", label: "Documentos del Personal", icon: Briefcase },
+    { id: "legal", label: "Documentos Legales", icon: Scale },
   ];
 
   const documentStats = {
@@ -105,84 +127,134 @@ export default function DocumentManagement() {
           </div>
         </div>
 
-        {/* Filters and Search */}
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Buscar documentos..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
-          </div>
-          <div className="flex gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline">
-                  <Filter className="h-4 w-4 mr-2" />
-                  Filtrar
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                {categories.map((category) => (
-                  <DropdownMenuItem
-                    key={category}
-                    onClick={() => setSelectedCategory(category === "Todos" ? null : category)}
-                  >
-                    {category}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <div className="flex rounded-md border bg-background">
-              <Button
-                variant="ghost"
-                size="icon"
-                className={cn(
-                  "rounded-none",
-                  viewMode === "grid" && "bg-muted"
-                )}
-                onClick={() => setViewMode("grid")}
+        {/* Document Categories */}
+        <Tabs defaultValue="all" className="space-y-6">
+          <TabsList className="w-full justify-start">
+            <TabsTrigger value="all" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Todos
+            </TabsTrigger>
+            {categories.map((category) => (
+              <TabsTrigger
+                key={category.id}
+                value={category.id}
+                className="flex items-center gap-2"
               >
-                <Grid className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className={cn(
-                  "rounded-none",
-                  viewMode === "list" && "bg-muted"
-                )}
-                onClick={() => setViewMode("list")}
-              >
-                <List className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
+                <category.icon className="h-4 w-4" />
+                {category.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
 
-        {/* Document Grid/List */}
-        <div className={cn("grid gap-4", 
-          viewMode === "grid" 
-            ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" 
-            : "grid-cols-1"
-        )}>
-          {documents
-            .filter(
-              (doc) =>
-                (!selectedCategory || doc.category === selectedCategory) &&
-                (!searchQuery ||
-                  doc.name.toLowerCase().includes(searchQuery.toLowerCase()))
-            )
-            .map((document) =>
-              viewMode === "grid" ? (
-                <DocumentCard key={document.id} document={document} />
-              ) : (
-                <DocumentList key={document.id} document={document} />
-              )
-            )}
-        </div>
+          {/* Document Manager */}
+          <div className="space-y-4">
+            {/* Search and Filters */}
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Buscar documentos..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+              <div className="flex gap-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline">
+                      <Filter className="h-4 w-4 mr-2" />
+                      Filtrar
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    {categories.map((category) => (
+                      <DropdownMenuItem
+                        key={category.id}
+                        onClick={() => setSelectedCategory(category.id)}
+                      >
+                        {category.label}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <div className="flex rounded-md border bg-background">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn(
+                      "rounded-none",
+                      viewMode === "grid" && "bg-muted"
+                    )}
+                    onClick={() => setViewMode("grid")}
+                  >
+                    <Grid className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn(
+                      "rounded-none",
+                      viewMode === "list" && "bg-muted"
+                    )}
+                    onClick={() => setViewMode("list")}
+                  >
+                    <List className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Document Grid/List */}
+            <TabsContent value="all" className="mt-0">
+              <div className={cn("grid gap-4", 
+                viewMode === "grid" 
+                  ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" 
+                  : "grid-cols-1"
+              )}>
+                {documents
+                  .filter(
+                    (doc) =>
+                      (!selectedCategory || doc.category === selectedCategory) &&
+                      (!searchQuery ||
+                        doc.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                  )
+                  .map((document) =>
+                    viewMode === "grid" ? (
+                      <DocumentCard key={document.id} document={document} />
+                    ) : (
+                      <DocumentList key={document.id} document={document} />
+                    )
+                  )}
+              </div>
+            </TabsContent>
+
+            {categories.map((category) => (
+              <TabsContent key={category.id} value={category.id} className="mt-0">
+                <div className={cn("grid gap-4", 
+                  viewMode === "grid" 
+                    ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" 
+                    : "grid-cols-1"
+                )}>
+                  {documents
+                    .filter(
+                      (doc) =>
+                        doc.category === category.id &&
+                        (!searchQuery ||
+                          doc.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                    )
+                    .map((document) =>
+                      viewMode === "grid" ? (
+                        <DocumentCard key={document.id} document={document} />
+                      ) : (
+                        <DocumentList key={document.id} document={document} />
+                      )
+                    )}
+                </div>
+              </TabsContent>
+            ))}
+          </div>
+        </Tabs>
 
         {/* Upload Dialog */}
         <DocumentUploadDialog

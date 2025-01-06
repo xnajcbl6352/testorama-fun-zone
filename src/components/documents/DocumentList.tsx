@@ -1,4 +1,4 @@
-import { FileText, File, FileImage, MoreVertical, Download, Share2, Archive } from "lucide-react";
+import { FileText, File, FileImage, MoreVertical, Download, Share2, Archive, User } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +18,7 @@ interface DocumentListProps {
     status: string;
     lastModified: Date;
     size: string;
+    owner: string;
   };
 }
 
@@ -33,13 +34,31 @@ export function DocumentList({ document }: DocumentListProps) {
     }
   };
 
+  const getCategoryLabel = (category: string) => {
+    switch (category) {
+      case "student":
+        return "Alumno";
+      case "vehicle":
+        return "Vehículo";
+      case "staff":
+        return "Personal";
+      case "legal":
+        return "Legal";
+      default:
+        return category;
+    }
+  };
+
   return (
     <div className="group flex items-center justify-between bg-white rounded-lg shadow-sm border p-4 hover:shadow-md transition-shadow">
       <div className="flex items-center space-x-4">
         {getIcon()}
         <div>
           <h3 className="font-medium">{document.name}</h3>
-          <p className="text-sm text-muted-foreground">{document.size}</p>
+          <div className="flex items-center text-sm text-muted-foreground">
+            <User className="h-3 w-3 mr-1" />
+            {document.owner}
+          </div>
         </div>
       </div>
       
@@ -47,8 +66,9 @@ export function DocumentList({ document }: DocumentListProps) {
         <Badge
           variant={document.status === "active" ? "secondary" : "outline"}
         >
-          {document.category}
+          {getCategoryLabel(document.category)}
         </Badge>
+        <span className="text-sm text-muted-foreground">{document.size}</span>
         <span className="text-sm text-muted-foreground min-w-[120px] text-right">
           {formatDate(document.lastModified.toISOString())}
         </span>

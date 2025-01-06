@@ -1,4 +1,4 @@
-import { FileText, File, FileImage, MoreVertical, Download, Share2, Archive } from "lucide-react";
+import { FileText, File, FileImage, MoreVertical, Download, Share2, Archive, User } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +18,7 @@ interface DocumentCardProps {
     status: string;
     lastModified: Date;
     size: string;
+    owner: string;
   };
 }
 
@@ -30,6 +31,21 @@ export function DocumentCard({ document }: DocumentCardProps) {
         return <FileImage className="h-6 w-6 text-blue-500" />;
       default:
         return <FileText className="h-6 w-6 text-gray-500" />;
+    }
+  };
+
+  const getCategoryLabel = (category: string) => {
+    switch (category) {
+      case "student":
+        return "Alumno";
+      case "vehicle":
+        return "Vehículo";
+      case "staff":
+        return "Personal";
+      case "legal":
+        return "Legal";
+      default:
+        return category;
     }
   };
 
@@ -71,16 +87,22 @@ export function DocumentCard({ document }: DocumentCardProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="mt-4 flex items-center justify-between">
-        <Badge
-          variant={document.status === "active" ? "secondary" : "outline"}
-          className="text-xs"
-        >
-          {document.category}
-        </Badge>
-        <span className="text-xs text-muted-foreground">
-          {formatDate(document.lastModified.toISOString())}
-        </span>
+      <div className="mt-4 space-y-2">
+        <div className="flex items-center justify-between">
+          <Badge
+            variant={document.status === "active" ? "secondary" : "outline"}
+            className="text-xs"
+          >
+            {getCategoryLabel(document.category)}
+          </Badge>
+          <span className="text-xs text-muted-foreground">
+            {formatDate(document.lastModified.toISOString())}
+          </span>
+        </div>
+        <div className="flex items-center text-xs text-muted-foreground">
+          <User className="h-3 w-3 mr-1" />
+          {document.owner}
+        </div>
       </div>
     </div>
   );
