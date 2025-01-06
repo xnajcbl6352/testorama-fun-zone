@@ -5,6 +5,7 @@ import { VehiculosManagement } from "@/components/software/VehiculosManagement";
 import { StudentManagement } from "@/components/software/StudentManagement";
 import { PaymentManagement } from "@/components/software/payments/PaymentManagement";
 import { ReportsDashboard } from "@/components/software/reports/ReportsDashboard";
+import { MarketingManagement } from "@/components/software/marketing/MarketingManagement";
 import { 
   Calendar, 
   LayoutDashboard, 
@@ -15,7 +16,8 @@ import {
   Car,
   Users,
   ChevronLeft,
-  Menu
+  Menu,
+  Target
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -45,6 +47,7 @@ export default function SoftwareManagement() {
     { id: "reports", label: "Informes", icon: FileBarChart },
     { id: "documents", label: "Documentos", icon: Files },
     { id: "vehicles", label: "Vehículos", icon: Car },
+    { id: "marketing", label: "Marketing", icon: Target },
   ];
 
   const handleTabChange = (tabId: string) => {
@@ -108,6 +111,7 @@ export default function SoftwareManagement() {
               {activeTab === "invoices" && <InvoiceList />}
               {activeTab === "payments" && <PaymentManagement />}
               {activeTab === "vehicles" && <VehiculosManagement />}
+              {activeTab === "marketing" && <MarketingManagement />}
               {activeTab === "reports" && (
                 <div className="space-y-4">
                   <ReportsDashboard />
