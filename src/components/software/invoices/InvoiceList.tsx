@@ -104,7 +104,7 @@ export function InvoiceList() {
                     <Badge
                       variant={
                         invoice.status === "paid"
-                          ? "success"
+                          ? "secondary"
                           : invoice.status === "overdue"
                           ? "destructive"
                           : "default"
