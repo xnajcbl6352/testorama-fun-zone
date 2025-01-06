@@ -43,6 +43,16 @@ export function Login() {
             onlyThirdPartyProviders={false}
             magicLink={false}
             showLinks={true}
+            onError={(error) => {
+              console.error('Auth error:', error);
+              toast({
+                title: "Error de autenticación",
+                description: error.message === "Email logins are disabled" 
+                  ? "El inicio de sesión por correo electrónico está deshabilitado"
+                  : "Por favor, verifica tus credenciales e intenta de nuevo",
+                variant: "destructive",
+              });
+            }}
             localization={{
               variables: {
                 sign_in: {
