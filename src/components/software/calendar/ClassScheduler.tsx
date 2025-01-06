@@ -14,8 +14,6 @@ import { CancellationModal } from "./CancellationModal";
 import { useClasses } from "@/hooks/useClasses";
 import { supabase } from "@/integrations/supabase/client";
 import type { Class } from "@/types/class";
-import { ClassCard } from "./ClassCard";
-import { EventImpl } from '@fullcalendar/core/internal';
 
 export function ClassScheduler() {
   const [selectedClass, setSelectedClass] = useState<Class | null>(null);
@@ -26,7 +24,6 @@ export function ClassScheduler() {
   const { toast } = useToast();
   const { isLoading, loadClasses } = useClasses();
   const [classes, setClasses] = useState<Class[]>([]);
-  const [currentDate, setCurrentDate] = useState(new Date());
 
   useEffect(() => {
     const channel = supabase
@@ -105,13 +102,6 @@ export function ClassScheduler() {
     }
   };
 
-  const handleEventClick = (info: { event: EventImpl }) => {
-    const classData = classes.find(c => c.id === info.event.id);
-    if (classData) {
-      setSelectedClass(classData);
-    }
-  };
-
   return (
     <div className="space-y-4">
       <CalendarTopNav 
@@ -120,7 +110,6 @@ export function ClassScheduler() {
         selectedLocation={selectedLocation}
         onLocationChange={setSelectedLocation}
         onAddClass={() => setIsAddingClass(true)}
-        currentDate={currentDate}
       />
 
       <Card className="p-4">
@@ -136,7 +125,7 @@ export function ClassScheduler() {
           events={calendarEvents}
           eventDrop={handleEventDrop}
           select={() => setIsAddingClass(true)}
-          eventClick={handleEventClick}
+          eventClick={({ event }) => setSelectedClass(classes.find(c => c.id === event.id) || null)}
           height="auto"
           slotMinTime="08:00:00"
           slotMaxTime="20:00:00"
@@ -145,15 +134,21 @@ export function ClassScheduler() {
           slotDuration="00:30:00"
           snapDuration="00:15:00"
           eventContent={(eventInfo) => (
-            <ClassCard
-              classData={classes.find(c => c.id === eventInfo.event.id)}
-              onClick={() => {
-                const classData = classes.find(c => c.id === eventInfo.event.id);
-                if (classData) {
-                  setSelectedClass(classData);
-                }
-              }}
-            />
+            <div className="p-1 h-full">
+              <div className="text-xs font-semibold">{eventInfo.timeText}</div>
+              <div className="text-sm truncate">{eventInfo.event.title}</div>
+              {eventInfo.event.extendedProps.teacher && (
+                <div className="text-xs text-gray-600 truncate">
+                  {eventInfo.event.extendedProps.teacher.first_name} {eventInfo.event.extendedProps.teacher.last_name}
+                </div>
+              )}
+              {eventInfo.event.extendedProps.vehicle && (
+                <div className="text-xs text-gray-600 truncate">
+                  {eventInfo.event.extendedProps.vehicle.brand} {eventInfo.event.extendedProps.vehicle.model}
+                </div>
+              )}
+              <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-green-500" />
+            </div>
           )}
         />
       </Card>
