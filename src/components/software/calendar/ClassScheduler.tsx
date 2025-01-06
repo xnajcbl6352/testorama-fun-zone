@@ -11,7 +11,7 @@ import { NewClassModal } from "./NewClassModal";
 import { CancellationModal } from "./CancellationModal";
 import { useClasses } from "@/hooks/useClasses";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Filter } from "lucide-react";
+import { Plus, Filter, MapPin } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import type { Class } from "@/types/class";
@@ -21,6 +21,7 @@ export function ClassScheduler() {
   const [isAddingClass, setIsAddingClass] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const [view, setView] = useState('timeGridWeek');
+  const [selectedLocation, setSelectedLocation] = useState<string>('all');
   const { toast } = useToast();
   const { isLoading, loadClasses } = useClasses();
   const [classes, setClasses] = useState<Class[]>([]);
@@ -54,17 +55,21 @@ export function ClassScheduler() {
   const getEventColor = (type: string) => {
     switch (type) {
       case 'theoretical':
-        return '#818cf8'; // Blue
+        return '#818cf8';
       case 'practical':
-        return '#34d399'; // Green
+        return '#34d399';
       case 'exam':
-        return '#f87171'; // Orange
+        return '#f87171';
       default:
-        return '#94a3b8'; // Gray
+        return '#94a3b8';
     }
   };
 
-  const calendarEvents = classes.map(classItem => ({
+  const filteredClasses = selectedLocation === 'all' 
+    ? classes 
+    : classes.filter(c => c.location_id === selectedLocation);
+
+  const calendarEvents = filteredClasses.map(classItem => ({
     id: classItem.id,
     title: `${classItem.type.charAt(0).toUpperCase() + classItem.type.slice(1)} - ${classItem.student?.first_name} ${classItem.student?.last_name}`,
     start: `${classItem.date}T${classItem.start_time}`,
@@ -77,13 +82,14 @@ export function ClassScheduler() {
       student: classItem.student,
       vehicle: classItem.vehicle,
       payment_status: classItem.payment_status,
-      route_plan: classItem.route_plan
+      route_plan: classItem.route_plan,
+      location: classItem.location
     }
   }));
 
   const handleEventDrop = async ({ event }: any) => {
     try {
-      // Implementation pending - will be added in next iteration
+      // Implementation pending
       toast({
         title: "Class rescheduled",
         description: "The class has been successfully rescheduled.",
@@ -111,9 +117,29 @@ export function ClassScheduler() {
               <SelectItem value="timeGridDay">Day</SelectItem>
             </SelectContent>
           </Select>
+
+          <Select 
+            value={selectedLocation} 
+            onValueChange={setSelectedLocation}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select location">
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  <span>Sede</span>
+                </div>
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas las sedes</SelectItem>
+              {/* Add location options */}
+            </SelectContent>
+          </Select>
+
           <Button variant="outline" size="sm">
             Today
           </Button>
+          
           <div className="flex items-center space-x-2">
             <Button variant="outline" size="icon">
               <Filter className="h-4 w-4" />
@@ -160,6 +186,12 @@ export function ClassScheduler() {
               {eventInfo.event.extendedProps.teacher && (
                 <div className="text-xs text-gray-600 truncate">
                   {eventInfo.event.extendedProps.teacher.first_name} {eventInfo.event.extendedProps.teacher.last_name}
+                </div>
+              )}
+              {eventInfo.event.extendedProps.location && (
+                <div className="text-xs text-gray-600 truncate flex items-center gap-1">
+                  <MapPin className="h-3 w-3" />
+                  {eventInfo.event.extendedProps.location.name}
                 </div>
               )}
               {eventInfo.event.extendedProps.vehicle && (

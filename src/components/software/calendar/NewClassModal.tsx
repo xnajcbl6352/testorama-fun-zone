@@ -14,12 +14,15 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 const formSchema = z.object({
   type: z.enum(['theoretical', 'practical', 'exam']),
   teacher_id: z.string().min(1, "Selecciona un profesor"),
   student_id: z.string().min(1, "Selecciona un alumno"),
   vehicle_id: z.string().optional(),
+  location_id: z.string().min(1, "Selecciona una sede"),
   date: z.string(),
   start_time: z.string(),
   end_time: z.string(),
@@ -30,6 +33,9 @@ const formSchema = z.object({
     frequency: z.enum(['daily', 'weekly', 'monthly']).optional(),
     until: z.string().optional(),
   }).optional(),
+  waiting_list: z.boolean().optional(),
+  auto_assign_vehicle: z.boolean().optional(),
+  auto_assign_instructor: z.boolean().optional(),
 });
 
 interface NewClassModalProps {
@@ -45,6 +51,9 @@ export function NewClassModal({ open, onClose }: NewClassModalProps) {
       recurrence: {
         enabled: false,
       },
+      waiting_list: false,
+      auto_assign_vehicle: false,
+      auto_assign_instructor: false,
     },
   });
 
@@ -92,6 +101,21 @@ export function NewClassModal({ open, onClose }: NewClassModalProps) {
               </div>
 
               <div className="space-y-2">
+                <label className="text-sm font-medium">Sede</label>
+                <Select
+                  name="location_id"
+                  onValueChange={(value) => form.setValue('location_id', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona sede" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {/* Add location options */}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
                 <label className="text-sm font-medium">Alumno</label>
                 <Select
                   name="student_id"
@@ -119,6 +143,7 @@ export function NewClassModal({ open, onClose }: NewClassModalProps) {
                 <Select
                   name="teacher_id"
                   onValueChange={(value) => form.setValue('teacher_id', value)}
+                  disabled={form.watch('auto_assign_instructor')}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecciona profesor" />
@@ -145,7 +170,7 @@ export function NewClassModal({ open, onClose }: NewClassModalProps) {
                 />
               </div>
 
-              {form.watch('type') === 'practical' && (
+              {form.watch('type') === 'practical' && !form.watch('auto_assign_vehicle') && (
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Vehículo</label>
                   <Select
@@ -161,6 +186,49 @@ export function NewClassModal({ open, onClose }: NewClassModalProps) {
                   </Select>
                 </div>
               )}
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="auto_assign_instructor"
+                  checked={form.watch('auto_assign_instructor')}
+                  onCheckedChange={(checked) => 
+                    form.setValue('auto_assign_instructor', checked)
+                  }
+                />
+                <Label htmlFor="auto_assign_instructor">
+                  Asignar profesor automáticamente
+                </Label>
+              </div>
+
+              {form.watch('type') === 'practical' && (
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="auto_assign_vehicle"
+                    checked={form.watch('auto_assign_vehicle')}
+                    onCheckedChange={(checked) => 
+                      form.setValue('auto_assign_vehicle', checked)
+                    }
+                  />
+                  <Label htmlFor="auto_assign_vehicle">
+                    Asignar vehículo automáticamente
+                  </Label>
+                </div>
+              )}
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="waiting_list"
+                  checked={form.watch('waiting_list')}
+                  onCheckedChange={(checked) => 
+                    form.setValue('waiting_list', checked)
+                  }
+                />
+                <Label htmlFor="waiting_list">
+                  Añadir a lista de espera si no hay disponibilidad
+                </Label>
+              </div>
             </div>
 
             <div className="space-y-2">
