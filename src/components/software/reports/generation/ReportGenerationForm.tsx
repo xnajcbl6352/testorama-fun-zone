@@ -5,14 +5,15 @@ import { ReportTypeSelector } from "./ReportTypeSelector";
 import { DatePickerWithRange } from "@/components/ui/date-range-picker";
 import { useToast } from "@/hooks/use-toast";
 import { Download, FileSpreadsheet } from "lucide-react";
+import { DateRange } from "react-day-picker";
 
 export function ReportGenerationForm() {
   const [reportType, setReportType] = useState("");
-  const [dateRange, setDateRange] = useState<{ from: Date; to: Date } | undefined>();
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const { toast } = useToast();
 
   const handleGenerateReport = () => {
-    if (!reportType || !dateRange) {
+    if (!reportType || !dateRange?.from || !dateRange?.to) {
       toast({
         title: "Error",
         description: "Por favor selecciona el tipo de informe y el rango de fechas",
