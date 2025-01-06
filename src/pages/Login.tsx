@@ -2,7 +2,7 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { useSession } from "@supabase/auth-helpers-react";
+import { useSession, AuthChangeEvent } from "@supabase/auth-helpers-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -22,8 +22,8 @@ export function Login() {
   useEffect(() => {
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'USER_DELETED' || event === 'SIGNED_OUT') {
+    } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session) => {
+      if (event === "USER_DELETED" || event === "SIGNED_OUT") {
         toast({
           title: "Sesión finalizada",
           description: "Has cerrado sesión correctamente",
