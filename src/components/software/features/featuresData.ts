@@ -28,7 +28,7 @@ import {
   Video,
   CalendarClock,
   Truck,
-  ChalkboardTeacher,
+  School
 } from "lucide-react";
 
 export const features = [
@@ -213,7 +213,7 @@ export const features = [
     component: "FleetManagement"
   },
   {
-    icon: ChalkboardTeacher,
+    icon: School,
     title: "Portal del Profesor",
     description: "Gestión de clases y evaluaciones",
     component: "InstructorPortal"

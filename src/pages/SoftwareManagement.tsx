@@ -19,7 +19,7 @@ import {
   ChevronLeft,
   Menu,
   Target,
-  ChalkboardTeacher
+  School
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -50,7 +50,7 @@ export default function SoftwareManagement() {
     { id: "documents", label: "Documentos", icon: Files },
     { id: "vehicles", label: "Vehículos", icon: Car },
     { id: "marketing", label: "Marketing", icon: Target },
-    { id: "instructor", label: "Portal del Profesor", icon: ChalkboardTeacher },
+    { id: "instructor", label: "Portal del Profesor", icon: School },
   ];
 
   const handleTabChange = (tabId: string) => {

@@ -12,8 +12,8 @@ export function InstructorSchedule() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("classes")
-        .select("*, student:students(*)")
-        .eq("teacher_id", "current-user-id") // Replace with actual auth
+        .select("*, student:students!classes_student_id_fkey(*)")
+        .eq("teacher_id", "current-user-id")
         .eq("date", date?.toISOString().split("T")[0]);
       
       if (error) throw error;

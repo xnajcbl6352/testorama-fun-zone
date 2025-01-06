@@ -1,4 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatisticsOverview } from "./dashboard/StatisticsOverview";
 import { ReportGenerationForm } from "./generation/ReportGenerationForm";
 import { ChartBar, FileText, Settings } from "lucide-react";

@@ -10,8 +10,8 @@ export function RoutePlanning() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("classes")
-        .select("*, student:students(*)")
-        .eq("teacher_id", "current-user-id") // Replace with actual auth
+        .select("*, student:students!classes_student_id_fkey(*)")
+        .eq("teacher_id", "current-user-id")
         .order("start_time");
       
       if (error) throw error;

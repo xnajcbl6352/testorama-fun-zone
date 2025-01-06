@@ -10,8 +10,8 @@ export function ClassNotes() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("classes")
-        .select("*, student:students(*)")
-        .eq("teacher_id", "current-user-id") // Replace with actual auth
+        .select("*, student:students!classes_student_id_fkey(*)")
+        .eq("teacher_id", "current-user-id")
         .not("notes", "is", null)
         .order("date", { ascending: false });
       
