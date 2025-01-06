@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   Search, Upload, Grid, List, Filter, 
-  FileText, FilePdf, FileImage, 
+  FileText, File, FileImage, 
   MoreVertical, ArrowLeft
 } from "lucide-react";
 import { Button } from "@/components/ui/button";

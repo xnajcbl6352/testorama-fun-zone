@@ -1,4 +1,4 @@
-import { FileText, FilePdf, FileImage, MoreVertical, Download, Share2, Archive } from "lucide-react";
+import { FileText, File, FileImage, MoreVertical, Download, Share2, Archive } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -25,7 +25,7 @@ export function DocumentCard({ document }: DocumentCardProps) {
   const getIcon = () => {
     switch (document.type) {
       case "pdf":
-        return <FilePdf className="h-6 w-6 text-red-500" />;
+        return <File className="h-6 w-6 text-red-500" />;
       case "image":
         return <FileImage className="h-6 w-6 text-blue-500" />;
       default:
