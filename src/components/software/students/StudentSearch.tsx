@@ -1,5 +1,6 @@
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface StudentSearchProps {
   onSearch: (term: string) => void;
@@ -7,13 +8,18 @@ interface StudentSearchProps {
 
 export function StudentSearch({ onSearch }: StudentSearchProps) {
   return (
-    <div className="relative mb-6">
-      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-      <Input
-        placeholder="Search students..."
-        className="pl-10"
-        onChange={(e) => onSearch(e.target.value)}
-      />
+    <div className="flex items-center justify-between mb-6">
+      <div className="relative flex-1 max-w-sm">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+        <Input
+          placeholder="Buscar alumnos..."
+          className="pl-10"
+          onChange={(e) => onSearch(e.target.value)}
+        />
+      </div>
+      <Button>
+        Nuevo Alumno
+      </Button>
     </div>
   );
 }
