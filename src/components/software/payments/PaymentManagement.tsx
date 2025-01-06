@@ -6,11 +6,11 @@ import { StudentPaymentView } from "./StudentPaymentView";
 import { PaymentReports } from "./PaymentReports";
 import { PaymentConfiguration } from "./PaymentConfiguration";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useMediaQuery } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function PaymentManagement() {
   const [activeTab, setActiveTab] = useState("overview");
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = useIsMobile();
 
   return (
     <div className="space-y-6">

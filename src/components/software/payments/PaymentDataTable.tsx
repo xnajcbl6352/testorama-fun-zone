@@ -89,8 +89,8 @@ export function PaymentDataTable() {
 
   const getStatusBadge = (status: string) => {
     const variants = {
-      pending: "warning",
-      paid: "success",
+      pending: "secondary",
+      paid: "default",
       overdue: "destructive",
     } as const;
 
