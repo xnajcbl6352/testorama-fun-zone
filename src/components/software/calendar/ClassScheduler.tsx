@@ -6,21 +6,13 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import { ClassDetailsModal } from "./ClassDetailsModal";
 import { NewClassModal } from "./NewClassModal";
 import { CancellationModal } from "./CancellationModal";
 import { useClasses } from "@/hooks/useClasses";
-import { Class } from "@/types/class";
 import { supabase } from "@/integrations/supabase/client";
-import { Calendar as CalendarIcon, Plus, Filter, Search } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Plus, Filter } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
 export function ClassScheduler() {
@@ -58,7 +50,7 @@ export function ClassScheduler() {
     loadClasses().then(setClasses);
   }, [loadClasses]);
 
-  const getEventColor = (type: Class['type']) => {
+  const getEventColor = (type: string) => {
     switch (type) {
       case 'theoretical':
         return '#818cf8'; // Blue
@@ -116,7 +108,6 @@ export function ClassScheduler() {
               <SelectItem value="dayGridMonth">Month</SelectItem>
               <SelectItem value="timeGridWeek">Week</SelectItem>
               <SelectItem value="timeGridDay">Day</SelectItem>
-              <SelectItem value="resourceTimelineDay">Timeline</SelectItem>
             </SelectContent>
           </Select>
           <Button variant="outline" size="sm">
@@ -140,12 +131,12 @@ export function ClassScheduler() {
 
       <Card className="p-4">
         <FullCalendar
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, resourceTimelinePlugin]}
+          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           initialView={view}
           headerToolbar={{
             left: 'prev,next today',
             center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay,resourceTimelineDay'
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
           }}
           editable={true}
           selectable={true}

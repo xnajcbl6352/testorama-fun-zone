@@ -10,8 +10,8 @@ import { supabase } from "@/integrations/supabase/client";
 export function StudentDashboard() {
   const { students, isLoading, loadStudents } = useStudents();
   const [searchTerm, setSearchTerm] = useState("");
+  const [viewType, setViewType] = useState<"grid" | "list">("list");
 
-  // Fetch quick stats data
   const { data: quickStats } = useQuery({
     queryKey: ['student-stats'],
     queryFn: async () => {
@@ -93,8 +93,16 @@ export function StudentDashboard() {
       {/* Student List Section */}
       <Card>
         <CardContent className="p-6">
-          <StudentSearch onSearch={setSearchTerm} onStudentCreated={handleStudentCreated} />
-          <StudentList searchTerm={searchTerm} />
+          <StudentSearch 
+            onSearch={setSearchTerm} 
+            onStudentCreated={handleStudentCreated}
+            viewType={viewType}
+            onViewTypeChange={setViewType}
+          />
+          <StudentList 
+            searchTerm={searchTerm} 
+            viewType={viewType}
+          />
         </CardContent>
       </Card>
     </div>
