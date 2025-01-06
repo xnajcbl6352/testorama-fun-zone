@@ -5,18 +5,29 @@ import { Brain, BookOpen, GraduationCap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
+interface Module {
+  id: string;
+  name: string;
+  progress: number;
+  type: string;
+}
+
 interface LearningPath {
-  current_modules: {
-    id: string;
-    name: string;
-    progress: number;
-    type: string;
-  }[];
+  current_modules: Module[];
   completed_modules: string[];
   recommendations: {
     type: string;
     description: string;
   }[];
+}
+
+interface SupabaseLearningPath {
+  id: string;
+  student_id: string | null;
+  current_modules: any;
+  completed_modules: any;
+  recommendations: any;
+  last_updated: string;
 }
 
 export function LearningPathView() {
@@ -30,7 +41,14 @@ export function LearningPathView() {
         .single();
 
       if (!error && data) {
-        setLearningPath(data);
+        const supabasePath = data as SupabaseLearningPath;
+        // Transform the data to match our interface
+        const transformedPath: LearningPath = {
+          current_modules: supabasePath.current_modules || [],
+          completed_modules: supabasePath.completed_modules || [],
+          recommendations: supabasePath.recommendations || [],
+        };
+        setLearningPath(transformedPath);
       }
     };
 

@@ -44,9 +44,16 @@ export function LearningStyleForm() {
 
   const onSubmit = async (data: LearningStyleFormValues) => {
     try {
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      
+      if (userError) throw userError;
+      
       const { error } = await supabase
         .from("student_profiles")
-        .insert([data]);
+        .insert([{
+          id: userData.user.id,
+          ...data,
+        }]);
 
       if (error) throw error;
 

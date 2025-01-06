@@ -5,11 +5,16 @@ import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { TestTypesSection } from "@/components/home/TestTypesSection";
 import { useNavigate } from "react-router-dom";
 
+interface Test {
+  id: string;
+  name: string;
+  type: string;
+}
+
 export function Index() {
   const navigate = useNavigate();
 
-  const handleTestSelect = (test: any) => {
-    // Handle test selection
+  const handleTestSelect = (test: Test) => {
     console.log("Selected test:", test);
   };
 
