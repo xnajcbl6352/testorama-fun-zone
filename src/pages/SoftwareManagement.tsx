@@ -12,17 +12,30 @@ import {
   FileBarChart, 
   Files, 
   Car,
-  Users 
+  Users,
+  ChevronLeft,
+  Menu
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { 
+  Sidebar, 
+  SidebarContent, 
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+  SidebarInset
+} from "@/components/ui/sidebar";
 
 export default function SoftwareManagement() {
   const [activeTab, setActiveTab] = useState("students");
   const navigate = useNavigate();
 
-  const tabs = [
+  const menuItems = [
     { id: "students", label: "Alumnos", icon: Users },
     { id: "calendar", label: "Calendario", icon: Calendar },
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -41,57 +54,74 @@ export default function SoftwareManagement() {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50/40">
-      <div className="container mx-auto p-6 space-y-8">
-        <div className="flex flex-col space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight text-blue-600">
-            Software de Gestión
-          </h1>
-          <p className="text-muted-foreground">
-            Gestiona tu autoescuela de manera eficiente
-          </p>
-        </div>
-
-        <nav className="flex space-x-1 border-b">
-          {tabs.map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              onClick={() => handleTabChange(id)}
-              className={cn(
-                "flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors",
-                "hover:text-blue-600 relative",
-                activeTab === id
-                  ? "text-blue-600 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-600"
-                  : "text-muted-foreground"
-              )}
-            >
-              <Icon className="h-4 w-4" />
-              {label}
-            </button>
+  const AppSidebar = () => (
+    <Sidebar>
+      <SidebarHeader className="border-b p-4">
+        <h2 className="text-lg font-semibold text-blue-600">
+          Software de Gestión
+        </h2>
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarMenu>
+          {menuItems.map((item) => (
+            <SidebarMenuItem key={item.id}>
+              <SidebarMenuButton
+                onClick={() => handleTabChange(item.id)}
+                isActive={activeTab === item.id}
+                tooltip={item.label}
+              >
+                <item.icon className="h-4 w-4" />
+                <span>{item.label}</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
           ))}
-        </nav>
+        </SidebarMenu>
+      </SidebarContent>
+    </Sidebar>
+  );
 
-        <div className="mt-6">
-          {activeTab === "students" && <StudentManagement />}
-          {activeTab === "calendar" && <ProgramacionManagement />}
-          {activeTab === "dashboard" && <FinancialDashboard />}
-          {activeTab === "invoices" && <InvoiceList />}
-          {activeTab === "payments" && <PaymentManagement />}
-          {activeTab === "vehicles" && <VehiculosManagement />}
-          {activeTab === "reports" && (
-            <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-12">
-              <div className="flex flex-col items-center justify-center text-center space-y-3">
-                <FileBarChart className="h-12 w-12 text-muted-foreground/50" />
-                <h3 className="text-lg font-semibold">Módulo de informes</h3>
-                <p className="text-muted-foreground text-sm">
-                  Esta funcionalidad estará disponible próximamente
-                </p>
+  return (
+    <SidebarProvider defaultOpen>
+      <div className="flex min-h-screen w-full bg-gray-50/40">
+        <AppSidebar />
+        <SidebarInset className="flex-1 p-6">
+          <div className="container mx-auto space-y-8">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <SidebarTrigger />
+                <div className="flex flex-col">
+                  <h1 className="text-2xl font-bold tracking-tight text-blue-600">
+                    {menuItems.find(item => item.id === activeTab)?.label}
+                  </h1>
+                  <p className="text-muted-foreground">
+                    Gestiona tu autoescuela de manera eficiente
+                  </p>
+                </div>
               </div>
             </div>
-          )}
-        </div>
+
+            <div className="mt-6">
+              {activeTab === "students" && <StudentManagement />}
+              {activeTab === "calendar" && <ProgramacionManagement />}
+              {activeTab === "dashboard" && <FinancialDashboard />}
+              {activeTab === "invoices" && <InvoiceList />}
+              {activeTab === "payments" && <PaymentManagement />}
+              {activeTab === "vehicles" && <VehiculosManagement />}
+              {activeTab === "reports" && (
+                <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-12">
+                  <div className="flex flex-col items-center justify-center text-center space-y-3">
+                    <FileBarChart className="h-12 w-12 text-muted-foreground/50" />
+                    <h3 className="text-lg font-semibold">Módulo de informes</h3>
+                    <p className="text-muted-foreground text-sm">
+                      Esta funcionalidad estará disponible próximamente
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </SidebarInset>
       </div>
-    </div>
+    </SidebarProvider>
   );
 }
