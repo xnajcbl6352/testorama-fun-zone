@@ -193,7 +193,7 @@ export function NewClassModal({ open, onClose }: NewClassModalProps) {
                 <Checkbox
                   id="auto_assign_instructor"
                   checked={form.watch('auto_assign_instructor')}
-                  onCheckedChange={(checked) => 
+                  onCheckedChange={(checked: boolean) => 
                     form.setValue('auto_assign_instructor', checked)
                   }
                 />
@@ -207,7 +207,7 @@ export function NewClassModal({ open, onClose }: NewClassModalProps) {
                   <Checkbox
                     id="auto_assign_vehicle"
                     checked={form.watch('auto_assign_vehicle')}
-                    onCheckedChange={(checked) => 
+                    onCheckedChange={(checked: boolean) => 
                       form.setValue('auto_assign_vehicle', checked)
                     }
                   />
@@ -221,7 +221,7 @@ export function NewClassModal({ open, onClose }: NewClassModalProps) {
                 <Checkbox
                   id="waiting_list"
                   checked={form.watch('waiting_list')}
-                  onCheckedChange={(checked) => 
+                  onCheckedChange={(checked: boolean) => 
                     form.setValue('waiting_list', checked)
                   }
                 />

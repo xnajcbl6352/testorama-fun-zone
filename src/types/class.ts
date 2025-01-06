@@ -4,6 +4,7 @@ export interface Class {
   teacher_id: string;
   student_id: string;
   vehicle_id?: string;
+  location_id?: string;
   date: string;
   start_time: string;
   end_time: string;
@@ -24,6 +25,10 @@ export interface Class {
     plate_number: string;
     brand: string;
     model: string;
+  };
+  location?: {
+    id: string;
+    name: string;
   };
   payment_status?: string;
   route_plan?: Record<string, any>;
