@@ -2,7 +2,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatCurrency } from "@/lib/utils";
-import { Euro, AlertCircle, Calendar } from "lucide-react";
+import { Euro, AlertCircle, Calendar, TrendingUp } from "lucide-react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 export function PaymentOverview() {
   const { data: stats } = useQuery({
@@ -38,8 +47,17 @@ export function PaymentOverview() {
     },
   });
 
+  const chartData = [
+    { name: "Ene", ingresos: 4000, gastos: 2400 },
+    { name: "Feb", ingresos: 3000, gastos: 1398 },
+    { name: "Mar", ingresos: 2000, gastos: 9800 },
+    { name: "Abr", ingresos: 2780, gastos: 3908 },
+    { name: "May", ingresos: 1890, gastos: 4800 },
+    { name: "Jun", ingresos: 2390, gastos: 3800 },
+  ];
+
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">
@@ -77,6 +95,29 @@ export function PaymentOverview() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats?.upcomingPayments || 0}</div>
+        </CardContent>
+      </Card>
+
+      <Card className="col-span-full lg:col-span-1">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">
+            Ingresos vs Gastos
+          </CardTitle>
+          <TrendingUp className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="h-[200px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <XAxis dataKey="name" className="text-xs" />
+                <YAxis className="text-xs" />
+                <Tooltip />
+                <Bar dataKey="ingresos" fill="#22c55e" />
+                <Bar dataKey="gastos" fill="#ef4444" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </CardContent>
       </Card>
     </div>
