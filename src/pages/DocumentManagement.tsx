@@ -19,6 +19,7 @@ import {
 import { DocumentUploadDialog } from "@/components/documents/DocumentUploadDialog";
 import { DocumentCard } from "@/components/documents/DocumentCard";
 import { DocumentList } from "@/components/documents/DocumentList";
+import { DGTFileManagement } from "@/components/documents/dgt/DGTFileManagement";
 import { cn } from "@/lib/utils";
 
 export default function DocumentManagement() {
@@ -134,6 +135,10 @@ export default function DocumentManagement() {
               <FileText className="h-4 w-4" />
               Todos
             </TabsTrigger>
+            <TabsTrigger value="dgt" className="flex items-center gap-2">
+              <Car className="h-4 w-4" />
+              DGT
+            </TabsTrigger>
             {categories.map((category) => (
               <TabsTrigger
                 key={category.id}
@@ -146,67 +151,36 @@ export default function DocumentManagement() {
             ))}
           </TabsList>
 
-          {/* Document Manager */}
-          <div className="space-y-4">
-            {/* Search and Filters */}
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Buscar documentos..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9"
-                />
-              </div>
-              <div className="flex gap-2">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline">
-                      <Filter className="h-4 w-4 mr-2" />
-                      Filtrar
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48">
-                    {categories.map((category) => (
-                      <DropdownMenuItem
-                        key={category.id}
-                        onClick={() => setSelectedCategory(category.id)}
-                      >
-                        {category.label}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                <div className="flex rounded-md border bg-background">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={cn(
-                      "rounded-none",
-                      viewMode === "grid" && "bg-muted"
-                    )}
-                    onClick={() => setViewMode("grid")}
-                  >
-                    <Grid className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={cn(
-                      "rounded-none",
-                      viewMode === "list" && "bg-muted"
-                    )}
-                    onClick={() => setViewMode("list")}
-                  >
-                    <List className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </div>
+          <TabsContent value="dgt">
+            <DGTFileManagement />
+          </TabsContent>
 
-            {/* Document Grid/List */}
-            <TabsContent value="all" className="mt-0">
+          {/* Document Manager */}
+          <TabsContent value="all" className="mt-0">
+            <div className={cn("grid gap-4", 
+              viewMode === "grid" 
+                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" 
+                : "grid-cols-1"
+            )}>
+              {documents
+                .filter(
+                  (doc) =>
+                    (!selectedCategory || doc.category === selectedCategory) &&
+                    (!searchQuery ||
+                      doc.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                )
+                .map((document) =>
+                  viewMode === "grid" ? (
+                    <DocumentCard key={document.id} document={document} />
+                  ) : (
+                    <DocumentList key={document.id} document={document} />
+                  )
+                )}
+            </div>
+          </TabsContent>
+
+          {categories.map((category) => (
+            <TabsContent key={category.id} value={category.id} className="mt-0">
               <div className={cn("grid gap-4", 
                 viewMode === "grid" 
                   ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" 
@@ -215,7 +189,7 @@ export default function DocumentManagement() {
                 {documents
                   .filter(
                     (doc) =>
-                      (!selectedCategory || doc.category === selectedCategory) &&
+                      doc.category === category.id &&
                       (!searchQuery ||
                         doc.name.toLowerCase().includes(searchQuery.toLowerCase()))
                   )
@@ -228,32 +202,7 @@ export default function DocumentManagement() {
                   )}
               </div>
             </TabsContent>
-
-            {categories.map((category) => (
-              <TabsContent key={category.id} value={category.id} className="mt-0">
-                <div className={cn("grid gap-4", 
-                  viewMode === "grid" 
-                    ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" 
-                    : "grid-cols-1"
-                )}>
-                  {documents
-                    .filter(
-                      (doc) =>
-                        doc.category === category.id &&
-                        (!searchQuery ||
-                          doc.name.toLowerCase().includes(searchQuery.toLowerCase()))
-                    )
-                    .map((document) =>
-                      viewMode === "grid" ? (
-                        <DocumentCard key={document.id} document={document} />
-                      ) : (
-                        <DocumentList key={document.id} document={document} />
-                      )
-                    )}
-                </div>
-              </TabsContent>
-            ))}
-          </div>
+          ))}
         </Tabs>
 
         {/* Upload Dialog */}
