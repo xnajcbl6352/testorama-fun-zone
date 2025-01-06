@@ -24,7 +24,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { StudentDetailsModal } from "./StudentDetailsModal";
 
 interface StudentListProps {
@@ -32,8 +32,13 @@ interface StudentListProps {
 }
 
 export function StudentList({ searchTerm = '' }: StudentListProps) {
-  const { students, isLoading } = useStudents();
+  const { students, isLoading, loadStudents } = useStudents();
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+
+  // Load students when component mounts and when searchTerm changes
+  useEffect(() => {
+    loadStudents();
+  }, [loadStudents]);
 
   if (isLoading) {
     return <div>Loading...</div>;

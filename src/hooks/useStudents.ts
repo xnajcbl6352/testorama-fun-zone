@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from './use-toast';
 import { 
   type StudentFormValues, 
   type StudentRecord, 
@@ -16,16 +16,20 @@ export const useStudents = () => {
   const loadStudents = async (): Promise<StudentRecord[]> => {
     try {
       setIsLoading(true);
+      console.log('Loading students...');
       const { data, error } = await supabase
         .from('students')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
+      
+      console.log('Students loaded:', data);
       const loadedStudents = (data || []) as StudentRecord[];
       setStudents(loadedStudents);
       return loadedStudents;
     } catch (error: any) {
+      console.error('Error loading students:', error);
       toast({
         title: "Error al cargar alumnos",
         description: error.message,
@@ -158,7 +162,7 @@ export const useStudents = () => {
 
   return {
     isLoading,
-    students, // Now we're returning the students array
+    students,
     loadStudents,
     searchStudents,
     createStudent,
