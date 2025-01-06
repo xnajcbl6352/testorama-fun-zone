@@ -3,7 +3,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StudentList } from "./students/StudentList";
 import { StudentSearch } from "./students/StudentSearch";
-import { FileText, Users, TrendingUp, Download, Upload } from "lucide-react";
+import { DocumentGenerationPanel } from "./students/documents/DocumentGenerationPanel";
+import { GPSTrackingView } from "./students/tracking/GPSTrackingView";
+import { CommunicationHub } from "./students/communication/CommunicationHub";
+import { FileText, Users, MapPin, MessageSquare, TrendingUp, Download, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
@@ -19,13 +22,21 @@ export function StudentManagement() {
               <Users className="h-4 w-4" />
               Lista de Alumnos
             </TabsTrigger>
-            <TabsTrigger value="progress" className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
-              Seguimiento
-            </TabsTrigger>
             <TabsTrigger value="documents" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Documentación
+            </TabsTrigger>
+            <TabsTrigger value="tracking" className="flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
+              Seguimiento GPS
+            </TabsTrigger>
+            <TabsTrigger value="communication" className="flex items-center gap-2">
+              <MessageSquare className="h-4 w-4" />
+              Comunicaciones
+            </TabsTrigger>
+            <TabsTrigger value="progress" className="flex items-center gap-2">
+              <TrendingUp className="h-4 w-4" />
+              Progreso
             </TabsTrigger>
           </TabsList>
           <div className="flex items-center gap-2">
@@ -54,19 +65,20 @@ export function StudentManagement() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="progress">
-          <StudentDashboard />
+        <TabsContent value="documents">
+          <DocumentGenerationPanel />
         </TabsContent>
 
-        <TabsContent value="documents">
-          <Card>
-            <CardContent className="p-6">
-              <h2 className="text-lg font-semibold mb-4">Documentación de Alumnos</h2>
-              <p className="text-muted-foreground">
-                Módulo de gestión de documentación en desarrollo.
-              </p>
-            </CardContent>
-          </Card>
+        <TabsContent value="tracking">
+          <GPSTrackingView />
+        </TabsContent>
+
+        <TabsContent value="communication">
+          <CommunicationHub />
+        </TabsContent>
+
+        <TabsContent value="progress">
+          <StudentDashboard />
         </TabsContent>
       </Tabs>
     </div>
