@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Search, Plus } from "lucide-react";
+import { Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { VehicleCard } from "./vehicles/VehicleCard";
 import { FleetOverview } from "./vehicles/FleetOverview";
+import { AddVehicleDialog } from "./vehicles/AddVehicleDialog";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Vehicle {
@@ -62,13 +62,6 @@ export function VehiculosManagement() {
     reserved: vehicles.filter(v => v.status === "in_use").length,
   };
 
-  const handleAddVehicle = () => {
-    toast({
-      title: "Función en desarrollo",
-      description: "La funcionalidad para añadir vehículos estará disponible próximamente.",
-    });
-  };
-
   const handleEditVehicle = (id: string) => {
     toast({
       title: "Función en desarrollo",
@@ -103,10 +96,7 @@ export function VehiculosManagement() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Control de Vehículos</h2>
-        <Button onClick={handleAddVehicle} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Añadir Vehículo
-        </Button>
+        <AddVehicleDialog onVehicleAdded={loadVehicles} />
       </div>
 
       <FleetOverview stats={stats} />
