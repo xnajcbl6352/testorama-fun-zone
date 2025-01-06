@@ -6,10 +6,16 @@ import { NewStudentModal } from "./NewStudentModal";
 
 interface StudentSearchProps {
   onSearch: (term: string) => void;
+  onStudentCreated: () => void;
 }
 
-export function StudentSearch({ onSearch }: StudentSearchProps) {
+export function StudentSearch({ onSearch, onStudentCreated }: StudentSearchProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    onStudentCreated();
+  };
 
   return (
     <>
@@ -29,7 +35,7 @@ export function StudentSearch({ onSearch }: StudentSearchProps) {
 
       <NewStudentModal 
         open={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+        onClose={handleModalClose} 
       />
     </>
   );

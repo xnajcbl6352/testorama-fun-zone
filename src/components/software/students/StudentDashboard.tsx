@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export function StudentDashboard() {
-  const { students, isLoading } = useStudents();
+  const { students, isLoading, loadStudents } = useStudents();
   const [searchTerm, setSearchTerm] = useState("");
 
   // Fetch quick stats data
@@ -71,6 +71,10 @@ export function StudentDashboard() {
     }
   ];
 
+  const handleStudentCreated = async () => {
+    await loadStudents();
+  };
+
   return (
     <div className="space-y-6">
       {/* Stats Section */}
@@ -89,7 +93,7 @@ export function StudentDashboard() {
       {/* Student List Section */}
       <Card>
         <CardContent className="p-6">
-          <StudentSearch onSearch={setSearchTerm} />
+          <StudentSearch onSearch={setSearchTerm} onStudentCreated={handleStudentCreated} />
           <StudentList searchTerm={searchTerm} />
         </CardContent>
       </Card>
