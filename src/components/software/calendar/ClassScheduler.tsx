@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Plus, Filter } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import type { Class } from "@/types/class";
 
 export function ClassScheduler() {
   const [selectedClass, setSelectedClass] = useState<Class | null>(null);
