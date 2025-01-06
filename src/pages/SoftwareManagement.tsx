@@ -1,7 +1,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FinancialDashboard } from "@/components/software/financial/FinancialDashboard";
 import { InvoiceList } from "@/components/software/invoices/InvoiceList";
-import { LayoutDashboard, Receipt, CreditCard, FileBarChart } from "lucide-react";
+import { ProgramacionManagement } from "@/components/software/ProgramacionManagement";
+import { LayoutDashboard, Receipt, CreditCard, FileBarChart, Calendar } from "lucide-react";
 
 export default function SoftwareManagement() {
   return (
@@ -16,8 +17,12 @@ export default function SoftwareManagement() {
           </p>
         </div>
         
-        <Tabs defaultValue="overview" className="space-y-6">
+        <Tabs defaultValue="calendar" className="space-y-6">
           <TabsList className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <TabsTrigger value="calendar" className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              Calendario
+            </TabsTrigger>
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <LayoutDashboard className="h-4 w-4" />
               Dashboard
@@ -35,6 +40,10 @@ export default function SoftwareManagement() {
               Informes
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="calendar">
+            <ProgramacionManagement />
+          </TabsContent>
 
           <TabsContent value="overview" className="space-y-6">
             <FinancialDashboard />
