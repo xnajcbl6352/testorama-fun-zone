@@ -62,5 +62,9 @@ export interface Student {
   first_name: string;
   last_name: string;
   dni: string;
+  email: string | null;
+  phone: string | null;
+  address: string | null;
+  registration_date: string;
   status: string;
 }
