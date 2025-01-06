@@ -35,10 +35,10 @@ export function StudentList({ searchTerm = '' }: StudentListProps) {
   const { students, isLoading, loadStudents } = useStudents();
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
 
-  // Load students when component mounts and when searchTerm changes
+  // Load students only when component mounts
   useEffect(() => {
     loadStudents();
-  }, [loadStudents]);
+  }, []); // Removed loadStudents from dependencies
 
   if (isLoading) {
     return <div>Loading...</div>;
