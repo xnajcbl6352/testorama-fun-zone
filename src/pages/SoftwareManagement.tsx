@@ -2,16 +2,27 @@ import { ProgramacionManagement } from "@/components/software/ProgramacionManage
 import { FinancialDashboard } from "@/components/software/financial/FinancialDashboard";
 import { InvoiceList } from "@/components/software/invoices/InvoiceList";
 import { VehiculosManagement } from "@/components/software/VehiculosManagement";
-import { Calendar, LayoutDashboard, Receipt, CreditCard, FileBarChart, Files, Car } from "lucide-react";
+import { StudentManagement } from "@/components/software/StudentManagement";
+import { 
+  Calendar, 
+  LayoutDashboard, 
+  Receipt, 
+  CreditCard, 
+  FileBarChart, 
+  Files, 
+  Car,
+  Users 
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function SoftwareManagement() {
-  const [activeTab, setActiveTab] = useState("calendar");
+  const [activeTab, setActiveTab] = useState("students");
   const navigate = useNavigate();
 
   const tabs = [
+    { id: "students", label: "Alumnos", icon: Users },
     { id: "calendar", label: "Calendario", icon: Calendar },
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
     { id: "invoices", label: "Facturas", icon: Receipt },
@@ -61,6 +72,7 @@ export default function SoftwareManagement() {
         </nav>
 
         <div className="mt-6">
+          {activeTab === "students" && <StudentManagement />}
           {activeTab === "calendar" && <ProgramacionManagement />}
           {activeTab === "dashboard" && <FinancialDashboard />}
           {activeTab === "invoices" && <InvoiceList />}
