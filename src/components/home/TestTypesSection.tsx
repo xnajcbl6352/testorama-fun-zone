@@ -2,6 +2,16 @@ import { Book, Brain, Trophy, BarChart3, FileQuestion, Clock } from "lucide-reac
 import { TestTypeCard } from "@/components/TestTypeCard";
 import { useNavigate } from "react-router-dom";
 
+interface Test {
+  id: string;
+  name: string;
+  type: string;
+}
+
+interface TestTypesSectionProps {
+  onTestSelect?: (test: Test) => void;
+}
+
 const testTypes = [
   {
     title: "Tests Simples",
@@ -59,11 +69,20 @@ const testTypes = [
   },
 ];
 
-export function TestTypesSection() {
+export function TestTypesSection({ onTestSelect }: TestTypesSectionProps) {
   const navigate = useNavigate();
 
   const handleTestSelect = (path: string) => {
     console.info("Selected test:", path);
+    if (onTestSelect) {
+      // Create a test object that matches the Test interface
+      const test: Test = {
+        id: path,
+        name: testTypes.find(t => t.path === path)?.title || "",
+        type: path.split("/")[2],
+      };
+      onTestSelect(test);
+    }
     navigate(path);
   };
 
