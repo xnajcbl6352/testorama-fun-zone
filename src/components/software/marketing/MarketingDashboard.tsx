@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Users, Target, CreditCard, Heart } from "lucide-react";
+import { Users, Target, CreditCard, Heart, BarChart2, LineChart } from "lucide-react";
 import { AnalyticsCard } from "./AnalyticsCard";
 
 export function MarketingDashboard() {
@@ -34,13 +34,19 @@ export function MarketingDashboard() {
 
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Channel Performance</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold">ROI Analytics</h3>
+            <BarChart2 className="h-5 w-5 text-muted-foreground" />
+          </div>
           <div className="h-[300px] flex items-center justify-center text-muted-foreground">
             Chart coming soon
           </div>
         </Card>
         <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Lead Sources</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold">Lead Sources</h3>
+            <LineChart className="h-5 w-5 text-muted-foreground" />
+          </div>
           <div className="h-[300px] flex items-center justify-center text-muted-foreground">
             Chart coming soon
           </div>
