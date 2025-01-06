@@ -5,6 +5,15 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
   type: z.enum(['theoretical', 'practical', 'exam']),
@@ -14,6 +23,13 @@ const formSchema = z.object({
   date: z.string(),
   start_time: z.string(),
   end_time: z.string(),
+  notes: z.string().optional(),
+  payment_status: z.enum(['pending', 'paid', 'overdue']).optional(),
+  recurrence: z.object({
+    enabled: z.boolean(),
+    frequency: z.enum(['daily', 'weekly', 'monthly']).optional(),
+    until: z.string().optional(),
+  }).optional(),
 });
 
 interface NewClassModalProps {
@@ -25,6 +41,11 @@ export function NewClassModal({ open, onClose }: NewClassModalProps) {
   const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      recurrence: {
+        enabled: false,
+      },
+    },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -46,13 +67,110 @@ export function NewClassModal({ open, onClose }: NewClassModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Programar Nueva Clase</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            {/* Form fields will be implemented in the next iteration */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Tipo de Clase</label>
+                <Select
+                  name="type"
+                  onValueChange={(value) => form.setValue('type', value as any)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona tipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="theoretical">Teórica</SelectItem>
+                    <SelectItem value="practical">Práctica</SelectItem>
+                    <SelectItem value="exam">Examen</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Alumno</label>
+                <Select
+                  name="student_id"
+                  onValueChange={(value) => form.setValue('student_id', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona alumno" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {/* Add student options */}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Fecha</label>
+                <Input
+                  type="date"
+                  {...form.register('date')}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Profesor</label>
+                <Select
+                  name="teacher_id"
+                  onValueChange={(value) => form.setValue('teacher_id', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona profesor" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {/* Add teacher options */}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Hora inicio</label>
+                <Input
+                  type="time"
+                  {...form.register('start_time')}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Hora fin</label>
+                <Input
+                  type="time"
+                  {...form.register('end_time')}
+                />
+              </div>
+
+              {form.watch('type') === 'practical' && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Vehículo</label>
+                  <Select
+                    name="vehicle_id"
+                    onValueChange={(value) => form.setValue('vehicle_id', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona vehículo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {/* Add vehicle options */}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Notas</label>
+              <Textarea
+                {...form.register('notes')}
+                placeholder="Añade notas sobre la clase..."
+              />
+            </div>
+
             <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" onClick={onClose}>
                 Cancelar

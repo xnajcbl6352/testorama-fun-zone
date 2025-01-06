@@ -6,17 +6,28 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import { ClassDetailsModal } from "./ClassDetailsModal";
 import { NewClassModal } from "./NewClassModal";
 import { CancellationModal } from "./CancellationModal";
 import { useClasses } from "@/hooks/useClasses";
 import { Class } from "@/types/class";
 import { supabase } from "@/integrations/supabase/client";
+import { Calendar as CalendarIcon, Plus, Filter, Search } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 
 export function ClassScheduler() {
   const [selectedClass, setSelectedClass] = useState<Class | null>(null);
   const [isAddingClass, setIsAddingClass] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
+  const [view, setView] = useState('timeGridWeek');
   const { toast } = useToast();
   const { isLoading, loadClasses } = useClasses();
   const [classes, setClasses] = useState<Class[]>([]);
@@ -50,13 +61,13 @@ export function ClassScheduler() {
   const getEventColor = (type: Class['type']) => {
     switch (type) {
       case 'theoretical':
-        return '#818cf8';
+        return '#818cf8'; // Blue
       case 'practical':
-        return '#34d399';
+        return '#34d399'; // Green
       case 'exam':
-        return '#f87171';
+        return '#f87171'; // Orange
       default:
-        return '#94a3b8';
+        return '#94a3b8'; // Gray
     }
   };
 
@@ -94,30 +105,80 @@ export function ClassScheduler() {
   };
 
   return (
-    <Card className="p-4">
-      <FullCalendar
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="timeGridWeek"
-        headerToolbar={{
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay resourceTimeGridDay'
-        }}
-        editable={true}
-        selectable={true}
-        selectMirror={true}
-        dayMaxEvents={true}
-        weekends={true}
-        events={calendarEvents}
-        eventDrop={handleEventDrop}
-        select={() => setIsAddingClass(true)}
-        eventClick={({ event }) => setSelectedClass(classes.find(c => c.id === event.id) || null)}
-        height="auto"
-        slotMinTime="08:00:00"
-        slotMaxTime="22:00:00"
-        allDaySlot={false}
-        locale="es"
-      />
+    <div className="space-y-4">
+      <div className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm">
+        <div className="flex items-center space-x-4">
+          <Select defaultValue={view} onValueChange={setView}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select view" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="dayGridMonth">Month</SelectItem>
+              <SelectItem value="timeGridWeek">Week</SelectItem>
+              <SelectItem value="timeGridDay">Day</SelectItem>
+              <SelectItem value="resourceTimelineDay">Timeline</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button variant="outline" size="sm">
+            Today
+          </Button>
+          <div className="flex items-center space-x-2">
+            <Button variant="outline" size="icon">
+              <Filter className="h-4 w-4" />
+            </Button>
+            <Input
+              placeholder="Search classes..."
+              className="w-64"
+            />
+          </div>
+        </div>
+        <Button onClick={() => setIsAddingClass(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          New Class
+        </Button>
+      </div>
+
+      <Card className="p-4">
+        <FullCalendar
+          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, resourceTimelinePlugin]}
+          initialView={view}
+          headerToolbar={{
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay,resourceTimelineDay'
+          }}
+          editable={true}
+          selectable={true}
+          selectMirror={true}
+          dayMaxEvents={true}
+          weekends={true}
+          events={calendarEvents}
+          eventDrop={handleEventDrop}
+          select={() => setIsAddingClass(true)}
+          eventClick={({ event }) => setSelectedClass(classes.find(c => c.id === event.id) || null)}
+          height="auto"
+          slotMinTime="08:00:00"
+          slotMaxTime="22:00:00"
+          allDaySlot={false}
+          locale="es"
+          eventContent={(eventInfo) => (
+            <div className="p-1">
+              <div className="text-xs font-semibold">{eventInfo.timeText}</div>
+              <div className="text-sm truncate">{eventInfo.event.title}</div>
+              {eventInfo.event.extendedProps.teacher && (
+                <div className="text-xs text-gray-600 truncate">
+                  {eventInfo.event.extendedProps.teacher.first_name} {eventInfo.event.extendedProps.teacher.last_name}
+                </div>
+              )}
+              {eventInfo.event.extendedProps.vehicle && (
+                <div className="text-xs text-gray-600 truncate">
+                  {eventInfo.event.extendedProps.vehicle.brand} {eventInfo.event.extendedProps.vehicle.model}
+                </div>
+              )}
+            </div>
+          )}
+        />
+      </Card>
 
       <ClassDetailsModal
         classData={selectedClass}
@@ -139,6 +200,6 @@ export function ClassScheduler() {
         open={isCancelling}
         onClose={() => setIsCancelling(false)}
       />
-    </Card>
+    </div>
   );
 }
