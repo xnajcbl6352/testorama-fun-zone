@@ -9,6 +9,36 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      achievements: {
+        Row: {
+          created_at: string
+          description: string
+          icon_url: string | null
+          id: string
+          name: string
+          points: number | null
+          requirements: Json | null
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          icon_url?: string | null
+          id?: string
+          name: string
+          points?: number | null
+          requirements?: Json | null
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          icon_url?: string | null
+          id?: string
+          name?: string
+          points?: number | null
+          requirements?: Json | null
+        }
+        Relationships: []
+      }
       classes: {
         Row: {
           attendance_marked: boolean | null
@@ -120,6 +150,41 @@ export type Database = {
           },
         ]
       }
+      learning_paths: {
+        Row: {
+          completed_modules: Json | null
+          current_modules: Json | null
+          id: string
+          last_updated: string
+          recommendations: Json | null
+          student_id: string | null
+        }
+        Insert: {
+          completed_modules?: Json | null
+          current_modules?: Json | null
+          id?: string
+          last_updated?: string
+          recommendations?: Json | null
+          student_id?: string | null
+        }
+        Update: {
+          completed_modules?: Json | null
+          current_modules?: Json | null
+          id?: string
+          last_updated?: string
+          recommendations?: Json | null
+          student_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_paths_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
@@ -209,6 +274,86 @@ export type Database = {
             foreignKeyName: "records_student_id_fkey"
             columns: ["student_id"]
             isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      student_achievements: {
+        Row: {
+          achievement_id: string | null
+          earned_at: string
+          id: string
+          student_id: string | null
+        }
+        Insert: {
+          achievement_id?: string | null
+          earned_at?: string
+          id?: string
+          student_id?: string | null
+        }
+        Update: {
+          achievement_id?: string | null
+          earned_at?: string
+          id?: string
+          student_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_achievements_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_achievements_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      student_profiles: {
+        Row: {
+          created_at: string
+          current_level: Database["public"]["Enums"]["student_level"] | null
+          id: string
+          learning_goals: string[] | null
+          learning_style: Database["public"]["Enums"]["learning_style"]
+          points: number | null
+          preferred_schedule: string[] | null
+          prior_experience: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          current_level?: Database["public"]["Enums"]["student_level"] | null
+          id: string
+          learning_goals?: string[] | null
+          learning_style?: Database["public"]["Enums"]["learning_style"]
+          points?: number | null
+          preferred_schedule?: string[] | null
+          prior_experience?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          current_level?: Database["public"]["Enums"]["student_level"] | null
+          id?: string
+          learning_goals?: string[] | null
+          learning_style?: Database["public"]["Enums"]["learning_style"]
+          points?: number | null
+          preferred_schedule?: string[] | null
+          prior_experience?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
             referencedRelation: "students"
             referencedColumns: ["id"]
           },
@@ -311,9 +456,11 @@ export type Database = {
     Enums: {
       class_status: "scheduled" | "completed" | "cancelled"
       class_type: "theoretical" | "practical" | "exam"
+      learning_style: "visual" | "auditory" | "kinesthetic" | "mixed"
       payment_method: "cash" | "card" | "transfer"
       payment_status: "pending" | "paid" | "overdue"
       record_status: "pending" | "in_progress" | "completed"
+      student_level: "beginner" | "intermediate" | "advanced"
       vehicle_status: "available" | "in_use" | "maintenance"
       vehicle_type: "car" | "motorcycle" | "truck"
     }

@@ -9,6 +9,8 @@ import { ClassBookingDialog } from "./ClassBookingDialog";
 import { StudentProgress } from "./StudentProgress";
 import { type Class } from "@/types/class";
 import { useNavigate } from "react-router-dom";
+import { AchievementsDisplay } from "../dashboard/AchievementsDisplay";
+import { LearningPathView } from "../dashboard/LearningPathView";
 
 export function StudentDashboard() {
   const session = useSession();
@@ -74,60 +76,67 @@ export function StudentDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5" />
-              Próximas Clases
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {upcomingClasses.length === 0 ? (
-              <p className="text-muted-foreground">No hay clases programadas</p>
-            ) : (
-              <ul className="space-y-4">
-                {upcomingClasses.map((class_) => (
-                  <li key={class_.id} className="flex justify-between items-center">
-                    <div>
-                      <p className="font-medium">{new Date(class_.date).toLocaleDateString()}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {class_.start_time.slice(0, 5)} - {class_.end_time.slice(0, 5)}
-                      </p>
-                    </div>
-                    <span className="text-sm bg-primary/10 text-primary px-2 py-1 rounded">
-                      {class_.type}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column */}
+        <div className="lg:col-span-2 space-y-6">
+          <LearningPathView />
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Clock className="h-5 w-5" />
+                Próximas Clases
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {upcomingClasses.length === 0 ? (
+                <p className="text-muted-foreground">No hay clases programadas</p>
+              ) : (
+                <ul className="space-y-4">
+                  {upcomingClasses.map((class_) => (
+                    <li key={class_.id} className="flex justify-between items-center">
+                      <div>
+                        <p className="font-medium">{new Date(class_.date).toLocaleDateString()}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {class_.start_time.slice(0, 5)} - {class_.end_time.slice(0, 5)}
+                        </p>
+                      </div>
+                      <span className="text-sm bg-primary/10 text-primary px-2 py-1 rounded">
+                        {class_.type}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <GraduationCap className="h-5 w-5" />
-              Progreso
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <StudentProgress />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CreditCard className="h-5 w-5" />
-              Pagos Pendientes
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">No hay pagos pendientes</p>
-          </CardContent>
-        </Card>
+        {/* Right Column */}
+        <div className="space-y-6">
+          <AchievementsDisplay />
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <GraduationCap className="h-5 w-5" />
+                Progreso
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <StudentProgress />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CreditCard className="h-5 w-5" />
+                Pagos Pendientes
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">No hay pagos pendientes</p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       <ClassBookingDialog 
