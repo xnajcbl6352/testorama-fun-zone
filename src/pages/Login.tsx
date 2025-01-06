@@ -5,10 +5,12 @@ import { useEffect } from "react";
 import { useSession } from "@supabase/auth-helpers-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 export function Login() {
   const session = useSession();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (session) {
@@ -47,11 +49,15 @@ export function Login() {
                   email_label: 'Correo electrónico',
                   password_label: 'Contraseña',
                   button_label: 'Iniciar sesión',
+                  email_input_placeholder: 'tu@email.com',
+                  password_input_placeholder: 'Tu contraseña',
                 },
                 sign_up: {
                   email_label: 'Correo electrónico',
                   password_label: 'Contraseña',
                   button_label: 'Registrarse',
+                  email_input_placeholder: 'tu@email.com',
+                  password_input_placeholder: 'Tu contraseña',
                 },
               },
             }}
