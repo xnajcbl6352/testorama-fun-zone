@@ -11,7 +11,17 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
-import { FileText, Calendar, CreditCard, MessageSquare } from "lucide-react";
+import { 
+  FileText, 
+  Calendar, 
+  CreditCard, 
+  MessageSquare,
+  Phone,
+  Mail,
+  MapPin,
+  GraduationCap,
+  Clock
+} from "lucide-react";
 
 interface StudentDetailsModalProps {
   student: Student | null;
@@ -51,13 +61,17 @@ export function StudentDetailsModal({ student, open, onClose }: StudentDetailsMo
               <FileText className="h-4 w-4 mr-2" />
               Información Personal
             </TabsTrigger>
+            <TabsTrigger value="academic">
+              <GraduationCap className="h-4 w-4 mr-2" />
+              Progreso Académico
+            </TabsTrigger>
             <TabsTrigger value="classes">
               <Calendar className="h-4 w-4 mr-2" />
               Historial de Clases
             </TabsTrigger>
             <TabsTrigger value="payments">
               <CreditCard className="h-4 w-4 mr-2" />
-              Registro de Pagos
+              Estado de Pagos
             </TabsTrigger>
             <TabsTrigger value="notes">
               <MessageSquare className="h-4 w-4 mr-2" />
@@ -73,21 +87,33 @@ export function StudentDetailsModal({ student, open, onClose }: StudentDetailsMo
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Email</p>
-                      <p>{student.email || '-'}</p>
+                    <div className="flex items-center gap-2">
+                      <Mail className="h-4 w-4 text-muted-foreground" />
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Email</p>
+                        <p>{student.email || '-'}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Teléfono</p>
-                      <p>{student.phone || '-'}</p>
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-muted-foreground" />
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Teléfono</p>
+                        <p>{student.phone || '-'}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Dirección</p>
-                      <p>{student.address || '-'}</p>
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-muted-foreground" />
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Dirección</p>
+                        <p>{student.address || '-'}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Fecha de Registro</p>
-                      <p>{formatDate(student.registration_date)}</p>
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-muted-foreground" />
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Fecha de Registro</p>
+                        <p>{formatDate(student.registration_date || '')}</p>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -103,14 +129,29 @@ export function StudentDetailsModal({ student, open, onClose }: StudentDetailsMo
               </Card>
             </TabsContent>
 
+            <TabsContent value="academic">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Progreso del Alumno</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {/* This will be implemented in a future iteration */}
+                  <p className="text-muted-foreground text-sm">
+                    Módulo de progreso académico en desarrollo
+                  </p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
             <TabsContent value="classes">
               <Card>
                 <CardHeader>
                   <CardTitle>Historial de Clases</CardTitle>
                 </CardHeader>
                 <CardContent>
+                  {/* This will be implemented in a future iteration */}
                   <p className="text-muted-foreground text-sm">
-                    Implementar vista de historial de clases
+                    Módulo de historial de clases en desarrollo
                   </p>
                 </CardContent>
               </Card>
@@ -119,11 +160,12 @@ export function StudentDetailsModal({ student, open, onClose }: StudentDetailsMo
             <TabsContent value="payments">
               <Card>
                 <CardHeader>
-                  <CardTitle>Registro de Pagos</CardTitle>
+                  <CardTitle>Estado de Pagos</CardTitle>
                 </CardHeader>
                 <CardContent>
+                  {/* This will be implemented in a future iteration */}
                   <p className="text-muted-foreground text-sm">
-                    Implementar vista de registro de pagos
+                    Módulo de estado de pagos en desarrollo
                   </p>
                 </CardContent>
               </Card>
@@ -135,8 +177,9 @@ export function StudentDetailsModal({ student, open, onClose }: StudentDetailsMo
                   <CardTitle>Notas del Profesor</CardTitle>
                 </CardHeader>
                 <CardContent>
+                  {/* This will be implemented in a future iteration */}
                   <p className="text-muted-foreground text-sm">
-                    Implementar sistema de notas
+                    Módulo de notas en desarrollo
                   </p>
                 </CardContent>
               </Card>

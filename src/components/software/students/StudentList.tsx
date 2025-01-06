@@ -16,7 +16,8 @@ import {
   MoreVertical, 
   FileEdit, 
   Trash2, 
-  MessageCircle 
+  MessageCircle,
+  Calendar
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -26,6 +27,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useState, useEffect } from "react";
 import { StudentDetailsModal } from "./StudentDetailsModal";
+import { formatDate } from "@/lib/utils";
 
 interface StudentListProps {
   searchTerm?: string;
@@ -35,25 +37,26 @@ export function StudentList({ searchTerm = '' }: StudentListProps) {
   const { students, isLoading, loadStudents } = useStudents();
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
 
-  // Load students only when component mounts
   useEffect(() => {
     loadStudents();
-  }, []); // Removed loadStudents from dependencies
+  }, []);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </div>
+    );
   }
 
   const filteredStudents = students?.filter((student: Student) =>
     `${student.first_name} ${student.last_name} ${student.dni}`.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const getPaymentStatus = (student: Student) => {
-    // This is a placeholder - implement actual payment status logic
+  const getLicenseType = (student: Student) => {
+    // This is a placeholder - implement actual license type logic
     return (
-      <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-        Al día
-      </Badge>
+      <Badge variant="outline">B</Badge>
     );
   };
 
@@ -67,23 +70,33 @@ export function StudentList({ searchTerm = '' }: StudentListProps) {
     );
   };
 
+  const getPendingClasses = (student: Student) => {
+    // This is a placeholder - implement actual pending classes logic
+    return (
+      <Badge variant="secondary" className="font-mono">
+        3
+      </Badge>
+    );
+  };
+
   return (
-    <>
+    <div className="relative">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Alumno</TableHead>
             <TableHead>DNI/NIE</TableHead>
             <TableHead>Tipo Permiso</TableHead>
+            <TableHead>Estado</TableHead>
             <TableHead>Progreso</TableHead>
-            <TableHead>Prácticas</TableHead>
-            <TableHead>Pagos</TableHead>
+            <TableHead>Clases Pendientes</TableHead>
+            <TableHead>Último Acceso</TableHead>
             <TableHead className="text-right">Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {filteredStudents?.map((student) => (
-            <TableRow key={student.id}>
+            <TableRow key={student.id} className="group">
               <TableCell className="flex items-center space-x-3">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src="/placeholder.svg" />
@@ -92,15 +105,23 @@ export function StudentList({ searchTerm = '' }: StudentListProps) {
                     {student.last_name[0]}
                   </AvatarFallback>
                 </Avatar>
-                <span>{student.first_name} {student.last_name}</span>
+                <div>
+                  <div className="font-medium">{student.first_name} {student.last_name}</div>
+                  <div className="text-sm text-muted-foreground">{student.email}</div>
+                </div>
               </TableCell>
               <TableCell>{student.dni}</TableCell>
+              <TableCell>{getLicenseType(student)}</TableCell>
               <TableCell>
-                <Badge variant="secondary">B</Badge>
+                <Badge variant={student.status === 'active' ? 'default' : 'secondary'}>
+                  {student.status === 'active' ? 'Activo' : 'Inactivo'}
+                </Badge>
               </TableCell>
               <TableCell>{getProgress(student)}</TableCell>
-              <TableCell>12/15</TableCell>
-              <TableCell>{getPaymentStatus(student)}</TableCell>
+              <TableCell>{getPendingClasses(student)}</TableCell>
+              <TableCell className="text-sm text-muted-foreground">
+                {formatDate(student.updated_at || '')}
+              </TableCell>
               <TableCell className="text-right">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -114,12 +135,16 @@ export function StudentList({ searchTerm = '' }: StudentListProps) {
                       Ver detalles
                     </DropdownMenuItem>
                     <DropdownMenuItem>
+                      <Calendar className="mr-2 h-4 w-4" />
+                      Programar clase
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
                       <MessageCircle className="mr-2 h-4 w-4" />
-                      Añadir nota
+                      Enviar mensaje
                     </DropdownMenuItem>
                     <DropdownMenuItem className="text-red-600">
                       <Trash2 className="mr-2 h-4 w-4" />
-                      Eliminar
+                      Dar de baja
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -134,6 +159,6 @@ export function StudentList({ searchTerm = '' }: StudentListProps) {
         open={!!selectedStudent} 
         onClose={() => setSelectedStudent(null)} 
       />
-    </>
+    </div>
   );
 }
