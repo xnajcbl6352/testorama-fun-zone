@@ -3,21 +3,46 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { FileText, Plus } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export function ClassNotes() {
+  const [userId, setUserId] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserId(user.id);
+      }
+    };
+    getCurrentUser();
+  }, []);
+
   const { data: classes, isLoading } = useQuery({
-    queryKey: ["class-notes"],
+    queryKey: ["class-notes", userId],
     queryFn: async () => {
+      if (!userId) return null;
+
       const { data, error } = await supabase
         .from("classes")
         .select("*, student:students!classes_student_id_fkey(*)")
-        .eq("teacher_id", "current-user-id")
+        .eq("teacher_id", userId)
         .not("notes", "is", null)
         .order("date", { ascending: false });
       
-      if (error) throw error;
+      if (error) {
+        toast({
+          title: "Error loading class notes",
+          description: error.message,
+          variant: "destructive",
+        });
+        throw error;
+      }
       return data;
-    }
+    },
+    enabled: !!userId,
   });
 
   return (
@@ -33,10 +58,10 @@ export function ClassNotes() {
       <div className="grid gap-4">
         {isLoading ? (
           <p>Cargando notas...</p>
-        ) : classes?.length === 0 ? (
+        ) : !classes || classes.length === 0 ? (
           <p>No hay notas registradas.</p>
         ) : (
-          classes?.map((class_) => (
+          classes.map((class_) => (
             <Card key={class_.id}>
               <CardHeader>
                 <CardTitle>{class_.student?.first_name} {class_.student?.last_name}</CardTitle>
